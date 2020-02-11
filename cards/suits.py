@@ -79,16 +79,16 @@ class SuitSet():
     def __str__(self):
         return str(self.items)
 
-    def __eq__(self, other):
+    def __eq__(self, other:'SuitSet'):
         return self.items == other.items
 
-    def __ne__(self, other):
+    def __ne__(self, other:'SuitSet'):
         return self.items != other.items
 
     def __iter__(self):
         return iter(self.items)
 
-    def __contains__(self, item):
+    def __contains__(self, item:Suit):
         return item in self.items
 
     def get(self, code:str) -> Optional[Suit]:
