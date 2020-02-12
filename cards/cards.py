@@ -7,29 +7,6 @@ from suits import Suit, suits
 class Card():
     """
     Representation of abstract card
-
-    Tests
-    -----
-    >>> a = Rank('a', 'rank A', 1)
-    >>> b = Rank('b', 'rank B', 2)
-    >>> c = Rank('c', 'rank C', 3)
-    >>> x = Suit('x', 'suit X')
-    >>> y = Suit('y', 'suit Y')
-    >>> ax = Card(a, x)
-    >>> ay = Card(a, y)
-    >>> bx = Card(b, x)
-    >>> by = Card(b, y)
-    >>> cc = Card(c)
-    >>> ax.code
-    'ax'
-    >>> cc.code
-    'c'
-    >>> ax == bx
-    False
-    >>> ax > by
-    False
-    >>> cc >= ay
-    True
     """
 
     def __init__(self, rank:Rank, suit:Optional[Suit]=None) -> None:
@@ -45,6 +22,11 @@ class Card():
         if self.suit:
             return '%s of %s' % (self.rank.__str__(), self.suit.__str__(),)
         return self.rank.__str__()
+
+    def __hash__(self) -> str:
+        if self.suit:
+            return 256 * ord(self.suit.code) + ord(self.rank.code)
+        return ord(self.rank.code)
 
     def __eq__(self, other:'Card') -> bool:
         return self.rank == other.rank and self.suit == other.suit
@@ -74,35 +56,10 @@ class Card():
 class CardSet():
     """
     Representation of abstract set of cards
-
-    Tests
-    -----
-    >>> a = Rank('a', 'rank A', 1)
-    >>> b = Rank('b', 'rank B', 2)
-    >>> c = Rank('c', 'rank C', 3)
-    >>> x = Suit('x', 'suit X')
-    >>> y = Suit('y', 'suit Y')
-    >>> ax = Card(a, x)
-    >>> ay = Card(a, y)
-    >>> bx = Card(b, x)
-    >>> by = Card(b, y)
-    >>> cc = Card(c)
-    >>> s = CardSet([ax, ay, cc,])
-    >>> z = s.get('ax')
-    >>> z.code
-    'ax'
-    >>> ax in s
-    True
-    >>> by in s
-    False
-    >>> c in s
-    True
     """
 
-    items:List[Card] = []
-
     def __init__(self, items:List[Card]) -> None:
-        self.items = items
+        self.items = set(items)
 
     def __repr__(self):
         return repr(self.items)
@@ -130,8 +87,3 @@ class CardSet():
 
 
 cards:Card = CardSet([ Card(x, y) for y in suits for x in ranks ])
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

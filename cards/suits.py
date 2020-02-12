@@ -4,24 +4,6 @@ from typing import List, Optional
 class Suit():
     """
     Representation of abstract suit
-
-    Tests
-    -----
-    >>> a = Suit('a', 'suit A')
-    >>> a
-    suit A
-    >>> str(a)
-    'suit A'
-    >>> b = Suit('b', 'suit B')
-    >>> b == a
-    False
-    >>> a != b
-    True
-    >>> c = Suit('a', 'suit C')
-    >>> c == a
-    True
-    >>> b != c
-    True
     """
 
     def __init__(self, code:str, name:str) -> None:
@@ -30,6 +12,9 @@ class Suit():
 
     def __repr__(self) -> str:
         return self.name
+
+    def __hash__(self) -> str:
+        return ord(self.code)
 
     def __str__(self) -> str:
         return self.name
@@ -44,34 +29,10 @@ class Suit():
 class SuitSet():
     """
     Representation of abstract set of suits
-
-    Tests
-    -----
-    >>> a = Suit('a', 'suit A')
-    >>> b = Suit('b', 'suit B')
-    >>> c = Suit('c', 'suit C')
-    >>> s = SuitSet([a, b,])
-    >>> str(s)
-    '[suit A, suit B]'
-    >>> s
-    [suit A, suit B]
-    >>> s.get(a.code)
-    suit A
-    >>> s.get(c.code)
-    >>> for x in s:
-    ...     x
-    suit A
-    suit B
-    >>> a in s
-    True
-    >>> c in s
-    False
     """
 
-    items:List[Suit] = []
-
     def __init__(self, items:List[Suit]) -> None:
-        self.items = items
+        self.items = set(items)
 
     def __repr__(self):
         return repr(self.items)
@@ -104,8 +65,3 @@ diamonds:Suit = Suit('d', 'diamonds')
 clubs:Suit = Suit('c', 'clubs')
 
 suits:SuitSet = SuitSet([ spades, hearts, diamonds, clubs, ])
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()
