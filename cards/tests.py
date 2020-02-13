@@ -3,13 +3,14 @@ import unittest
 from ranks import Rank, RankSet
 from suits import Suit, SuitSet
 from cards import Card, CardSet
+from decks import Deck
 
 
 class TestRank(unittest.TestCase):
     def setUp(self):
-        self.a = Rank('a', 'rank A', 1)
-        self.b = Rank('b', 'rank B', 2)
-        self.c = Rank('a', 'rank C', 3)
+        self.a = Rank('A', 'rank A', 1)
+        self.b = Rank('B', 'rank B', 2)
+        self.c = Rank('A', 'rank C', 3)
 
     def tearDown(self):
         del self.a
@@ -38,9 +39,9 @@ class TestRank(unittest.TestCase):
 
 class TestRankSet(unittest.TestCase):
     def setUp(self):
-        self.a = Rank('a', 'rank A', 1)
-        self.b = Rank('b', 'rank B', 2)
-        self.c = Rank('c', 'rank C', 3)
+        self.a = Rank('A', 'rank A', 1)
+        self.b = Rank('B', 'rank B', 2)
+        self.c = Rank('C', 'rank C', 3)
         self.ab = RankSet([self.a, self.b,])
         self.bc = RankSet([self.b, self.c,])
         self.ba = RankSet([self.b, self.a,])
@@ -65,9 +66,9 @@ class TestRankSet(unittest.TestCase):
         self.assertTrue(self.b in self.ba)
         self.assertTrue(self.a not in self.bc)
 
-    def test_get(self):
-        self.assertEqual(self.ab.get(self.a.code), self.a)
-        self.assertNotEqual(self.bc.get(self.b.code), self.a)
+    def test_getitem(self):
+        self.assertEqual(self.ab[self.a.code], self.a)
+        self.assertNotEqual(self.bc[self.b.code], self.a)
 
 
 class TestSuit(unittest.TestCase):
@@ -118,17 +119,17 @@ class TestSuitSet(unittest.TestCase):
         self.assertTrue(self.y in self.yx)
         self.assertTrue(self.x not in self.yz)
 
-    def test_get(self):
-        self.assertEqual(self.xy.get(self.x.code), self.x)
-        self.assertNotEqual(self.yz.get(self.y.code), self.x)
+    def test_getitem(self):
+        self.assertEqual(self.xy[self.x.code], self.x)
+        self.assertNotEqual(self.yz[self.y.code], self.x)
 
 
 class TestCard(unittest.TestCase):
     def setUp(self):
-        self.a = Rank('a', 'rank A', 1)
-        self.b = Rank('b', 'rank B', 2)
-        self.c = Rank('a', 'rank C', 3)
-        self.j = Rank('j', 'rank J', 4)
+        self.a = Rank('A', 'rank A', 1)
+        self.b = Rank('B', 'rank B', 2)
+        self.c = Rank('A', 'rank C', 3)
+        self.j = Rank('J', 'rank J', 4)
         self.x = Suit('x', 'suit X')
         self.y = Suit('y', 'suit Y')
         self.z = Suit('x', 'suit Z')
@@ -177,9 +178,9 @@ class TestCard(unittest.TestCase):
 
 class TestCardSet(unittest.TestCase):
     def setUp(self):
-        self.a = Rank('a', 'rank A', 1)
-        self.b = Rank('b', 'rank B', 2)
-        self.j = Rank('j', 'rank J', 3)
+        self.a = Rank('A', 'rank A', 1)
+        self.b = Rank('B', 'rank B', 2)
+        self.j = Rank('J', 'rank J', 3)
         self.x = Suit('x', 'suit X')
         self.y = Suit('y', 'suit Y')
         self.ax = Card(self.a, self.x)
@@ -218,9 +219,44 @@ class TestCardSet(unittest.TestCase):
         self.assertTrue(self.jj in self.ayjj)
         self.assertTrue(self.ay not in self.axby)
 
-    def test_get(self):
-        self.assertEqual(self.axby.get(self.ax.code), self.ax)
-        self.assertNotEqual(self.ayjj.get(self.jj.code), self.ay)
+    def test_getitem(self):
+        self.assertEqual(self.axby[self.ax.code], self.ax)
+        self.assertNotEqual(self.ayjj[self.jj.code], self.ay)
+
+
+class TestDeck(unittest.TestCase):
+    def setUp(self):
+        self.a = Rank('A', 'rank A', 1)
+        self.b = Rank('B', 'rank B', 2)
+        self.j = Rank('J', 'rank J', 3)
+        self.x = Suit('x', 'suit X')
+        self.y = Suit('y', 'suit Y')
+        self.ax = Card(self.a, self.x)
+        self.ay = Card(self.a, self.y)
+        self.bx = Card(self.b, self.x)
+        self.by = Card(self.b, self.y)
+        self.jj = Card(self.j)
+        self.axby = Deck(CardSet([self.ax, self.by,]))
+        self.byax = Deck(CardSet([self.by, self.ax,]))
+        self.ayjj = Deck(CardSet([self.ay, self.jj,]))
+
+    def tearDown(self):
+        del self.a
+        del self.b
+        del self.j
+        del self.x
+        del self.y
+        del self.ax
+        del self.ay
+        del self.bx
+        del self.by
+        del self.jj
+        del self.axby
+        del self.byax
+        del self.ayjj
+
+    def test_ne(self):
+        self.assertNotEqual(self.axby, self.ayjj)
 
 
 if __name__ == '__main__':

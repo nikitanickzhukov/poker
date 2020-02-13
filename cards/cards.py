@@ -1,7 +1,7 @@
 from typing import List, Optional
 
-from ranks import Rank, ranks
-from suits import Suit, suits
+from ranks import Rank, standard_ranks
+from suits import Suit, standard_suits
 
 
 class Card():
@@ -23,7 +23,7 @@ class Card():
             return '%s of %s' % (self.rank.__str__(), self.suit.__str__(),)
         return self.rank.__str__()
 
-    def __hash__(self) -> str:
+    def __hash__(self) -> int:
         if self.suit:
             return 256 * ord(self.suit.code) + ord(self.rank.code)
         return ord(self.rank.code)
@@ -61,29 +61,35 @@ class CardSet():
     def __init__(self, items:List[Card]) -> None:
         self.items = set(items)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return repr(self.items)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.items)
 
-    def __eq__(self, other):
+    def __bool__(self) -> bool:
+        return bool(self.items)
+
+    def __eq__(self, other) -> bool:
         return self.items == other.items
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         return self.items != other.items
 
-    def __iter__(self):
-        return iter(self.items)
-
-    def __contains__(self, item:Card):
+    def __contains__(self, item:Card) -> bool:
         return item in self.items
 
-    def get(self, code:str) -> Optional[Card]:
+    def __len__(self) -> int:
+        return len(self.items)
+
+    def __iter__(self) -> iter:
+        return iter(self.items)
+
+    def __getitem__(self, key:str) -> Card:
         for x in self.items:
-            if x.code == code:
+            if x.code == key:
                 return x
-        return None
+        raise KeyError('Card %s is not found' % (key,))
 
 
-cards:Card = CardSet([ Card(x, y) for y in suits for x in ranks ])
+standard_cards:CardSet = CardSet([ Card(x, y) for y in standard_suits for x in standard_ranks ])

@@ -7,6 +7,10 @@ class Rank():
     """
 
     def __init__(self, code:str, name:str, weight:int) -> None:
+        assert len(code) == 1 and ('A' <= code <= 'Z' or '0' <= code <= '9'), 'Code must be a single uppercase char from A to Z or from 0 to 9'
+        assert len(name) > 0, 'Name must be specified'
+        assert weight > 0, 'Weight must be a positive int'
+
         self.code = code
         self.name = name
         self.weight = weight
@@ -17,7 +21,7 @@ class Rank():
     def __repr__(self) -> str:
         return self.name
 
-    def __hash__(self) -> str:
+    def __hash__(self) -> int:
         return ord(self.code)
 
     def __eq__(self, other:'Rank') -> bool:
@@ -47,29 +51,35 @@ class RankSet():
     def __init__(self, items:List[Rank]) -> None:
         self.items = set(items)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return repr(self.items)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.items)
 
-    def __eq__(self, other:'RankSet'):
+    def __bool__(self) -> bool:
+        return bool(self.items)
+
+    def __eq__(self, other:'RankSet') -> bool:
         return self.items == other.items
 
-    def __ne__(self, other:'RankSet'):
+    def __ne__(self, other:'RankSet') -> bool:
         return self.items != other.items
 
-    def __iter__(self):
-        return iter(self.items)
-
-    def __contains__(self, item:Rank):
+    def __contains__(self, item:Rank) -> bool:
         return item in self.items
 
-    def get(self, code:str) -> Optional[Rank]:
+    def __len__(self) -> int:
+        return len(self.items)
+
+    def __iter__(self) -> iter:
+        return iter(self.items)
+
+    def __getitem__(self, key:str) -> Rank:
         for x in self.items:
-            if x.code == code:
+            if x.code == key:
                 return x
-        return None
+        raise KeyError('Rank %s is not found' % (key,))
 
 
 ace:Rank = Rank('A', 'Ace', 14)
@@ -83,7 +93,7 @@ seven:Rank = Rank('7', 'Seven', 7)
 six:Rank = Rank('6', 'Six', 6)
 five:Rank = Rank('5', 'Five', 5)
 four:Rank = Rank('4', 'Four', 4)
-three:Rank = Rank('3', 'Three', 3)
+trey:Rank = Rank('3', 'Trey', 3)
 deuce:Rank = Rank('2', 'Deuce', 2)
 
-ranks:RankSet = RankSet([ ace, deuce, three, four, five, six, seven, eight, nine, ten, jack, queen, king, ])
+standard_ranks:RankSet = RankSet([ ace, deuce, trey, four, five, six, seven, eight, nine, ten, jack, queen, king, ])
