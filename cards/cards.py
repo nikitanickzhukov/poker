@@ -9,24 +9,18 @@ class Card():
     Representation of abstract card
     """
 
-    def __init__(self, rank:Rank, suit:Optional[Suit]=None) -> None:
+    def __init__(self, rank:Rank, suit:Suit) -> None:
         self.rank = rank
         self.suit = suit
 
     def __repr__(self) -> str:
-        if self.suit:
-            return '%s of %s' % (self.rank.__repr__(), self.suit.__repr__(),)
-        return self.rank.__repr__()
+        return '%s of %s' % (self.rank.__repr__(), self.suit.__repr__(),)
 
     def __str__(self) -> str:
-        if self.suit:
-            return '%s of %s' % (self.rank.__str__(), self.suit.__str__(),)
-        return self.rank.__str__()
+        return '%s of %s' % (self.rank.__str__(), self.suit.__str__(),)
 
     def __hash__(self) -> int:
-        if self.suit:
-            return 256 * ord(self.suit.code) + ord(self.rank.code)
-        return ord(self.rank.code)
+        return 256 * ord(self.suit.code) + ord(self.rank.code)
 
     def __eq__(self, other:'Card') -> bool:
         return self.rank == other.rank and self.suit == other.suit
@@ -48,10 +42,8 @@ class Card():
 
     @property
     def code(self) -> str:
-        if self.suit:
-            return self.rank.code + self.suit.code
-        return self.rank.code
-    
+        return self.rank.code + self.suit.code
+
 
 class CardSet():
     """
@@ -90,6 +82,9 @@ class CardSet():
             if x.code == key:
                 return x
         raise KeyError('Card %s is not found' % (key,))
+
+    def __delitem__(self, key:str) -> None:
+        self.items.remove(self[key])
 
 
 standard_cards:CardSet = CardSet([ Card(x, y) for y in standard_suits for x in standard_ranks ])

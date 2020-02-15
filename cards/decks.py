@@ -39,11 +39,8 @@ class Deck():
     def __getitem__(self, idx:int) -> Card:
         return self.items[idx]
 
-    def __setitem__(self, idx:int, item:Card) -> None:
-        self.items[idx] = item
-
     def __delitem__(self, idx:int) -> None:
-        self.items.remove(idx)
+        del self.items[idx]
 
     def shuffle(self) -> None:
         random.shuffle(self.items)

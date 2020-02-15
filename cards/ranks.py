@@ -81,6 +81,9 @@ class RankSet():
                 return x
         raise KeyError('Rank %s is not found' % (key,))
 
+    def __delitem__(self, key:str) -> None:
+        self.items.remove(self[key])
+
 
 ace:Rank = Rank('A', 'Ace', 14)
 king:Rank = Rank('K', 'King', 13)

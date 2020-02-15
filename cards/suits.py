@@ -67,6 +67,9 @@ class SuitSet():
                 return x
         raise KeyError('Suit %s is not found' % (key,))
 
+    def __delitem__(self, key:str) -> None:
+        self.items.remove(self[key])
+
 
 spades:Suit = Suit('s', 'spades')
 hearts:Suit = Suit('h', 'hearts')
