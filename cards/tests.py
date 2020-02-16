@@ -1,9 +1,9 @@
 import unittest
 
-from ranks import Rank, RankSet
-from suits import Suit, SuitSet
-from cards import Card, CardSet
-from decks import Deck
+from .ranks import Rank, RankSet
+from .suits import Suit, SuitSet
+from .cards import Card, CardSet
+from .decks import Deck
 
 
 class TestRank(unittest.TestCase):
@@ -81,12 +81,6 @@ class TestRankSet(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.ab['x']
 
-    def test_delitem(self):
-        del self.ab[self.a.code]
-        self.assertNotIn(self.a, self.ab)
-        with self.assertRaises(KeyError):
-            del self.ab['x']
-
 
 class TestSuit(unittest.TestCase):
     def setUp(self):
@@ -139,12 +133,6 @@ class TestSuitSet(unittest.TestCase):
         self.assertNotEqual(self.yz[self.y.code], self.x)
         with self.assertRaises(KeyError):
             self.xy['a']
-
-    def test_delitem(self):
-        del self.xy[self.x.code]
-        self.assertNotIn(self.x, self.xy)
-        with self.assertRaises(KeyError):
-            del self.xy['a']
 
 
 class TestCard(unittest.TestCase):
@@ -234,12 +222,6 @@ class TestCardSet(unittest.TestCase):
         self.assertNotEqual(self.axby[self.by.code], self.ax)
         with self.assertRaises(KeyError):
             self.axby[self.bx.code]
-
-    def test_delitem(self):
-        del self.axby[self.ax.code]
-        self.assertNotIn(self.ax, self.axby)
-        with self.assertRaises(KeyError):
-            del self.axby['xa']
 
 
 class TestDeck(unittest.TestCase):

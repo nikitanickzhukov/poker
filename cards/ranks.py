@@ -11,36 +11,48 @@ class Rank():
         assert len(name) > 0, 'Name must be specified'
         assert weight > 0, 'Weight must be a positive int'
 
-        self.code = code
-        self.name = name
-        self.weight = weight
+        self._code = code
+        self._name = name
+        self._weight = weight
 
     def __str__(self) -> str:
-        return self.name
+        return self._name
 
     def __repr__(self) -> str:
-        return self.name
+        return self._name
 
     def __hash__(self) -> int:
-        return ord(self.code)
+        return ord(self._code)
 
     def __eq__(self, other:'Rank') -> bool:
-        return self.code == other.code
+        return self._code == other._code
 
     def __ne__(self, other:'Rank') -> bool:
-        return self.code != other.code
+        return self._code != other._code
 
     def __gt__(self, other:'Rank') -> bool:
-        return self.weight > other.weight
+        return self._weight > other._weight
 
     def __ge__(self, other:'Rank') -> bool:
-        return self.weight >= other.weight
+        return self._weight >= other._weight
 
     def __lt__(self, other:'Rank') -> bool:
-        return self.weight < other.weight
+        return self._weight < other._weight
 
     def __le__(self, other:'Rank') -> bool:
-        return self.weight <= other.weight
+        return self._weight <= other._weight
+
+    @property
+    def code(self):
+        return self._code
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def weight(self):
+        return self._weight
 
 
 class RankSet():
@@ -49,40 +61,37 @@ class RankSet():
     """
 
     def __init__(self, items:List[Rank]) -> None:
-        self.items = set(items)
+        self._items = set(items)
 
     def __repr__(self) -> str:
-        return repr(self.items)
+        return repr(self._items)
 
     def __str__(self) -> str:
-        return str(self.items)
+        return str(self._items)
 
     def __bool__(self) -> bool:
-        return bool(self.items)
+        return bool(self._items)
 
     def __eq__(self, other:'RankSet') -> bool:
-        return self.items == other.items
+        return self._items == other._items
 
     def __ne__(self, other:'RankSet') -> bool:
-        return self.items != other.items
+        return self._items != other._items
 
     def __contains__(self, item:Rank) -> bool:
-        return item in self.items
+        return item in self._items
 
     def __len__(self) -> int:
-        return len(self.items)
+        return len(self._items)
 
     def __iter__(self) -> iter:
-        return iter(self.items)
+        return iter(self._items)
 
     def __getitem__(self, key:str) -> Rank:
-        for x in self.items:
+        for x in self._items:
             if x.code == key:
                 return x
         raise KeyError('Rank %s is not found' % (key,))
-
-    def __delitem__(self, key:str) -> None:
-        self.items.remove(self[key])
 
 
 ace:Rank = Rank('A', 'Ace', 14)

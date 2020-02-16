@@ -1,7 +1,7 @@
 from typing import List, Union
 import random
 
-from cards import Card, CardSet, standard_cards
+from .cards import Card, CardSet, standard_cards
 
 
 class Deck():
@@ -9,53 +9,52 @@ class Deck():
     Representation of abstract deck
     """
 
-    items:List[Card] = []
+    _items:List[Card] = []
 
     def __init__(self, items:Union[CardSet, List[Card], None]=None):
         if items is not None:
-            self.items = list(items)
-
+            self._items = list(items)
     def __repr__(self) -> str:
-        return repr(self.items)
+        return repr(self._items)
 
     def __str__(self) -> str:
-        return str(self.items)
+        return str(self._items)
 
     def __bool__(self) -> bool:
-        return bool(self.items)
+        return bool(self._items)
 
     def __eq__(self, other:'Deck') -> bool:
-        return self.items == other.items
+        return self._items == other._items
 
     def __ne__(self, other:'Deck') -> bool:
-        return self.items != other.items
+        return self._items != other._items
 
     def __len__(self) -> int:
-        return len(self.items)
+        return len(self._items)
 
     def __iter__(self) -> iter:
-        return iter(self.items)
+        return iter(self._items)
 
     def __getitem__(self, idx:int) -> Card:
-        return self.items[idx]
+        return self._items[idx]
 
     def __delitem__(self, idx:int) -> None:
-        del self.items[idx]
+        del self._items[idx]
 
     def shuffle(self) -> None:
-        random.shuffle(self.items)
+        random.shuffle(self._items)
 
     def push(self, item:Card) -> None:
-        self.items.append(item)
+        self._items.append(item)
 
     def pop(self) -> Card:
-        return self.items.pop()
+        return self._items.pop()
 
     def unshift(self, item:Card) -> None:
-        self.items.insert(0, item)
+        self._items.insert(0, item)
 
     def shift(self) -> Card:
-        return self.items.pop(0)
+        return self._items.pop(0)
 
 
 class StandardDeck(Deck):
