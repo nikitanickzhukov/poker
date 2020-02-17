@@ -8,12 +8,13 @@ class Hand():
     Representation of abstract hand
     """
 
-    _length:Optional[int] = None
+    _length:int = 0
+    _items:set = set()
 
-    def __init__(self, items:List[Card]):
-        if self._length is not None:
+    def __init__(self, items:Optional[List[Card]]=None):
+        if items is not None:
             assert len(items) <= self._length, 'Hand cannot contain more than %d card(s)' % (self._length)
-        self._items = set(items)
+            self._items = set(items)
 
     def __repr__(self) -> str:
         return repr(self._items)
@@ -42,9 +43,12 @@ class Hand():
                 return x
         raise KeyError('Card %s is not found' % (key,))
 
-    def append(self, item:Card):
-        if self._length is not None:
-            assert len(self._items) < self._length, 'Hand cannot contain more than %d card(s)' % (self._length,)
+    @property
+    def is_full(self) -> bool:
+        return len(self._items) < self._length
+
+    def append(self, item:Card) -> None:
+        assert len(self._items) < self._length, 'Hand cannot contain more than %d card(s)' % (self._length,)
         self._items.add(item)
 
 
