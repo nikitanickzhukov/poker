@@ -14,6 +14,7 @@ class Deck():
     def __init__(self, items:Union[CardSet, List[Card], None]=None):
         if items is not None:
             self._items = list(items)
+
     def __repr__(self) -> str:
         return repr(self._items)
 
@@ -62,4 +63,4 @@ class StandardDeck(Deck):
     Standard 52-card deck
     """
 
-    items:List[Card] = list(standard_cards)
+    _items:List[Card] = list(standard_cards)
