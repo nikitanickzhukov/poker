@@ -1,9 +1,9 @@
-from typing import List, Optional
+from abc import ABC
 
 from cards import Card
 
 
-class Hand():
+class Hand(ABC):
     """
     Representation of abstract hand
     """
@@ -11,10 +11,9 @@ class Hand():
     _length:int = 0
     _items:set = set()
 
-    def __init__(self, items:Optional[List[Card]]=None):
-        if items is not None:
-            assert len(items) <= self._length, 'Hand cannot contain more than %d card(s)' % (self._length)
-            self._items = set(items)
+    def __init__(self, *args) -> None:
+        if args:
+            self._append(*args)
 
     def __repr__(self) -> str:
         return repr(self._items)
@@ -37,19 +36,14 @@ class Hand():
     def __iter__(self) -> iter:
         return iter(self._items)
 
-    def __getitem__(self, key:str) -> Card:
-        for x in self._items:
-            if x.code == key:
-                return x
-        raise KeyError('Card %s is not found' % (key,))
-
     @property
     def is_full(self) -> bool:
         return len(self._items) < self._length
 
-    def append(self, item:Card) -> None:
-        assert len(self._items) < self._length, 'Hand cannot contain more than %d card(s)' % (self._length,)
-        self._items.add(item)
+    def append(self, *args) -> None:
+        assert all([ isinstance(x, Card) for x in args ]), 'Hand cannot contain non-card items'
+        assert len(args) <= self._length - len(self._items), 'Hand cannot contain more than %d card(s)' % (self._length,)
+        self._items.update(set(args))
 
 
 class HoldemHand(Hand):
@@ -58,3 +52,11 @@ class HoldemHand(Hand):
     """
 
     _length:int = 2
+
+
+class OmahaHand(HoldemHand):
+    """
+    Representation of Omaha hand
+    """
+
+    _length:int = 4

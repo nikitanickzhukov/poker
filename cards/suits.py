@@ -1,17 +1,18 @@
-from typing import List, Optional
-
-
 class Suit():
     """
     Representation of abstract suit
     """
 
-    def __init__(self, code:str, name:str) -> None:
+    def __init__(self, code:str, name:str, order:int, weight:int) -> None:
         assert len(code) == 1 and 'a' <= code <= 'z', 'Code must be a single lowercase char from a to z'
         assert len(name) > 0, 'Name must be specified'
+        assert order > 0, 'Order must be a positive int'
+        assert weight > 0, 'Weight must be a positive int'
 
         self._code = code
         self._name = name
+        self._order = order
+        self._weight = weight
 
     def __repr__(self) -> str:
         return self._name
@@ -28,6 +29,18 @@ class Suit():
     def __ne__(self, other:'Suit') -> bool:
         return self._code != other._code
 
+    def __gt__(self, other:'Suit') -> bool:
+        return self._order > other._order
+
+    def __ge__(self, other:'Suit') -> bool:
+        return self._order >= other._order
+
+    def __lt__(self, other:'Suit') -> bool:
+        return self._order < other._order
+
+    def __le__(self, other:'Suit') -> bool:
+        return self._order <= other._order
+
     @property
     def code(self):
         return self._code
@@ -36,49 +49,10 @@ class Suit():
     def name(self):
         return self._name
 
+    @property
+    def order(self):
+        return self._order
 
-class SuitSet():
-    """
-    Representation of abstract set of suits
-    """
-
-    def __init__(self, items:List[Suit]):
-        self._items = set(items)
-
-    def __repr__(self) -> str:
-        return repr(self._items)
-
-    def __str__(self) -> str:
-        return str(self._items)
-
-    def __bool__(self) -> bool:
-        return bool(self._items)
-
-    def __eq__(self, other:'SuitSet') -> bool:
-        return self._items == other._items
-
-    def __ne__(self, other:'SuitSet') -> bool:
-        return self._items != other._items
-
-    def __contains__(self, item:Suit) -> bool:
-        return item in self._items
-
-    def __len__(self) -> int:
-        return len(self._items)
-
-    def __iter__(self) -> iter:
-        return iter(self._items)
-
-    def __getitem__(self, key:str) -> Suit:
-        for x in self._items:
-            if x.code == key:
-                return x
-        raise KeyError('Suit %s is not found' % (key,))
-
-
-spades:Suit = Suit('s', 'spades')
-hearts:Suit = Suit('h', 'hearts')
-diamonds:Suit = Suit('d', 'diamonds')
-clubs:Suit = Suit('c', 'clubs')
-
-standard_suits:SuitSet = SuitSet([ spades, hearts, diamonds, clubs, ])
+    @property
+    def weight(self):
+        return self._weight

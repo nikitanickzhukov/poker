@@ -1,121 +1,75 @@
 import unittest
 
-from cards import Rank, Suit, Card
-from .hands import Hand
-from .boards import Board
+from .decks import HoldemDeck
+from .hands import HoldemHand
+from .boards import HoldemBoard
 
 
-class CustomHand(Hand):
-    _length = 2
-
-class CustomBoard(Board):
-    _length = 2
-
-
-class TestHand(unittest.TestCase):
+class DeckTestCase(unittest.TestCase):
     def setUp(self):
-        a = Rank('A', 'rank A', 1)
-        b = Rank('B', 'rank B', 2)
-        x = Suit('x', 'suit X')
-        y = Suit('y', 'suit Y')
-        self.ax = Card(a, x)
-        self.ay = Card(a, y)
-        self.bx = Card(b, x)
-        self.by = Card(b, y)
-        self.axby = CustomHand([self.ax, self.by,])
+        self.a = HoldemDeck()
+        self.b = HoldemDeck()
 
     def tearDown(self):
-        del self.ax
-        del self.ay
-        del self.bx
-        del self.by
-        del self.axby
-
-    def test_init(self):
-        CustomHand([self.ax, self.ay,])
-        with self.assertRaises(AssertionError):
-            CustomHand([self.ax, self.ay, self.bx,])
+        del self.a
+        del self.b
 
     def test_eq(self):
-        self.assertTrue(self.axby == CustomHand([self.ax, self.by,]))
-        self.assertTrue(self.axby == CustomHand([self.by, self.ax,]))
-        self.assertFalse(self.axby == CustomHand([self.ax, self.bx,]))
+        self.assertTrue(self.a == self.b)
+        self.b.shuffle()
+        self.assertFalse(self.a == self.b)
 
     def test_ne(self):
-        self.assertFalse(self.axby != CustomHand([self.ax, self.by,]))
-        self.assertFalse(self.axby != CustomHand([self.by, self.ax,]))
-        self.assertTrue(self.axby != CustomHand([self.ax, self.bx,]))
+        self.assertFalse(self.a != self.b)
+        self.b.shuffle()
+        self.assertTrue(self.a != self.b)
 
     def test_contains(self):
-        self.assertTrue(self.ax in self.axby)
-        self.assertFalse(self.by in CustomHand([self.ax, self.bx,]))
-        self.assertFalse(self.ay in self.axby)
+        c = self.a[0]
+        self.assertTrue(c in self.a)
+        c = self.a.shift()
+        self.assertFalse(c in self.a)
 
     def test_getitem(self):
-        self.assertEqual(self.axby[self.ax.code], self.ax)
-        self.assertNotEqual(self.axby[self.by.code], self.ax)
-        with self.assertRaises(KeyError):
-            self.axby[self.bx.code]
-
-    def test_append(self):
-        q = CustomHand([self.ax,])
-        q.append(self.bx)
-        self.assertIn(self.bx, q)
-        with self.assertRaises(AssertionError):
-            q.append(self.by)
-
-
-class TestBoard(unittest.TestCase):
-    def setUp(self):
-        a = Rank('A', 'rank A', 1)
-        b = Rank('B', 'rank B', 2)
-        x = Suit('x', 'suit X')
-        y = Suit('y', 'suit Y')
-        self.ax = Card(a, x)
-        self.ay = Card(a, y)
-        self.bx = Card(b, x)
-        self.by = Card(b, y)
-        self.axby = CustomBoard([self.ax, self.by,])
-
-    def tearDown(self):
-        del self.ax
-        del self.ay
-        del self.bx
-        del self.by
-        del self.axby
-
-    def test_init(self):
-        CustomBoard([self.ax, self.ay,])
-        with self.assertRaises(AssertionError):
-            CustomBoard([self.ax, self.ay, self.bx,])
-
-    def test_eq(self):
-        self.assertTrue(self.axby == CustomBoard([self.ax, self.by,]))
-        self.assertFalse(self.axby == CustomBoard([self.by, self.ax,]))
-        self.assertFalse(self.axby == CustomBoard([self.ax, self.bx,]))
-
-    def test_ne(self):
-        self.assertFalse(self.axby != CustomBoard([self.ax, self.by,]))
-        self.assertTrue(self.axby != CustomBoard([self.by, self.ax,]))
-        self.assertTrue(self.axby != CustomBoard([self.ax, self.bx,]))
-
-    def test_contains(self):
-        self.assertTrue(self.ax in self.axby)
-        self.assertFalse(self.by in CustomBoard([self.ax, self.bx,]))
-        self.assertFalse(self.ay in self.axby)
-
-    def test_getitem(self):
-        self.assertEqual(self.axby[0], self.ax)
-        self.assertNotEqual(self.axby[1], self.ax)
+        c = self.a[0]
         with self.assertRaises(IndexError):
-            self.axby[2]
+            self.a[len(self.a)]
 
-    def test_append(self):
-        q = CustomBoard([self.ax,])
-        q.append(self.bx)
-        self.assertIn(self.bx, q)
+    def test_delitem(self):
+        c = self.a[0]
+        self.assertIn(c, self.a)
+        del self.a[0]
+        self.assertNotIn(c, self.a)
+        with self.assertRaises(IndexError):
+            del self.a[len(self.a)]
+
+    def test_push(self):
+        c = self.a[-1]
         with self.assertRaises(AssertionError):
-            q.append(self.by)
+            self.a.push(c)
+        del self.a[-1]
+        self.assertNotEqual(c, self.a[-1])
+        self.a.push(c)
+        self.assertEqual(c, self.a[-1])
+
+    def test_pop(self):
+        c = self.a[-1]
+        self.assertEqual(c, self.a.pop())
+        self.assertNotEqual(c, self.a[-1])
+
+    def test_unshift(self):
+        c = self.a[0]
+        with self.assertRaises(AssertionError):
+            self.a.unshift(c)
+        del self.a[0]
+        self.assertNotEqual(c, self.a[0])
+        self.a.unshift(c)
+        self.assertEqual(c, self.a[0])
+
+    def test_shift(self):
+        c = self.a[0]
+        self.assertEqual(c, self.a.shift())
+        self.assertNotEqual(c, self.a[0])
 
 
 if __name__ == '__main__':
