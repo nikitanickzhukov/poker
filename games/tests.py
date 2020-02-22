@@ -1,15 +1,13 @@
 import unittest
 
-from .decks import HoldemDeck
-from .hands import HoldemHand
-from .streets import Flop, Turn, River
-from .boards import HoldemBoard
+from .decks import StandardDeck
+from .kits import Flop, Turn, River, HoldemBoard, HoldemHand
 
 
 class DeckTestCase(unittest.TestCase):
     def setUp(self):
-        self.a = HoldemDeck()
-        self.b = HoldemDeck()
+        self.a = StandardDeck()
+        self.b = StandardDeck()
 
     def tearDown(self):
         del self.a
@@ -68,64 +66,9 @@ class DeckTestCase(unittest.TestCase):
         self.assertNotEqual(c, self.a[0])
 
 
-class HandTestCase(unittest.TestCase):
-    def setUp(self):
-        self.d = HoldemDeck()
-        self.d.shuffle()
-
-    def tearDown(self):
-        del self.d
-
-    def test_init(self):
-        m = self.d.shift()
-        n = self.d.shift()
-        o = self.d.shift()
-        HoldemHand(m)
-        HoldemHand(m, n)
-        with self.assertRaises(AssertionError):
-            HoldemHand(m, n, o)
-        with self.assertRaises(AssertionError):
-            HoldemHand(self.d)
-
-    def test_eq(self):
-        m = self.d.shift()
-        n = self.d.shift()
-        o = self.d.shift()
-        p = self.d.shift()
-        self.assertEqual(HoldemHand(m, n), HoldemHand(m, n))
-        self.assertEqual(HoldemHand(m, n), HoldemHand(n, m))
-        self.assertNotEqual(HoldemHand(m, n), HoldemHand(m, o))
-        self.assertNotEqual(HoldemHand(m, n), HoldemHand(o, p))
-
-    def test_contains(self):
-        m = self.d.shift()
-        n = self.d.shift()
-        o = self.d.shift()
-        self.assertIn(m, HoldemHand(m, n))
-        self.assertIn(m, HoldemHand(n, m))
-        self.assertNotIn(o, HoldemHand(m, n))
-
-    def test_full(self):
-        m = self.d.shift()
-        n = self.d.shift()
-        self.assertTrue(HoldemHand(m, n).is_full)
-        self.assertFalse(HoldemHand(m).is_full)
-
-    def test_append(self):
-        m = self.d.shift()
-        n = self.d.shift()
-        o = self.d.shift()
-        h = HoldemHand()
-        h.append(m, n)
-        self.assertIn(m, h)
-        self.assertIn(n, h)
-        with self.assertRaises(AssertionError):
-            h.append(o)
-
-
 class StreetTestCase(unittest.TestCase):
     def setUp(self):
-        self.d = HoldemDeck()
+        self.d = StandardDeck()
         self.d.shuffle()
 
     def tearDown(self):
@@ -165,7 +108,7 @@ class StreetTestCase(unittest.TestCase):
 
 class BoardTestCase(unittest.TestCase):
     def setUp(self):
-        self.d = HoldemDeck()
+        self.d = StandardDeck()
         self.d.shuffle()
 
     def tearDown(self):

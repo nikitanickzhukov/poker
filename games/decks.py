@@ -86,18 +86,11 @@ ranks = (
 cards = [ Card(rank=r, suit=s) for s in suits for r in ranks ]
 
 
-class HoldemDeck(Deck):
+class StandardDeck(Deck):
     """
-    Standard Texas hold'em 52-card deck
+    Standard 52-card deck
     """
 
     def __init__(self) -> None:
         super().__init__()
         self._items = [ x for x in cards ]
-
-
-class OmahaDeck(HoldemDeck):
-    """
-    Standard omaha 52-card deck
-    """
-    pass
