@@ -8,10 +8,10 @@ class Hand(ABC):
     Representation of abstract hand
     """
 
-    _length:int = 0
+    _length = 0
 
     def __init__(self, *args) -> None:
-        self._items:set = set()
+        self._items = set()
         if args:
             self.append(*args)
 
@@ -51,7 +51,7 @@ class HoldemHand(Hand):
     Representation of Texas hold'em hand
     """
 
-    _length:int = 2
+    _length = 2
 
 
 class OmahaHand(HoldemHand):
@@ -59,4 +59,4 @@ class OmahaHand(HoldemHand):
     Representation of Omaha hand
     """
 
-    _length:int = 4
+    _length = 4

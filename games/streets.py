@@ -8,12 +8,12 @@ class Street(ABC):
     Representation of abstract street on a board
     """
 
-    _length:int = 0
+    _length = 0
 
     def __init__(self, *args) -> None:
         assert len(args) == self._length, 'Street cannot contain %d card(s) instead of %d' % (len(args), self._length,)
         assert all([ isinstance(x, Card) for x in args ]), 'Street cannot contain non-card items'
-        self._items:set = set(args)
+        self._items = set(args)
 
     def __repr__(self) -> str:
         return repr(self._items)

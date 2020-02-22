@@ -10,7 +10,7 @@ class Deck(ABC):
     """
 
     def __init__(self) -> None:
-        self._items:list = []
+        self._items = []
 
     def __repr__(self) -> str:
         return repr(self._items)
@@ -93,7 +93,7 @@ class HoldemDeck(Deck):
 
     def __init__(self) -> None:
         super().__init__()
-        self._items:list = [ x for x in cards ]
+        self._items = [ x for x in cards ]
 
 
 class OmahaDeck(HoldemDeck):

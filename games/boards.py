@@ -9,10 +9,10 @@ class Board(ABC):
     Representation of abstract board
     """
 
-    _street_classes:tuple = ()
+    _street_classes = ()
 
     def __init__(self, *args) -> None:
-        self._streets:list = []
+        self._streets = []
         if args:
             self.append(*args)
 
@@ -68,7 +68,7 @@ class HoldemBoard(Board):
     Representation of Texas hold'em board
     """
 
-    _street_classes:tuple = (Flop, Turn, River,)
+    _street_classes = (Flop, Turn, River,)
 
 
 class OmahaBoard(HoldemBoard):
