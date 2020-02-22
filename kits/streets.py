@@ -8,10 +8,10 @@ class Street(ABC):
     Representation of abstract street on a board or in a hand
     """
 
-    _length = 0
+    length = 0
 
     def __init__(self, *args) -> None:
-        assert len(args) == self._length, 'Street cannot contain %d card(s) instead of %d' % (len(args), self._length,)
+        assert len(args) == self.length, 'Street cannot contain %d card(s) instead of %d' % (len(args), self.length,)
         assert all([ isinstance(x, Card) for x in args ]), 'Street cannot contain non-card items'
         self._items = set(args)
 
@@ -22,10 +22,10 @@ class Street(ABC):
         return str(self._items)
 
     def __eq__(self, other:'Street') -> bool:
-        return self._items == other._items
+        return self.__class__ == other.__class__ and self._items == other._items
 
     def __ne__(self, other:'Street') -> bool:
-        return self._items != other._items
+        return self.__class__ != other.__class__ or self._items != other._items
 
     def __contains__(self, item:Card) -> bool:
         return item in self._items
@@ -38,16 +38,16 @@ class Street(ABC):
 
 
 class HoldemPreflop(Street):
-    _length = 2
+    length = 2
 
 class OmahaPreflop(HoldemPreflop):
-    _length = 4
+    length = 4
 
 class Flop(Street):
-    _length = 3
+    length = 3
 
 class Turn(Street):
-    _length = 1
+    length = 1
 
 class River(Street):
-    _length = 1
+    length = 1

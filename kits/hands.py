@@ -5,7 +5,7 @@ from .streets import HoldemPreflop, OmahaPreflop
 
 
 class HoldemHand(Kit):
-    _street_classes = (HoldemPreflop,)
+    street_classes = (HoldemPreflop,)
 
 class OmahaHand(Kit):
-    _street_classes = (OmahaPreflop,)
+    street_classes = (OmahaPreflop,)

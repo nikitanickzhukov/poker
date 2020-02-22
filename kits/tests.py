@@ -121,6 +121,7 @@ class BoardTestCase(unittest.TestCase):
         o = self.d.shift()
         p = self.d.shift()
         q = self.d.shift()
+        r = self.d.shift()
         flop = Flop(m, n, o)
         turn = Turn(p)
         river = River(q)
@@ -130,6 +131,15 @@ class BoardTestCase(unittest.TestCase):
         HoldemBoard(flop, turn, river)
         with self.assertRaises(AssertionError):
             HoldemBoard(turn, river, flop)
+        with self.assertRaises(AssertionError):
+            HoldemBoard(flop, turn, river, River(r))
+        HoldemBoard(m, n, o)
+        HoldemBoard(m, n, o, p)
+        HoldemBoard(m, n, o, p, q)
+        with self.assertRaises(AssertionError):
+            HoldemBoard(m, n)
+        with self.assertRaises(AssertionError):
+            HoldemBoard(m, n, o, p, q, r)
 
     def test_eq(self):
         m = self.d.shift()
@@ -169,7 +179,7 @@ class BoardTestCase(unittest.TestCase):
         self.assertIn(p, b)
         with self.assertRaises(AssertionError):
             b.append(Turn(q))
-        b.append(River(q))
+        b.append(q)
         self.assertIn(q, b)
 
 
