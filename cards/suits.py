@@ -3,15 +3,13 @@ class Suit():
     Representation of abstract suit
     """
 
-    def __init__(self, code:str, name:str, order:int, weight:int) -> None:
+    def __init__(self, code:str, name:str, weight:int) -> None:
         assert len(code) == 1 and 'a' <= code <= 'z', 'Code must be a single lowercase char from a to z'
         assert len(name) > 0, 'Name must be specified'
-        assert order > 0, 'Order must be a positive int'
         assert weight > 0, 'Weight must be a positive int'
 
         self._code = code
         self._name = name
-        self._order = order
         self._weight = weight
 
     def __repr__(self) -> str:
@@ -30,16 +28,16 @@ class Suit():
         return self._code != other._code
 
     def __gt__(self, other:'Suit') -> bool:
-        return self._order > other._order
+        return self._weight > other._weight
 
     def __ge__(self, other:'Suit') -> bool:
-        return self._order >= other._order
+        return self._weight >= other._weight
 
     def __lt__(self, other:'Suit') -> bool:
-        return self._order < other._order
+        return self._weight < other._weight
 
     def __le__(self, other:'Suit') -> bool:
-        return self._order <= other._order
+        return self._weight <= other._weight
 
     @property
     def code(self):
@@ -48,10 +46,6 @@ class Suit():
     @property
     def name(self):
         return self._name
-
-    @property
-    def order(self):
-        return self._order
 
     @property
     def weight(self):

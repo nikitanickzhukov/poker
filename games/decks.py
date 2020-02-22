@@ -10,7 +10,7 @@ class Deck(ABC):
     """
 
     def __init__(self) -> None:
-        pass
+        self._items:list = []
 
     def __repr__(self) -> str:
         return repr(self._items)
@@ -42,9 +42,6 @@ class Deck(ABC):
     def __delitem__(self, idx:int) -> None:
         del self._items[idx]
 
-    def sort(self) -> None:
-        self._items.sort()
-
     def shuffle(self) -> None:
         random.shuffle(self._items)
 
@@ -66,25 +63,25 @@ class Deck(ABC):
 
 
 suits = (
-    Suit(code='s', name='spades', order=1, weight=1),
-    Suit(code='h', name='hearts', order=2, weight=1),
-    Suit(code='d', name='diamonds', order=3, weight=1),
-    Suit(code='c', name='clubs', order=4, weight=1),
+    Suit(code='s', name='spades', weight=1),
+    Suit(code='h', name='hearts', weight=1),
+    Suit(code='d', name='diamonds', weight=1),
+    Suit(code='c', name='clubs', weight=1),
 )
 ranks = (
-    Rank(code='A', name='Ace', order=1, weight=14),
-    Rank(code='2', name='Deuce', order=2, weight=2),
-    Rank(code='3', name='Trey', order=3, weight=3),
-    Rank(code='4', name='Four', order=4, weight=4),
-    Rank(code='5', name='Five', order=5, weight=5),
-    Rank(code='6', name='Six', order=6, weight=6),
-    Rank(code='7', name='Seven', order=7, weight=7),
-    Rank(code='8', name='Eight', order=8, weight=8),
-    Rank(code='9', name='Nine', order=9, weight=9),
-    Rank(code='T', name='Ten', order=10, weight=10),
-    Rank(code='J', name='Jack', order=11, weight=11),
-    Rank(code='Q', name='Queen', order=12, weight=12),
-    Rank(code='K', name='King', order=13, weight=13),
+    Rank(code='A', name='Ace', weight=14),
+    Rank(code='2', name='Deuce', weight=2),
+    Rank(code='3', name='Trey', weight=3),
+    Rank(code='4', name='Four', weight=4),
+    Rank(code='5', name='Five', weight=5),
+    Rank(code='6', name='Six', weight=6),
+    Rank(code='7', name='Seven', weight=7),
+    Rank(code='8', name='Eight', weight=8),
+    Rank(code='9', name='Nine', weight=9),
+    Rank(code='T', name='Ten', weight=10),
+    Rank(code='J', name='Jack', weight=11),
+    Rank(code='Q', name='Queen', weight=12),
+    Rank(code='K', name='King', weight=13),
 )
 cards = [ Card(rank=r, suit=s) for s in suits for r in ranks ]
 
@@ -95,7 +92,9 @@ class HoldemDeck(Deck):
     """
 
     def __init__(self) -> None:
-        self._items = [ x for x in cards ]
+        super().__init__()
+        self._items:list = [ x for x in cards ]
+
 
 class OmahaDeck(HoldemDeck):
     """

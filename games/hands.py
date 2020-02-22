@@ -9,11 +9,11 @@ class Hand(ABC):
     """
 
     _length:int = 0
-    _items:set = set()
 
     def __init__(self, *args) -> None:
+        self._items:set = set()
         if args:
-            self._append(*args)
+            self.append(*args)
 
     def __repr__(self) -> str:
         return repr(self._items)
@@ -38,7 +38,7 @@ class Hand(ABC):
 
     @property
     def is_full(self) -> bool:
-        return len(self._items) < self._length
+        return len(self._items) == self._length
 
     def append(self, *args) -> None:
         assert all([ isinstance(x, Card) for x in args ]), 'Hand cannot contain non-card items'

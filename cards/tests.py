@@ -7,22 +7,27 @@ from .cards import Card
 
 class RankTestCase(unittest.TestCase):
     def setUp(self):
-        self.a = Rank(code='A', name='rank A', order=3, weight=8)
-        self.b = Rank(code='B', name='rank B', order=5, weight=6)
-        self.c = Rank(code='C', name='rank C', order=7, weight=4)
+        self.a = Rank(code='A', name='rank A', weight=3)
+        self.b = Rank(code='B', name='rank B', weight=5)
+        self.c = Rank(code='C', name='rank C', weight=7)
 
     def tearDown(self):
         del self.a
         del self.b
         del self.c
 
-    def test_eq(self):
-        self.assertTrue(self.a == Rank(code='A', name='Rank M', order=4, weight=7))
-        self.assertFalse(self.a == Rank(code='M', name='Rank A', order=3, weight=3))
+    def test_init(self):
+        Rank(code='A', name='Rank A', weight=1)
+        with self.assertRaises(AssertionError):
+            Rank(code='AA', name='Rank A', weight=1)
+        with self.assertRaises(AssertionError):
+            Rank(code='a', name='Rank A', weight=1)
+        with self.assertRaises(AssertionError):
+            Rank(code='aa', name='Rank A', weight=1)
 
-    def test_ne(self):
-        self.assertFalse(self.a != Rank(code='A', name='Rank M', order=4, weight=7))
-        self.assertTrue(self.a != Rank(code='M', name='Rank A', order=3, weight=3))
+    def test_eq(self):
+        self.assertEqual(self.a, Rank(code='A', name='Rank M', weight=4))
+        self.assertNotEqual(self.a, Rank(code='M', name='Rank A', weight=3))
 
     def test_gt(self):
         self.assertFalse(self.b > self.b)
@@ -47,22 +52,27 @@ class RankTestCase(unittest.TestCase):
 
 class SuitTestCase(unittest.TestCase):
     def setUp(self):
-        self.x = Suit(code='x', name='Suit X', order=3, weight=8)
-        self.y = Suit(code='y', name='Suit Y', order=5, weight=6)
-        self.z = Suit(code='z', name='Suit Z', order=7, weight=4)
+        self.x = Suit(code='x', name='Suit X', weight=3)
+        self.y = Suit(code='y', name='Suit Y', weight=5)
+        self.z = Suit(code='z', name='Suit Z', weight=7)
 
     def tearDown(self):
         del self.x
         del self.y
         del self.z
 
-    def test_eq(self):
-        self.assertTrue(self.x == Suit(code='x', name='Suit M', order=4, weight=7))
-        self.assertFalse(self.x == Suit(code='m', name='Suit X', order=3, weight=3))
+    def test_init(self):
+        Suit(code='x', name='Suit X', weight=1)
+        with self.assertRaises(AssertionError):
+            Suit(code='xx', name='Suit X', weight=1)
+        with self.assertRaises(AssertionError):
+            Suit(code='X', name='Suit X', weight=1)
+        with self.assertRaises(AssertionError):
+            Suit(code='XX', name='Suit X', weight=1)
 
-    def test_ne(self):
-        self.assertFalse(self.x != Suit(code='x', name='Suit M', order=4, weight=7))
-        self.assertTrue(self.x != Suit(code='m', name='Suit X', order=3, weight=3))
+    def test_eq(self):
+        self.assertEqual(self.x, Suit(code='x', name='Suit M', weight=4))
+        self.assertNotEqual(self.x, Suit(code='m', name='Suit X', weight=3))
 
     def test_gt(self):
         self.assertFalse(self.y > self.y)
@@ -87,10 +97,10 @@ class SuitTestCase(unittest.TestCase):
 
 class CardTestCase(unittest.TestCase):
     def setUp(self):
-        self.a = Rank(code='A', name='rank A', order=1, weight=2)
-        self.b = Rank(code='B', name='rank B', order=2, weight=1)
-        self.x = Suit(code='x', name='suit X', order=1, weight=2)
-        self.y = Suit(code='y', name='suit Y', order=2, weight=1)
+        self.a = Rank(code='A', name='rank A', weight=1)
+        self.b = Rank(code='B', name='rank B', weight=2)
+        self.x = Suit(code='x', name='suit X', weight=1)
+        self.y = Suit(code='y', name='suit Y', weight=2)
         self.ax = Card(rank=self.a, suit=self.x)
         self.ay = Card(rank=self.a, suit=self.y)
         self.bx = Card(rank=self.b, suit=self.x)
@@ -106,17 +116,20 @@ class CardTestCase(unittest.TestCase):
         del self.bx
         del self.by
 
-    def test_eq(self):
-        self.assertTrue(self.ax == self.ax)
-        self.assertFalse(self.ax == self.ay)
-        self.assertFalse(self.ax == self.bx)
-        self.assertFalse(self.ax == self.by)
+    def test_init(self):
+        Card(rank=self.a, suit=self.x)
+        with self.assertRaises(AssertionError):
+            Card(rank=self.a, suit=self.b)
+        with self.assertRaises(AssertionError):
+            Card(rank=self.y, suit=self.x)
+        with self.assertRaises(AssertionError):
+            Card(rank=self.y, suit=self.a)
 
-    def test_ne(self):
-        self.assertFalse(self.ax != self.ax)
-        self.assertTrue(self.ax != self.ay)
-        self.assertTrue(self.ax != self.bx)
-        self.assertTrue(self.ax != self.by)
+    def test_eq(self):
+        self.assertEqual(self.ax, self.ax)
+        self.assertNotEqual(self.ax, self.ay)
+        self.assertNotEqual(self.ax, self.bx)
+        self.assertNotEqual(self.ax, self.by)
 
     def test_gt(self):
         self.assertTrue(self.bx > self.ax)
