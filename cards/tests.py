@@ -3,6 +3,7 @@ import unittest
 from .ranks import Rank
 from .suits import Suit
 from .cards import Card
+from .decks import StandardDeck
 
 
 class RankTestCase(unittest.TestCase):
@@ -154,6 +155,68 @@ class CardTestCase(unittest.TestCase):
         self.assertFalse(self.bx <= self.ay)
         self.assertTrue(self.bx <= self.bx)
         self.assertTrue(self.bx <= self.by)
+
+
+class DeckTestCase(unittest.TestCase):
+    def setUp(self):
+        self.a = StandardDeck()
+        self.b = StandardDeck()
+
+    def tearDown(self):
+        del self.a
+        del self.b
+
+    def test_eq(self):
+        self.assertEqual(self.a, self.b)
+        self.b.shuffle()
+        self.assertNotEqual(self.a, self.b)
+
+    def test_contains(self):
+        c = self.a[0]
+        self.assertIn(c, self.a)
+        c = self.a.shift()
+        self.assertNotIn(c, self.a)
+
+    def test_getitem(self):
+        c = self.a[0]
+        with self.assertRaises(IndexError):
+            self.a[len(self.a)]
+
+    def test_delitem(self):
+        c = self.a[0]
+        self.assertIn(c, self.a)
+        del self.a[0]
+        self.assertNotIn(c, self.a)
+        with self.assertRaises(IndexError):
+            del self.a[len(self.a)]
+
+    def test_push(self):
+        c = self.a[-1]
+        with self.assertRaises(AssertionError):
+            self.a.push(c)
+        del self.a[-1]
+        self.assertNotEqual(c, self.a[-1])
+        self.a.push(c)
+        self.assertEqual(c, self.a[-1])
+
+    def test_pop(self):
+        c = self.a[-1]
+        self.assertEqual(c, self.a.pop())
+        self.assertNotEqual(c, self.a[-1])
+
+    def test_unshift(self):
+        c = self.a[0]
+        with self.assertRaises(AssertionError):
+            self.a.unshift(c)
+        del self.a[0]
+        self.assertNotEqual(c, self.a[0])
+        self.a.unshift(c)
+        self.assertEqual(c, self.a[0])
+
+    def test_shift(self):
+        c = self.a[0]
+        self.assertEqual(c, self.a.shift())
+        self.assertNotEqual(c, self.a[0])
 
 
 if __name__ == '__main__':

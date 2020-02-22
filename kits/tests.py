@@ -1,7 +1,8 @@
 import unittest
 
-from .decks import StandardDeck
-from .kits import Flop, Turn, River, HoldemBoard, HoldemHand
+from cards import StandardDeck
+from .streets import Flop, Turn, River
+from .boards import HoldemBoard
 
 
 class DeckTestCase(unittest.TestCase):

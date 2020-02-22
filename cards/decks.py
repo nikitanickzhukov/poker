@@ -1,7 +1,9 @@
 from abc import ABC
 import random
 
-from cards import Rank, Suit, Card
+from .ranks import Rank
+from .suits import Suit
+from .cards import Card
 
 
 class Deck(ABC):
