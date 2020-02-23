@@ -11,7 +11,7 @@ class Street(ABC):
     length = 0
 
     def __init__(self, *args) -> None:
-        assert len(args) == self.length, 'Street cannot contain %d card(s) instead of %d' % (len(args), self.length,)
+        assert len(args) == self.length, 'Street %s cannot contain %d card(s) instead of %d' % (self.__class__.__name__, len(args), self.length,)
         assert all([ isinstance(x, Card) for x in args ]), 'Street cannot contain non-card items'
         self._items = set(args)
 
@@ -35,19 +35,3 @@ class Street(ABC):
 
     def __iter__(self) -> iter:
         return iter(self._items)
-
-
-class HoldemPreflop(Street):
-    length = 2
-
-class OmahaPreflop(Street):
-    length = 4
-
-class Flop(Street):
-    length = 3
-
-class Turn(Street):
-    length = 1
-
-class River(Street):
-    length = 1

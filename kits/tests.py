@@ -1,70 +1,18 @@
 import unittest
 
 from cards import StandardDeck
-from .streets import Flop, Turn, River
-from .boards import HoldemBoard
+from .streets import Street
+from .kits import Kit
 
 
-class DeckTestCase(unittest.TestCase):
-    def setUp(self):
-        self.a = StandardDeck()
-        self.b = StandardDeck()
+class TestStreet1(Street):
+    length = 2
 
-    def tearDown(self):
-        del self.a
-        del self.b
+class TestStreet2(Street):
+    length = 1
 
-    def test_eq(self):
-        self.assertEqual(self.a, self.b)
-        self.b.shuffle()
-        self.assertNotEqual(self.a, self.b)
-
-    def test_contains(self):
-        c = self.a[0]
-        self.assertIn(c, self.a)
-        c = self.a.shift()
-        self.assertNotIn(c, self.a)
-
-    def test_getitem(self):
-        c = self.a[0]
-        with self.assertRaises(IndexError):
-            self.a[len(self.a)]
-
-    def test_delitem(self):
-        c = self.a[0]
-        self.assertIn(c, self.a)
-        del self.a[0]
-        self.assertNotIn(c, self.a)
-        with self.assertRaises(IndexError):
-            del self.a[len(self.a)]
-
-    def test_push(self):
-        c = self.a[-1]
-        with self.assertRaises(AssertionError):
-            self.a.push(c)
-        del self.a[-1]
-        self.assertNotEqual(c, self.a[-1])
-        self.a.push(c)
-        self.assertEqual(c, self.a[-1])
-
-    def test_pop(self):
-        c = self.a[-1]
-        self.assertEqual(c, self.a.pop())
-        self.assertNotEqual(c, self.a[-1])
-
-    def test_unshift(self):
-        c = self.a[0]
-        with self.assertRaises(AssertionError):
-            self.a.unshift(c)
-        del self.a[0]
-        self.assertNotEqual(c, self.a[0])
-        self.a.unshift(c)
-        self.assertEqual(c, self.a[0])
-
-    def test_shift(self):
-        c = self.a[0]
-        self.assertEqual(c, self.a.shift())
-        self.assertNotEqual(c, self.a[0])
+class TestKit(Kit):
+    street_classes = (TestStreet1, TestStreet2,)
 
 
 class StreetTestCase(unittest.TestCase):
@@ -79,35 +27,32 @@ class StreetTestCase(unittest.TestCase):
         m = self.d.shift()
         n = self.d.shift()
         o = self.d.shift()
-        p = self.d.shift()
-        Flop(m, n, o)
+        TestStreet1(m, n)
         with self.assertRaises(AssertionError):
-            Flop(m, n)
+            TestStreet1(m)
         with self.assertRaises(AssertionError):
-            Flop(m, n, o, p)
+            TestStreet1(m, n, o)
         with self.assertRaises(AssertionError):
-            Flop(self.d)
+            TestStreet1(m, self.d)
 
     def test_eq(self):
         m = self.d.shift()
         n = self.d.shift()
         o = self.d.shift()
-        p = self.d.shift()
-        self.assertEqual(Flop(m, n, o), Flop(m, n, o))
-        self.assertEqual(Flop(m, n, o), Flop(o, n, m))
-        self.assertNotEqual(Flop(m, n, o), Flop(m, n, p))
+        self.assertEqual(TestStreet1(m, n), TestStreet1(m, n))
+        self.assertEqual(TestStreet1(m, n), TestStreet1(n, m))
+        self.assertNotEqual(TestStreet1(m, n), TestStreet1(m, o))
 
     def test_contains(self):
         m = self.d.shift()
         n = self.d.shift()
         o = self.d.shift()
-        p = self.d.shift()
-        self.assertIn(m, Flop(m, n, o))
-        self.assertIn(m, Flop(o, n, m))
-        self.assertNotIn(p, Flop(m, n, o))
+        self.assertIn(m, TestStreet1(m, n))
+        self.assertIn(m, TestStreet1(n, m))
+        self.assertNotIn(o, TestStreet1(m, n))
 
 
-class BoardTestCase(unittest.TestCase):
+class KitTestCase(unittest.TestCase):
     def setUp(self):
         self.d = StandardDeck()
         self.d.shuffle()
@@ -120,26 +65,19 @@ class BoardTestCase(unittest.TestCase):
         n = self.d.shift()
         o = self.d.shift()
         p = self.d.shift()
-        q = self.d.shift()
-        r = self.d.shift()
-        flop = Flop(m, n, o)
-        turn = Turn(p)
-        river = River(q)
-        HoldemBoard()
-        HoldemBoard(flop)
-        HoldemBoard(flop, turn)
-        HoldemBoard(flop, turn, river)
+        street1 = TestStreet1(m, n)
+        street2 = TestStreet2(o)
+        TestKit()
+        TestKit(street1)
+        TestKit(street1, street2)
         with self.assertRaises(AssertionError):
-            HoldemBoard(turn, river, flop)
+            TestKit(street2, street1)
+        TestKit(m, n)
+        TestKit(m, n, o)
         with self.assertRaises(AssertionError):
-            HoldemBoard(flop, turn, river, River(r))
-        HoldemBoard(m, n, o)
-        HoldemBoard(m, n, o, p)
-        HoldemBoard(m, n, o, p, q)
+            TestKit(m)
         with self.assertRaises(AssertionError):
-            HoldemBoard(m, n)
-        with self.assertRaises(AssertionError):
-            HoldemBoard(m, n, o, p, q, r)
+            TestKit(m, n, o, p)
 
     def test_eq(self):
         m = self.d.shift()
@@ -147,40 +85,34 @@ class BoardTestCase(unittest.TestCase):
         o = self.d.shift()
         p = self.d.shift()
         q = self.d.shift()
-        self.assertEqual(HoldemBoard(Flop(m, n, o)), HoldemBoard(Flop(m, n, o)))
-        self.assertEqual(HoldemBoard(Flop(m, n, o)), HoldemBoard(Flop(o, n, m)))
-        self.assertNotEqual(HoldemBoard(Flop(m, n, o), Turn(p)), HoldemBoard(Flop(m, n, p), Turn(o)))
-        self.assertEqual(HoldemBoard(Flop(m, n, o), Turn(p), River(q)), HoldemBoard(Flop(m, n, o), Turn(p), River(q)))
-        self.assertNotEqual(HoldemBoard(Flop(m, n, o), Turn(p), River(q)), HoldemBoard(Flop(m, n, o), Turn(q), River(p)))
+        self.assertEqual(TestKit(TestStreet1(m, n)), TestKit(TestStreet1(m, n)))
+        self.assertEqual(TestKit(TestStreet1(m, n)), TestKit(TestStreet1(n, m)))
+        self.assertEqual(TestKit(TestStreet1(m, n), TestStreet2(o)), TestKit(TestStreet1(m, n), TestStreet2(o)))
+        self.assertNotEqual(TestKit(TestStreet1(m, n), TestStreet2(o)), TestKit(TestStreet1(m, o), TestStreet2(n)))
 
     def test_contains(self):
         m = self.d.shift()
         n = self.d.shift()
         o = self.d.shift()
         p = self.d.shift()
-        q = self.d.shift()
-        r = self.d.shift()
-        self.assertIn(m, HoldemBoard(Flop(m, n, o)))
-        self.assertIn(p, HoldemBoard(Flop(m, n, o), Turn(p)))
-        self.assertIn(q, HoldemBoard(Flop(m, n, o), Turn(p), River(q)))
-        self.assertNotIn(r, HoldemBoard(Flop(m, n, o), Turn(p), River(q)))
+        self.assertIn(m, TestKit(TestStreet1(m, n)))
+        self.assertIn(o, TestKit(TestStreet1(m, n), TestStreet2(o)))
+        self.assertNotIn(p, TestKit(TestStreet1(m, n), TestStreet2(o)))
 
     def test_append(self):
         m = self.d.shift()
         n = self.d.shift()
         o = self.d.shift()
         p = self.d.shift()
-        q = self.d.shift()
-        r = self.d.shift()
-        b = HoldemBoard()
-        b.append(Flop(m, n, o))
+        b = TestKit()
+        b.append(TestStreet1(m, n))
         self.assertIn(m, b)
-        b.append(Turn(p))
-        self.assertIn(p, b)
+        b.append(o)
+        self.assertIn(o, b)
         with self.assertRaises(AssertionError):
-            b.append(Turn(q))
-        b.append(q)
-        self.assertIn(q, b)
+            b.append(TestStreet2(p))
+        with self.assertRaises(AssertionError):
+            b.append(p)
 
 
 if __name__ == '__main__':
