@@ -40,7 +40,7 @@ class Street(ABC):
 class HoldemPreflop(Street):
     length = 2
 
-class OmahaPreflop(HoldemPreflop):
+class OmahaPreflop(Street):
     length = 4
 
 class Flop(Street):

@@ -51,3 +51,7 @@ class Card():
     @property
     def code(self) -> str:
         return self.rank.code + self.suit.code
+
+    @property
+    def name(self) -> str:
+        return '%s of %s' % (self.rank.name, self.suit.name,)

@@ -4,8 +4,8 @@ from .kits import Kit
 from .streets import HoldemPreflop, OmahaPreflop
 
 
-class HoldemHand(Kit):
+class HoldemPocket(Kit):
     street_classes = (HoldemPreflop,)
 
-class OmahaHand(Kit):
+class OmahaPocket(Kit):
     street_classes = (OmahaPreflop,)
