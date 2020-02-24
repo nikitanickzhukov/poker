@@ -1,3 +1,4 @@
+from typing import Union
 from abc import ABC
 import random
 
@@ -38,11 +39,31 @@ class Deck(ABC):
     def __iter__(self) -> iter:
         return iter(self._items)
 
-    def __getitem__(self, idx:int) -> Card:
-        return self._items[idx]
+    def __getitem__(self, key:Union[int, str]) -> Card:
+        if isinstance(key, int):
+            return self._items[key]
+        elif isinstance(key, str):
+            for item in self._items:
+                if item.code == key:
+                    return item
+            raise KeyError('Card %s is not found' % (key,))
+        else:
+            raise TypeError('Wrong key type')
 
-    def __delitem__(self, idx:int) -> None:
-        del self._items[idx]
+    def __delitem__(self, key:Union[int, str]) -> None:
+        if isinstance(key, int):
+            del self._items[key]
+        elif isinstance(key, str):
+            ok = False
+            for i in range(len(self._items)):
+                if self._items[i].code == key:
+                    del self._items[i]
+                    ok = True
+                    break
+            if not ok:
+                raise KeyError('Card %s is not found' % (key,))
+        else:
+            raise TypeError('Wrong key type')
 
     def shuffle(self) -> None:
         random.shuffle(self._items)

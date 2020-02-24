@@ -181,14 +181,21 @@ class DeckTestCase(unittest.TestCase):
         c = self.a[0]
         with self.assertRaises(IndexError):
             self.a[len(self.a)]
+        self.assertEqual(self.a[c.code], c)
+        with self.assertRaises(KeyError):
+            self.a['Xy']
 
     def test_delitem(self):
         c = self.a[0]
-        self.assertIn(c, self.a)
         del self.a[0]
         self.assertNotIn(c, self.a)
         with self.assertRaises(IndexError):
             del self.a[len(self.a)]
+        d = self.a[0]
+        del self.a[d.code]
+        self.assertNotIn(d, self.a)
+        with self.assertRaises(KeyError):
+            del self.a['Xy']
 
     def test_push(self):
         c = self.a[-1]
