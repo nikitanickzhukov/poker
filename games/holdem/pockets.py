@@ -1,0 +1,6 @@
+from kits import Pocket as BasePocket
+from .streets import Preflop
+
+
+class Pocket(BasePocket):
+    street_classes = (Preflop,)
