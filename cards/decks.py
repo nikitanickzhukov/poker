@@ -40,7 +40,7 @@ class Deck(ABC):
         return iter(self._items)
 
     def __getitem__(self, key:Union[int, str]) -> Card:
-        if isinstance(key, int):
+        if isinstance(key, (int, slice,)):
             return self._items[key]
         elif isinstance(key, str):
             for item in self._items:
