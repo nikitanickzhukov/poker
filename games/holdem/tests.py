@@ -3,7 +3,7 @@ import unittest
 from cards import StandardDeck, cards
 from .pockets import Pocket
 from .boards import Board
-from .hands import Hands, HighCard, OnePair, TwoPair, ThreeOfAKind, Straight, Flush, FullHouse, FourOfAKind, StraightFlush
+from .hands import Hands, HighCard, OnePair, TwoPair, Trips, Straight, Flush, FullHouse, Quads, StraightFlush
 
 
 class IdentifyTestCase(unittest.TestCase):
@@ -84,10 +84,10 @@ class IdentifyTestCase(unittest.TestCase):
         self.assertEqual(set(hand[2:4]), set([ self.deck['3s'], self.deck['3d'], ]))
         self.assertEqual(hand[4], self.deck['As'])
 
-    def test_three_of_a_kind(self):
+    def test_trips(self):
         pocket = Pocket(self.deck['As'], self.deck['2s'])
         board = Board(self.deck['3s'], self.deck['Ad'], self.deck['Ac'], self.deck['Qd'], self.deck['6s'])
-        self.assertIsInstance(Hands.identify(pocket, board), ThreeOfAKind)
+        self.assertIsInstance(Hands.identify(pocket, board), Trips)
 
     def test_straight(self):
         pocket = Pocket(self.deck['As'], self.deck['2s'])
@@ -104,10 +104,10 @@ class IdentifyTestCase(unittest.TestCase):
         board = Board(self.deck['3s'], self.deck['Ad'], self.deck['Ac'], self.deck['2d'], self.deck['6s'])
         self.assertIsInstance(Hands.identify(pocket, board), FullHouse)
 
-    def test_four_of_a_kind(self):
+    def test_quads(self):
         pocket = Pocket(self.deck['As'], self.deck['2s'])
         board = Board(self.deck['3s'], self.deck['Ad'], self.deck['Ac'], self.deck['Ah'], self.deck['6s'])
-        self.assertIsInstance(Hands.identify(pocket, board), FourOfAKind)
+        self.assertIsInstance(Hands.identify(pocket, board), Quads)
 
     def test_straight_flush(self):
         pocket = Pocket(self.deck['As'], self.deck['2s'])

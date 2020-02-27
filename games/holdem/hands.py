@@ -71,7 +71,7 @@ class TwoPair(Hand):
         return None
 
 
-class ThreeOfAKind(Hand):
+class Trips(Hand):
     hand_weight = 4
     first_is_best = True
 
@@ -155,7 +155,7 @@ class FullHouse(Hand):
         return None
 
 
-class FourOfAKind(Hand):
+class Quads(Hand):
     hand_weight = 8
     first_is_best = True
 
@@ -203,7 +203,7 @@ class StraightFlush(Hand):
 
 class Hands(BaseHands):
     length = 5
-    hand_classes = (StraightFlush, FourOfAKind, FullHouse, Flush, Straight, ThreeOfAKind, TwoPair, OnePair, HighCard,)
+    hand_classes = (StraightFlush, Quads, FullHouse, Flush, Straight, Trips, TwoPair, OnePair, HighCard,)
 
     @classmethod
     def get_cards(cls, pocket:Pocket, board:Board) -> list:
