@@ -57,7 +57,7 @@ class IdentifyTestCase(unittest.TestCase):
         self.assertEqual(hand[2], self.deck['Qd'])
 
     def test_two_pair(self):
-        # Two pair, in the pocket and on the board (mixed)
+        # Two pair, a pair in the pocket and a pair on the board
         pocket = Pocket(self.deck['As'], self.deck['2s'])
         board = Board(self.deck['3s'], self.deck['Ad'], self.deck['2h'], self.deck['Qd'], self.deck['6s'])
         hand = Hands.identify(pocket, board)
@@ -66,7 +66,7 @@ class IdentifyTestCase(unittest.TestCase):
         self.assertEqual(set(hand[2:4]), set([ self.deck['2s'], self.deck['2h'], ]))
         self.assertEqual(hand[4], self.deck['Qd'])
 
-        # Two pair, in the pocket and on the board (separetely)
+        # Two pair, in the pocket and on the board
         pocket = Pocket(self.deck['As'], self.deck['Ad'])
         board = Board(self.deck['3s'], self.deck['3d'], self.deck['Jh'], self.deck['Qd'], self.deck['6s'])
         hand = Hands.identify(pocket, board)
@@ -85,34 +85,184 @@ class IdentifyTestCase(unittest.TestCase):
         self.assertEqual(hand[4], self.deck['As'])
 
     def test_trips(self):
+        # Trips, 1 in the pocket and 2 on the board
         pocket = Pocket(self.deck['As'], self.deck['2s'])
         board = Board(self.deck['3s'], self.deck['Ad'], self.deck['Ac'], self.deck['Qd'], self.deck['6s'])
-        self.assertIsInstance(Hands.identify(pocket, board), Trips)
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, Trips)
+        self.assertEqual(set(hand[0:3]), set([ self.deck['As'], self.deck['Ad'], self.deck['Ac'], ]))
+        self.assertEqual(hand[3], self.deck['Qd'])
+
+        # Trips, a set
+        pocket = Pocket(self.deck['As'], self.deck['Ad'])
+        board = Board(self.deck['3s'], self.deck['2d'], self.deck['Ac'], self.deck['Qd'], self.deck['6s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, Trips)
+        self.assertEqual(set(hand[0:3]), set([ self.deck['As'], self.deck['Ad'], self.deck['Ac'], ]))
+        self.assertEqual(hand[3], self.deck['Qd'])
+
+        # Trips, on the board only
+        pocket = Pocket(self.deck['As'], self.deck['2s'])
+        board = Board(self.deck['3s'], self.deck['3d'], self.deck['3c'], self.deck['Qd'], self.deck['6s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, Trips)
+        self.assertEqual(set(hand[0:3]), set([ self.deck['3s'], self.deck['3d'], self.deck['3c'], ]))
+        self.assertEqual(hand[3], self.deck['As'])
 
     def test_straight(self):
+        # Straight, wheel, 2 in the pocket and 3 on the board
         pocket = Pocket(self.deck['As'], self.deck['2s'])
         board = Board(self.deck['3s'], self.deck['2d'], self.deck['Jh'], self.deck['4d'], self.deck['5s'])
-        self.assertIsInstance(Hands.identify(pocket, board), Straight)
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, Straight)
+        self.assertEqual(hand[0], self.deck['5s'])
+
+        # Straight, wheel, 1 in the pocket and 4 on the board
+        pocket = Pocket(self.deck['Ks'], self.deck['2s'])
+        board = Board(self.deck['3s'], self.deck['Ad'], self.deck['Jh'], self.deck['4d'], self.deck['5s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, Straight)
+        self.assertEqual(hand[0], self.deck['5s'])
+
+        # Straight, 2 in the pocket and 3 on the board
+        pocket = Pocket(self.deck['4s'], self.deck['7s'])
+        board = Board(self.deck['3s'], self.deck['Ad'], self.deck['Jh'], self.deck['6d'], self.deck['5s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, Straight)
+        self.assertEqual(hand[0], self.deck['7s'])
+
+        # Straight, 1 in the pocket and 4 on the board
+        pocket = Pocket(self.deck['As'], self.deck['2s'])
+        board = Board(self.deck['3s'], self.deck['Td'], self.deck['Jh'], self.deck['Qd'], self.deck['Ks'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, Straight)
+        self.assertEqual(hand[0], self.deck['As'])
+
+        # Straight, on the board only
+        pocket = Pocket(self.deck['Ks'], self.deck['Js'])
+        board = Board(self.deck['3s'], self.deck['4d'], self.deck['5h'], self.deck['7d'], self.deck['6s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, Straight)
+        self.assertEqual(hand[0], self.deck['7d'])
 
     def test_flush(self):
+        # Flush, 2 in the pocket and 3 on the board
         pocket = Pocket(self.deck['As'], self.deck['2s'])
         board = Board(self.deck['3s'], self.deck['Ad'], self.deck['Ac'], self.deck['Qs'], self.deck['6s'])
-        self.assertIsInstance(Hands.identify(pocket, board), Flush)
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, Flush)
+        self.assertEqual(hand[0], self.deck['As'])
+        self.assertEqual(hand[4], self.deck['2s'])
+
+        # Flush, 1 in the pocket and 4 on the board
+        pocket = Pocket(self.deck['As'], self.deck['2s'])
+        board = Board(self.deck['3s'], self.deck['Ad'], self.deck['Js'], self.deck['Qs'], self.deck['6s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, Flush)
+        self.assertEqual(hand[0], self.deck['As'])
+        self.assertEqual(hand[4], self.deck['3s'])
+
+        # Flush, on the board only
+        pocket = Pocket(self.deck['As'], self.deck['2s'])
+        board = Board(self.deck['3d'], self.deck['Ad'], self.deck['Jd'], self.deck['Qd'], self.deck['6d'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, Flush)
+        self.assertEqual(hand[0], self.deck['Ad'])
+        self.assertEqual(hand[4], self.deck['3d'])
 
     def test_full_house(self):
+        # Full house, a set and a pair on the board
+        pocket = Pocket(self.deck['As'], self.deck['Ad'])
+        board = Board(self.deck['3s'], self.deck['Ac'], self.deck['3c'], self.deck['2d'], self.deck['6s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, FullHouse)
+        self.assertEqual(set(hand[0:3]), set([ self.deck['As'], self.deck['Ad'], self.deck['Ac'], ]))
+        self.assertEqual(set(hand[3:5]), set([ self.deck['3s'], self.deck['3c'], ]))
+
+        # Full house, a trips and a pair on the board
         pocket = Pocket(self.deck['As'], self.deck['2s'])
-        board = Board(self.deck['3s'], self.deck['Ad'], self.deck['Ac'], self.deck['2d'], self.deck['6s'])
-        self.assertIsInstance(Hands.identify(pocket, board), FullHouse)
+        board = Board(self.deck['3s'], self.deck['Ac'], self.deck['2c'], self.deck['2d'], self.deck['6s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, FullHouse)
+        self.assertEqual(set(hand[0:3]), set([ self.deck['2s'], self.deck['2d'], self.deck['2c'], ]))
+        self.assertEqual(set(hand[3:5]), set([ self.deck['As'], self.deck['Ac'], ]))
+
+        # Full house, a pocket pair and a trips on the board
+        pocket = Pocket(self.deck['As'], self.deck['Ad'])
+        board = Board(self.deck['3s'], self.deck['3c'], self.deck['3d'], self.deck['2d'], self.deck['6s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, FullHouse)
+        self.assertEqual(set(hand[0:3]), set([ self.deck['3s'], self.deck['3d'], self.deck['3c'], ]))
+        self.assertEqual(set(hand[3:5]), set([ self.deck['As'], self.deck['Ad'], ]))
+
+        # Full house, on the board only
+        pocket = Pocket(self.deck['As'], self.deck['2s'])
+        board = Board(self.deck['3s'], self.deck['3c'], self.deck['3d'], self.deck['6d'], self.deck['6s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, FullHouse)
+        self.assertEqual(set(hand[0:3]), set([ self.deck['3s'], self.deck['3d'], self.deck['3c'], ]))
+        self.assertEqual(set(hand[3:5]), set([ self.deck['6d'], self.deck['6s'], ]))
 
     def test_quads(self):
+        # Quads, a pocket pair
+        pocket = Pocket(self.deck['As'], self.deck['Ad'])
+        board = Board(self.deck['3s'], self.deck['Ac'], self.deck['Ah'], self.deck['Jh'], self.deck['6s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, Quads)
+        self.assertEqual(set(hand[0:4]), set([ self.deck['As'], self.deck['Ad'], self.deck['Ac'], self.deck['Ah'], ]))
+        self.assertEqual(hand[4], self.deck['Jh'])
+
+        # Quads, a trips on a board
         pocket = Pocket(self.deck['As'], self.deck['2s'])
-        board = Board(self.deck['3s'], self.deck['Ad'], self.deck['Ac'], self.deck['Ah'], self.deck['6s'])
-        self.assertIsInstance(Hands.identify(pocket, board), Quads)
+        board = Board(self.deck['3s'], self.deck['Ac'], self.deck['Ah'], self.deck['Ad'], self.deck['6s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, Quads)
+        self.assertEqual(set(hand[0:4]), set([ self.deck['As'], self.deck['Ad'], self.deck['Ac'], self.deck['Ah'], ]))
+        self.assertEqual(hand[4], self.deck['6s'])
+
+        # Quads, on a board only
+        pocket = Pocket(self.deck['As'], self.deck['2s'])
+        board = Board(self.deck['3s'], self.deck['3c'], self.deck['3h'], self.deck['3d'], self.deck['6s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, Quads)
+        self.assertEqual(set(hand[0:4]), set([ self.deck['3s'], self.deck['3d'], self.deck['3c'], self.deck['3h'], ]))
+        self.assertEqual(hand[4], self.deck['As'])
 
     def test_straight_flush(self):
+        # Straight flush, wheel, 2 in the pocket and 3 on the board
         pocket = Pocket(self.deck['As'], self.deck['2s'])
-        board = Board(self.deck['3s'], self.deck['4s'], self.deck['Ac'], self.deck['Ah'], self.deck['5s'])
-        self.assertIsInstance(Hands.identify(pocket, board), StraightFlush)
+        board = Board(self.deck['3s'], self.deck['2d'], self.deck['Jh'], self.deck['4s'], self.deck['5s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, StraightFlush)
+        self.assertEqual(hand[0], self.deck['5s'])
+
+        # Straight flush, wheel, 1 in the pocket and 4 on the board
+        pocket = Pocket(self.deck['Ks'], self.deck['2s'])
+        board = Board(self.deck['3s'], self.deck['As'], self.deck['Jh'], self.deck['4s'], self.deck['5s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, StraightFlush)
+        self.assertEqual(hand[0], self.deck['5s'])
+
+        # Straight flush, 2 in the pocket and 3 on the board
+        pocket = Pocket(self.deck['4s'], self.deck['7s'])
+        board = Board(self.deck['3s'], self.deck['Ad'], self.deck['Jh'], self.deck['6s'], self.deck['5s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, StraightFlush)
+        self.assertEqual(hand[0], self.deck['7s'])
+
+        # Straight flush, 1 in the pocket and 4 on the board
+        pocket = Pocket(self.deck['As'], self.deck['2s'])
+        board = Board(self.deck['3s'], self.deck['Ts'], self.deck['Js'], self.deck['Qs'], self.deck['Ks'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, StraightFlush)
+        self.assertEqual(hand[0], self.deck['As'])
+
+        # Straight flush, on the board only
+        pocket = Pocket(self.deck['Ks'], self.deck['Js'])
+        board = Board(self.deck['3s'], self.deck['4s'], self.deck['5s'], self.deck['7s'], self.deck['6s'])
+        hand = Hands.identify(pocket, board)
+        self.assertIsInstance(hand, StraightFlush)
+        self.assertEqual(hand[0], self.deck['7s'])
 
 
 if __name__ == '__main__':
