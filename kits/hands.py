@@ -54,6 +54,10 @@ class Hand(ABC):
             raise TypeError('Wrong key type')
 
     @classmethod
+    def precheck(cls, pocket:Pocket, board:Board) -> bool:
+        return False
+
+    @classmethod
     def identify(cls, comb:list) -> None:
         return None
 
@@ -72,6 +76,9 @@ class Hands(ABC):
         combs = cls.get_combs(cards)
 
         for item in cls.hand_classes:
+            if not item.precheck(pocket, board, cards):
+                continue
+
             best_hand = None
             for comb in combs:
                 hand = item.identify(list(comb))

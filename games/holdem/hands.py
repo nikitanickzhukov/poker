@@ -9,6 +9,10 @@ max_rank = max(ranks)
 
 
 class Hand(BaseHand):
+    @classmethod
+    def precheck(cls, pocket:Pocket, board:Board, cards:list) -> bool:
+        return True
+
     @property
     def weight(self):
         return [ self.hand_weight, *[ x.rank.weight for x in self._items ], ]
@@ -99,10 +103,11 @@ class Straight(Hand):
 
     @classmethod
     def identify(cls, comb:list):
-        items = [ x for x in comb ]
+        items = comb
 
         # Moving Ace into the end when got Axxx2 comb
         if items[0].rank == max_rank and items[4].rank == min_rank:
+            items = items.copy()
             items.append(items.pop(0))
 
         ok = True
@@ -185,10 +190,11 @@ class StraightFlush(Hand):
 
     @classmethod
     def identify(cls, comb:list):
-        items = [ x for x in comb ]
+        items = comb
 
         # Moving Ace into the end when got Axxx2 comb
         if items[0].rank == max_rank and items[4].rank == min_rank:
+            items = items.copy()
             items.append(items.pop(0))
 
         ok = True
