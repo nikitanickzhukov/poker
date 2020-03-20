@@ -1,3 +1,4 @@
-from .streets import Preflop, Flop, Turn, River
-from .pockets import Pocket
-from .boards import Board
+from .streets import *
+from .pockets import *
+from .boards import *
+from .hands import *
