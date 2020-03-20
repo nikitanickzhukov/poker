@@ -1,3 +1,5 @@
+from itertools import combinations
+
 from cards import ranks
 from kits import Hand as BaseHand, Hands as BaseHands
 from .pockets import Pocket
@@ -9,10 +11,6 @@ max_rank = max(ranks)
 
 
 class Hand(BaseHand):
-    @classmethod
-    def precheck(cls, pocket:Pocket, board:Board, cards:list) -> bool:
-        return True
-
     @property
     def weight(self):
         return [ self.hand_weight, *[ x.rank.weight for x in self._items ], ]
@@ -212,7 +210,7 @@ class Hands(BaseHands):
     hand_classes = (StraightFlush, Quads, FullHouse, Flush, Straight, Trips, TwoPair, OnePair, HighCard,)
 
     @classmethod
-    def get_cards(cls, pocket:Pocket, board:Board) -> list:
-        items = [ x for x in pocket ] + [ y for y in board ]
-        items.sort(key=lambda x: x.rank, reverse=True)
-        return items
+    def get_combs(cls, pocket:Pocket, board:Board) -> iter:
+        cards = [ x for x in pocket ] + [ y for y in board ]
+        cards.sort(key=lambda x: x.rank, reverse=True)
+        return list(combinations(cards, cls.length))

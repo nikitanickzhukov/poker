@@ -1,6 +1,5 @@
 from typing import Union
 from abc import ABC
-from itertools import combinations
 
 from cards import Card
 from .pockets import Pocket
@@ -54,10 +53,6 @@ class Hand(ABC):
             raise TypeError('Wrong key type')
 
     @classmethod
-    def precheck(cls, pocket:Pocket, board:Board) -> bool:
-        return False
-
-    @classmethod
     def identify(cls, comb:list) -> None:
         return None
 
@@ -72,13 +67,9 @@ class Hands(ABC):
 
     @classmethod
     def identify(cls, pocket:Pocket, board:Board) -> Hand:
-        cards = cls.get_cards(pocket, board)
-        combs = cls.get_combs(cards)
+        combs = cls.get_combs(pocket, board)
 
         for item in cls.hand_classes:
-            if not item.precheck(pocket, board, cards):
-                continue
-
             best_hand = None
             for comb in combs:
                 hand = item.identify(list(comb))
@@ -92,9 +83,5 @@ class Hands(ABC):
         raise Exception('Hand is not identified')
 
     @classmethod
-    def get_cards(cls, pocket:Pocket, board:Board) -> list:
-        raise NotImplementedError('Must be implemented')
-
-    @classmethod
-    def get_combs(cls, cards:list) -> iter:
-        return list(combinations(cards, cls.length))
+    def get_combs(cls, pocket:Pocket, board:Board) -> iter:
+        raise NotImplementedError
