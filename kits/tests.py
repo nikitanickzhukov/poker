@@ -12,7 +12,7 @@ class TestStreet2(Street):
     length = 1
 
 class TestKit(Kit):
-    street_classes = (TestStreet1, TestStreet2,)
+    street_classes = (TestStreet1, TestStreet2)
 
 
 class StreetTestCase(unittest.TestCase):

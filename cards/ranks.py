@@ -4,7 +4,8 @@ class Rank():
     """
 
     def __init__(self, code:str, name:str, weight:int) -> None:
-        assert len(code) == 1 and ('A' <= code <= 'Z' or '0' <= code <= '9'), 'Code must be a single uppercase char from A to Z or from 0 to 9'
+        assert len(code) == 1 and ('A' <= code <= 'Z' or '0' <= code <= '9'), \
+               'Code must be a single uppercase char from A to Z or from 0 to 9'
         assert len(name) > 0, 'Name must be specified'
         assert weight > 0, 'Weight must be a positive int'
 

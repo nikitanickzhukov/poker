@@ -14,10 +14,10 @@ class Card():
         self._suit = suit
 
     def __repr__(self) -> str:
-        return '%s of %s' % (self.rank.__repr__(), self.suit.__repr__(),)
+        return '%s of %s' % (self.rank.__repr__(), self.suit.__repr__())
 
     def __str__(self) -> str:
-        return '%s of %s' % (self.rank.__str__(), self.suit.__str__(),)
+        return '%s of %s' % (self.rank.__str__(), self.suit.__str__())
 
     def __hash__(self) -> int:
         return 256 * ord(self.suit.code) + ord(self.rank.code)
@@ -29,16 +29,16 @@ class Card():
         return self.rank != other._rank or self.suit != other._suit
 
     def __gt__(self, other:'Card') -> bool:
-        return (self.rank, self.suit,) > (other._rank, other._suit,)
+        return (self.rank, self.suit) > (other._rank, other._suit)
 
     def __ge__(self, other:'Card') -> bool:
-        return (self.rank, self.suit,) >= (other._rank, other._suit,)
+        return (self.rank, self.suit) >= (other._rank, other._suit)
 
     def __lt__(self, other:'Card') -> bool:
-        return (self.rank, self.suit,) < (other._rank, other._suit,)
+        return (self.rank, self.suit) < (other._rank, other._suit)
 
     def __le__(self, other:'Card') -> bool:
-        return (self.rank, self.suit,) <= (other._rank, other._suit,)
+        return (self.rank, self.suit) <= (other._rank, other._suit)
 
     @property
     def rank(self) -> str:
@@ -54,4 +54,4 @@ class Card():
 
     @property
     def name(self) -> str:
-        return '%s of %s' % (self.rank.name, self.suit.name,)
+        return '%s of %s' % (self.rank.name, self.suit.name)

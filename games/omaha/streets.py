@@ -14,4 +14,4 @@ class River(BaseStreet):
     length = 1
 
 
-__all__ = ('Preflop', 'Flop', 'Turn', 'River',)
+__all__ = ('Preflop', 'Flop', 'Turn', 'River')

@@ -1,5 +1,5 @@
 from typing import Union
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from cards import Card
 from .pockets import Pocket
@@ -58,7 +58,7 @@ class Hand(ABC):
 
     @property
     def weight(self):
-        return [self.hand_weight,]
+        return (self.hand_weight,)
 
 
 class Hands(ABC):
@@ -83,5 +83,6 @@ class Hands(ABC):
         raise Exception('Hand is not identified')
 
     @classmethod
+    @abstractmethod
     def get_combs(cls, pocket:Pocket, board:Board) -> iter:
-        raise NotImplementedError
+        return iter([])

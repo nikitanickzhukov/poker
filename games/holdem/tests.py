@@ -37,7 +37,7 @@ class IdentifyTestCase(unittest.TestCase):
         board = Board(self.deck['3s'], self.deck['Ad'], self.deck['Jh'], self.deck['Qd'], self.deck['6s'])
         hand = Hands.identify(pocket, board)
         self.assertIsInstance(hand, OnePair)
-        self.assertEqual(set(hand[0:2]), set([ self.deck['As'], self.deck['Ad'], ]))
+        self.assertEqual(set(hand[0:2]), set([ self.deck['As'], self.deck['Ad'] ]))
         self.assertEqual(hand[2], self.deck['Qd'])
 
         # One pair, on the board only
@@ -45,7 +45,7 @@ class IdentifyTestCase(unittest.TestCase):
         board = Board(self.deck['3s'], self.deck['4d'], self.deck['Jh'], self.deck['Qd'], self.deck['4s'])
         hand = Hands.identify(pocket, board)
         self.assertIsInstance(hand, OnePair)
-        self.assertEqual(set(hand[0:2]), set([ self.deck['4d'], self.deck['4s'], ]))
+        self.assertEqual(set(hand[0:2]), set([ self.deck['4d'], self.deck['4s'] ]))
         self.assertEqual(hand[2], self.deck['As'])
 
         # One pair, in the pocket only
@@ -53,7 +53,7 @@ class IdentifyTestCase(unittest.TestCase):
         board = Board(self.deck['3s'], self.deck['4d'], self.deck['Jh'], self.deck['Qd'], self.deck['6s'])
         hand = Hands.identify(pocket, board)
         self.assertIsInstance(hand, OnePair)
-        self.assertEqual(set(hand[0:2]), set([ self.deck['As'], self.deck['Ad'], ]))
+        self.assertEqual(set(hand[0:2]), set([ self.deck['As'], self.deck['Ad'] ]))
         self.assertEqual(hand[2], self.deck['Qd'])
 
     def test_two_pair(self):
@@ -62,8 +62,8 @@ class IdentifyTestCase(unittest.TestCase):
         board = Board(self.deck['3s'], self.deck['Ad'], self.deck['2h'], self.deck['Qd'], self.deck['6s'])
         hand = Hands.identify(pocket, board)
         self.assertIsInstance(hand, TwoPair)
-        self.assertEqual(set(hand[0:2]), set([ self.deck['As'], self.deck['Ad'], ]))
-        self.assertEqual(set(hand[2:4]), set([ self.deck['2s'], self.deck['2h'], ]))
+        self.assertEqual(set(hand[0:2]), set([ self.deck['As'], self.deck['Ad'] ]))
+        self.assertEqual(set(hand[2:4]), set([ self.deck['2s'], self.deck['2h'] ]))
         self.assertEqual(hand[4], self.deck['Qd'])
 
         # Two pair, in the pocket and on the board
@@ -71,8 +71,8 @@ class IdentifyTestCase(unittest.TestCase):
         board = Board(self.deck['3s'], self.deck['3d'], self.deck['Jh'], self.deck['Qd'], self.deck['6s'])
         hand = Hands.identify(pocket, board)
         self.assertIsInstance(hand, TwoPair)
-        self.assertEqual(set(hand[0:2]), set([ self.deck['As'], self.deck['Ad'], ]))
-        self.assertEqual(set(hand[2:4]), set([ self.deck['3s'], self.deck['3d'], ]))
+        self.assertEqual(set(hand[0:2]), set([ self.deck['As'], self.deck['Ad'] ]))
+        self.assertEqual(set(hand[2:4]), set([ self.deck['3s'], self.deck['3d'] ]))
         self.assertEqual(hand[4], self.deck['Qd'])
 
         # Two pair, on the board only
@@ -80,8 +80,8 @@ class IdentifyTestCase(unittest.TestCase):
         board = Board(self.deck['3s'], self.deck['3d'], self.deck['Jh'], self.deck['Qd'], self.deck['Qs'])
         hand = Hands.identify(pocket, board)
         self.assertIsInstance(hand, TwoPair)
-        self.assertEqual(set(hand[0:2]), set([ self.deck['Qd'], self.deck['Qs'], ]))
-        self.assertEqual(set(hand[2:4]), set([ self.deck['3s'], self.deck['3d'], ]))
+        self.assertEqual(set(hand[0:2]), set([ self.deck['Qd'], self.deck['Qs'] ]))
+        self.assertEqual(set(hand[2:4]), set([ self.deck['3s'], self.deck['3d'] ]))
         self.assertEqual(hand[4], self.deck['As'])
 
     def test_trips(self):
@@ -90,7 +90,7 @@ class IdentifyTestCase(unittest.TestCase):
         board = Board(self.deck['3s'], self.deck['Ad'], self.deck['Ac'], self.deck['Qd'], self.deck['6s'])
         hand = Hands.identify(pocket, board)
         self.assertIsInstance(hand, Trips)
-        self.assertEqual(set(hand[0:3]), set([ self.deck['As'], self.deck['Ad'], self.deck['Ac'], ]))
+        self.assertEqual(set(hand[0:3]), set([ self.deck['As'], self.deck['Ad'], self.deck['Ac'] ]))
         self.assertEqual(hand[3], self.deck['Qd'])
 
         # Trips, a set
@@ -98,7 +98,7 @@ class IdentifyTestCase(unittest.TestCase):
         board = Board(self.deck['3s'], self.deck['2d'], self.deck['Ac'], self.deck['Qd'], self.deck['6s'])
         hand = Hands.identify(pocket, board)
         self.assertIsInstance(hand, Trips)
-        self.assertEqual(set(hand[0:3]), set([ self.deck['As'], self.deck['Ad'], self.deck['Ac'], ]))
+        self.assertEqual(set(hand[0:3]), set([ self.deck['As'], self.deck['Ad'], self.deck['Ac'] ]))
         self.assertEqual(hand[3], self.deck['Qd'])
 
         # Trips, on the board only
@@ -106,7 +106,7 @@ class IdentifyTestCase(unittest.TestCase):
         board = Board(self.deck['3s'], self.deck['3d'], self.deck['3c'], self.deck['Qd'], self.deck['6s'])
         hand = Hands.identify(pocket, board)
         self.assertIsInstance(hand, Trips)
-        self.assertEqual(set(hand[0:3]), set([ self.deck['3s'], self.deck['3d'], self.deck['3c'], ]))
+        self.assertEqual(set(hand[0:3]), set([ self.deck['3s'], self.deck['3d'], self.deck['3c'] ]))
         self.assertEqual(hand[3], self.deck['As'])
 
     def test_straight(self):
@@ -176,32 +176,32 @@ class IdentifyTestCase(unittest.TestCase):
         board = Board(self.deck['3s'], self.deck['Ac'], self.deck['3c'], self.deck['2d'], self.deck['6s'])
         hand = Hands.identify(pocket, board)
         self.assertIsInstance(hand, FullHouse)
-        self.assertEqual(set(hand[0:3]), set([ self.deck['As'], self.deck['Ad'], self.deck['Ac'], ]))
-        self.assertEqual(set(hand[3:5]), set([ self.deck['3s'], self.deck['3c'], ]))
+        self.assertEqual(set(hand[0:3]), set([ self.deck['As'], self.deck['Ad'], self.deck['Ac'] ]))
+        self.assertEqual(set(hand[3:5]), set([ self.deck['3s'], self.deck['3c'] ]))
 
         # Full house, a trips and a pair on the board
         pocket = Pocket(self.deck['As'], self.deck['2s'])
         board = Board(self.deck['3s'], self.deck['Ac'], self.deck['2c'], self.deck['2d'], self.deck['6s'])
         hand = Hands.identify(pocket, board)
         self.assertIsInstance(hand, FullHouse)
-        self.assertEqual(set(hand[0:3]), set([ self.deck['2s'], self.deck['2d'], self.deck['2c'], ]))
-        self.assertEqual(set(hand[3:5]), set([ self.deck['As'], self.deck['Ac'], ]))
+        self.assertEqual(set(hand[0:3]), set([ self.deck['2s'], self.deck['2d'], self.deck['2c'] ]))
+        self.assertEqual(set(hand[3:5]), set([ self.deck['As'], self.deck['Ac'] ]))
 
         # Full house, a pocket pair and a trips on the board
         pocket = Pocket(self.deck['As'], self.deck['Ad'])
         board = Board(self.deck['3s'], self.deck['3c'], self.deck['3d'], self.deck['2d'], self.deck['6s'])
         hand = Hands.identify(pocket, board)
         self.assertIsInstance(hand, FullHouse)
-        self.assertEqual(set(hand[0:3]), set([ self.deck['3s'], self.deck['3d'], self.deck['3c'], ]))
-        self.assertEqual(set(hand[3:5]), set([ self.deck['As'], self.deck['Ad'], ]))
+        self.assertEqual(set(hand[0:3]), set([ self.deck['3s'], self.deck['3d'], self.deck['3c'] ]))
+        self.assertEqual(set(hand[3:5]), set([ self.deck['As'], self.deck['Ad'] ]))
 
         # Full house, on the board only
         pocket = Pocket(self.deck['As'], self.deck['2s'])
         board = Board(self.deck['3s'], self.deck['3c'], self.deck['3d'], self.deck['6d'], self.deck['6s'])
         hand = Hands.identify(pocket, board)
         self.assertIsInstance(hand, FullHouse)
-        self.assertEqual(set(hand[0:3]), set([ self.deck['3s'], self.deck['3d'], self.deck['3c'], ]))
-        self.assertEqual(set(hand[3:5]), set([ self.deck['6d'], self.deck['6s'], ]))
+        self.assertEqual(set(hand[0:3]), set([ self.deck['3s'], self.deck['3d'], self.deck['3c'] ]))
+        self.assertEqual(set(hand[3:5]), set([ self.deck['6d'], self.deck['6s'] ]))
 
     def test_quads(self):
         # Quads, a pocket pair
@@ -209,7 +209,7 @@ class IdentifyTestCase(unittest.TestCase):
         board = Board(self.deck['3s'], self.deck['Ac'], self.deck['Ah'], self.deck['Jh'], self.deck['6s'])
         hand = Hands.identify(pocket, board)
         self.assertIsInstance(hand, Quads)
-        self.assertEqual(set(hand[0:4]), set([ self.deck['As'], self.deck['Ad'], self.deck['Ac'], self.deck['Ah'], ]))
+        self.assertEqual(set(hand[0:4]), set([ self.deck['As'], self.deck['Ad'], self.deck['Ac'], self.deck['Ah'] ]))
         self.assertEqual(hand[4], self.deck['Jh'])
 
         # Quads, a trips on a board
@@ -217,7 +217,7 @@ class IdentifyTestCase(unittest.TestCase):
         board = Board(self.deck['3s'], self.deck['Ac'], self.deck['Ah'], self.deck['Ad'], self.deck['6s'])
         hand = Hands.identify(pocket, board)
         self.assertIsInstance(hand, Quads)
-        self.assertEqual(set(hand[0:4]), set([ self.deck['As'], self.deck['Ad'], self.deck['Ac'], self.deck['Ah'], ]))
+        self.assertEqual(set(hand[0:4]), set([ self.deck['As'], self.deck['Ad'], self.deck['Ac'], self.deck['Ah'] ]))
         self.assertEqual(hand[4], self.deck['6s'])
 
         # Quads, on a board only
@@ -225,7 +225,7 @@ class IdentifyTestCase(unittest.TestCase):
         board = Board(self.deck['3s'], self.deck['3c'], self.deck['3h'], self.deck['3d'], self.deck['6s'])
         hand = Hands.identify(pocket, board)
         self.assertIsInstance(hand, Quads)
-        self.assertEqual(set(hand[0:4]), set([ self.deck['3s'], self.deck['3d'], self.deck['3c'], self.deck['3h'], ]))
+        self.assertEqual(set(hand[0:4]), set([ self.deck['3s'], self.deck['3d'], self.deck['3c'], self.deck['3h'] ]))
         self.assertEqual(hand[4], self.deck['As'])
 
     def test_straight_flush(self):

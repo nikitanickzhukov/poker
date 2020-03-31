@@ -40,7 +40,7 @@ class Deck(ABC):
         return iter(self._items)
 
     def __getitem__(self, key:Union[int, str]) -> Card:
-        if isinstance(key, (int, slice,)):
+        if isinstance(key, (int, slice)):
             return self._items[key]
         elif isinstance(key, str):
             for item in self._items:
@@ -116,4 +116,4 @@ class StandardDeck(Deck):
 
     def __init__(self) -> None:
         super().__init__()
-        self._items = [ x for x in cards ]
+        self._items = cards.copy()

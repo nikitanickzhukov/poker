@@ -9,13 +9,7 @@ max_rank = max(ranks)
 class Hand(BaseHand):
     @property
     def weight(self):
-        return [ self.hand_weight, *[ x.rank.weight for x in self._items ], ]
-
-
-class Hand(BaseHand):
-    @property
-    def weight(self):
-        return [ self.hand_weight, *[ x.rank.weight for x in self._items ], ]
+        return (self.hand_weight, *[ x.rank.weight for x in self._items ])
 
 
 class HighCard(Hand):
@@ -23,7 +17,8 @@ class HighCard(Hand):
     first_is_best = True
 
     def __repr__(self) -> str:
-        return 'High card: %s, kickers: %s' % (self._items[0].rank.__repr__(), ', '.join([ x.rank.__repr__() for x in self._items[1:] ]),)
+        return 'High card: %s, kickers: %s' % \
+               (self._items[0].rank.__repr__(), ', '.join([ x.rank.__repr__() for x in self._items[1:] ]))
 
     @classmethod
     def identify(cls, comb:list):
@@ -35,7 +30,8 @@ class OnePair(Hand):
     first_is_best = True
 
     def __repr__(self) -> str:
-        return 'One pair: %ss, kickers: %s' % (self._items[0].rank.__repr__(), ', '.join([ x.rank.__repr__() for x in self._items[2:] ]),)
+        return 'One pair: %ss, kickers: %s' % \
+               (self._items[0].rank.__repr__(), ', '.join([ x.rank.__repr__() for x in self._items[2:] ]))
 
     @classmethod
     def identify(cls, comb:list):
@@ -55,7 +51,8 @@ class TwoPair(Hand):
     first_is_best = True
 
     def __repr__(self) -> str:
-        return 'Two pair: %ss and %ss, kicker: %s' % (self._items[0].rank.__repr__(), self._items[2].rank.__repr__(), self._items[4].rank.__repr__(),)
+        return 'Two pair: %ss and %ss, kicker: %s' % \
+               (self._items[0].rank.__repr__(), self._items[2].rank.__repr__(), self._items[4].rank.__repr__())
 
     @classmethod
     def identify(cls, comb:list):
@@ -80,7 +77,8 @@ class Trips(Hand):
     first_is_best = True
 
     def __repr__(self) -> str:
-        return 'Three of a kind: %ss, kickers: %s' % (self._items[0].rank.__repr__(), ', '.join([ x.rank.__repr__() for x in self._items[3:] ]),)
+        return 'Three of a kind: %ss, kickers: %s' % \
+               (self._items[0].rank.__repr__(), ', '.join([ x.rank.__repr__() for x in self._items[3:] ]))
 
     @classmethod
     def identify(cls, comb:list):
@@ -112,7 +110,8 @@ class Straight(Hand):
 
         ok = True
         for i in range(len(items) - 1):
-            if (items[i].rank.weight != items[i + 1].rank.weight + 1) and (items[i].rank != min_rank or items[i + 1].rank != max_rank):
+            if (items[i].rank.weight != items[i + 1].rank.weight + 1) and \
+               (items[i].rank != min_rank or items[i + 1].rank != max_rank):
                 ok = False
                 break
         if ok:
@@ -125,7 +124,8 @@ class Flush(Hand):
     first_is_best = True
 
     def __repr__(self) -> str:
-        return '%s-high flush, %s' % (self._items[0].rank.__repr__(), ', '.join([ x.rank.__repr__() for x in self._items[1:] ]),)
+        return '%s-high flush, %s' % \
+               (self._items[0].rank.__repr__(), ', '.join([ x.rank.__repr__() for x in self._items[1:] ]))
 
     @classmethod
     def identify(cls, comb:list):
@@ -144,7 +144,7 @@ class FullHouse(Hand):
     first_is_best = True
 
     def __repr__(self) -> str:
-        return 'Full house, %ss over %ss' % (self._items[0].rank.__repr__(), self._items[3].rank.__repr__(),)
+        return 'Full house, %ss over %ss' % (self._items[0].rank.__repr__(), self._items[3].rank.__repr__())
 
     @classmethod
     def identify(cls, comb:list):
@@ -165,7 +165,7 @@ class Quads(Hand):
     first_is_best = True
 
     def __repr__(self) -> str:
-        return 'Four of a kind, %ss, kicker: %s' % (self._items[0].rank.__repr__(), self._items[4].rank.__repr__(),)
+        return 'Four of a kind, %ss, kicker: %s' % (self._items[0].rank.__repr__(), self._items[4].rank.__repr__())
 
     @classmethod
     def identify(cls, comb:list):
@@ -199,7 +199,10 @@ class StraightFlush(Hand):
 
         ok = True
         for i in range(len(items) - 1):
-            if items[i].suit != items[i + 1].suit or ((items[i].rank.weight != items[i + 1].rank.weight + 1) and (items[i].rank != min_rank or items[i + 1].rank != max_rank)):
+            if items[i].suit != items[i + 1].suit or ( \
+                   (items[i].rank.weight != items[i + 1].rank.weight + 1) and \
+                   (items[i].rank != min_rank or items[i + 1].rank != max_rank) \
+               ):
                 ok = False
                 break
         if ok:
@@ -209,7 +212,7 @@ class StraightFlush(Hand):
 
 class Hands(BaseHands):
     length = 5
-    hand_classes = (StraightFlush, Quads, FullHouse, Flush, Straight, Trips, TwoPair, OnePair, HighCard,)
+    hand_classes = (StraightFlush, Quads, FullHouse, Flush, Straight, Trips, TwoPair, OnePair, HighCard)
 
 
-__all__ = ('Hands', 'HighCard', 'OnePair', 'TwoPair', 'Trips', 'Straight', 'Flush', 'FullHouse', 'Quads', 'StraightFlush',)
+__all__ = ('Hands', 'HighCard', 'OnePair', 'TwoPair', 'Trips', 'Straight', 'Flush', 'FullHouse', 'Quads', 'StraightFlush')

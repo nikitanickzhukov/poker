@@ -4,7 +4,8 @@ class Suit():
     """
 
     def __init__(self, code:str, name:str, weight:int) -> None:
-        assert len(code) == 1 and 'a' <= code <= 'z', 'Code must be a single lowercase char from a to z'
+        assert len(code) == 1 and 'a' <= code <= 'z', \
+               'Code must be a single lowercase char from a to z'
         assert len(name) > 0, 'Name must be specified'
         assert weight > 0, 'Weight must be a positive int'
 
