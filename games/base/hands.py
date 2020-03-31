@@ -95,27 +95,26 @@ class Trips(Hand):
 
 class Straight(Hand):
     hand_weight = 5
+    first_is_best = False
 
     def __repr__(self) -> str:
         return '%s-high straight' % (self._items[0].rank.__repr__(),)
 
     @classmethod
     def identify(cls, comb:list):
-        items = comb
-
-        # Moving Ace into the end when got Axxx2 comb
-        if items[0].rank == max_rank and items[4].rank == min_rank:
-            items = items.copy()
-            items.append(items.pop(0))
-
         ok = True
-        for i in range(len(items) - 1):
-            if (items[i].rank.weight != items[i + 1].rank.weight + 1) and \
-               (items[i].rank != min_rank or items[i + 1].rank != max_rank):
+        # Looking for a sequence Xabcd with any X
+        for i in range(1, len(comb) - 1):
+            if comb[i].rank.weight != comb[i + 1].rank.weight + 1:
                 ok = False
                 break
         if ok:
-            return cls(*items)
+            if comb[0].rank.weight == comb[1].rank.weight + 1:
+                # Standard straight: 98765 etc.
+                return cls(*comb)
+            elif comb[0].rank == max_rank and comb[4].rank == min_rank:
+                # Wheel straight: 5432A
+                return cls(*comb[1:], comb[0])
         return None
 
 
@@ -148,15 +147,10 @@ class FullHouse(Hand):
 
     @classmethod
     def identify(cls, comb:list):
-        three = None
-        for i in range(len(comb) - 2):
-            if comb[i].rank == comb[i + 1].rank == comb[i + 2].rank:
-                three = list(comb[i:i + 3])
-                break
-        if three:
-            kickers = [ x for x in comb if x not in three ]
-            if kickers[0].rank == kickers[1].rank:
-                return cls(*(three + kickers))
+        trips = Trips.identify(comb)
+        if trips:
+            if trips[3].rank == trips[4].rank:
+                return cls(*trips)
         return None
 
 
@@ -169,19 +163,18 @@ class Quads(Hand):
 
     @classmethod
     def identify(cls, comb:list):
-        four = None
-        for i in range(len(comb) - 3):
-            if comb[i].rank == comb[i + 1].rank == comb[i + 2].rank == comb[i + 3].rank:
-                four = list(comb[i:i + 4])
-                break
-        if four:
-            kickers = [ x for x in comb if x not in four ]
-            return cls(*(four + kickers))
+        trips = Trips.identify(comb)
+        if trips:
+            if trips[3].rank == trips[0].rank:
+                return cls(*trips)
+            elif trips[4].rank == trips[0].rank:
+                return cls(*trips[0:3], trips[4], trips[3])
         return None
 
 
 class StraightFlush(Hand):
     hand_weight = 9
+    first_is_best = False
 
     def __repr__(self) -> str:
         if self._items[0].rank == max_rank:
@@ -190,23 +183,10 @@ class StraightFlush(Hand):
 
     @classmethod
     def identify(cls, comb:list):
-        items = comb
-
-        # Moving Ace into the end when got Axxx2 comb
-        if items[0].rank == max_rank and items[4].rank == min_rank:
-            items = items.copy()
-            items.append(items.pop(0))
-
-        ok = True
-        for i in range(len(items) - 1):
-            if items[i].suit != items[i + 1].suit or ( \
-                   (items[i].rank.weight != items[i + 1].rank.weight + 1) and \
-                   (items[i].rank != min_rank or items[i + 1].rank != max_rank) \
-               ):
-                ok = False
-                break
-        if ok:
-            return cls(*items)
+        if Flush.identify(comb):
+            straight = Straight.identify(comb)
+            if straight:
+                return cls(*straight)
         return None
 
 
