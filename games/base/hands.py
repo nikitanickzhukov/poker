@@ -1,3 +1,5 @@
+from typing import Optional
+
 from cards import ranks
 from kits import Hand as BaseHand, Hands as BaseHands
 
@@ -8,7 +10,7 @@ max_rank = max(ranks)
 
 class Hand(BaseHand):
     @property
-    def weight(self):
+    def weight(self) -> tuple:
         return (self.hand_weight, *[ x.rank.weight for x in self._items ])
 
 
@@ -21,7 +23,7 @@ class HighCard(Hand):
                (self._items[0].rank.__repr__(), ', '.join([ x.rank.__repr__() for x in self._items[1:] ]))
 
     @classmethod
-    def identify(cls, comb:list):
+    def identify(cls, comb:list) -> 'HighCard':
         return cls(*comb)
 
 
@@ -34,7 +36,7 @@ class OnePair(Hand):
                (self._items[0].rank.__repr__(), ', '.join([ x.rank.__repr__() for x in self._items[2:] ]))
 
     @classmethod
-    def identify(cls, comb:list):
+    def identify(cls, comb:list) -> Optional['OnePair']:
         pair = None
         for i in range(len(comb) - 1):
             if comb[i].rank == comb[i + 1].rank:
@@ -55,7 +57,7 @@ class TwoPair(Hand):
                (self._items[0].rank.__repr__(), self._items[2].rank.__repr__(), self._items[4].rank.__repr__())
 
     @classmethod
-    def identify(cls, comb:list):
+    def identify(cls, comb:list) -> Optional['TwoPair']:
         pair1 = None
         pair2 = None
         for i in range(len(comb) - 1):
@@ -81,7 +83,7 @@ class Trips(Hand):
                (self._items[0].rank.__repr__(), ', '.join([ x.rank.__repr__() for x in self._items[3:] ]))
 
     @classmethod
-    def identify(cls, comb:list):
+    def identify(cls, comb:list) -> Optional['Trips']:
         three = None
         for i in range(len(comb) - 2):
             if comb[i].rank == comb[i + 1].rank == comb[i + 2].rank:
@@ -101,7 +103,7 @@ class Straight(Hand):
         return '%s-high straight' % (self._items[0].rank.__repr__(),)
 
     @classmethod
-    def identify(cls, comb:list):
+    def identify(cls, comb:list) -> Optional['Straight']:
         ok = True
         # Looking for a sequence Xabcd with any X
         for i in range(1, len(comb) - 1):
@@ -127,7 +129,7 @@ class Flush(Hand):
                (self._items[0].rank.__repr__(), ', '.join([ x.rank.__repr__() for x in self._items[1:] ]))
 
     @classmethod
-    def identify(cls, comb:list):
+    def identify(cls, comb:list) -> Optional['Flush']:
         ok = True
         for i in range(len(comb) - 1):
             if comb[i].suit != comb[i + 1].suit:
@@ -146,7 +148,7 @@ class FullHouse(Hand):
         return 'Full house, %ss over %ss' % (self._items[0].rank.__repr__(), self._items[3].rank.__repr__())
 
     @classmethod
-    def identify(cls, comb:list):
+    def identify(cls, comb:list) -> Optional['FullHouse']:
         trips = Trips.identify(comb)
         if trips:
             if trips[3].rank == trips[4].rank:
@@ -162,7 +164,7 @@ class Quads(Hand):
         return 'Four of a kind, %ss, kicker: %s' % (self._items[0].rank.__repr__(), self._items[4].rank.__repr__())
 
     @classmethod
-    def identify(cls, comb:list):
+    def identify(cls, comb:list) -> Optional['Quads']:
         trips = Trips.identify(comb)
         if trips:
             if trips[3].rank == trips[0].rank:
@@ -182,7 +184,7 @@ class StraightFlush(Hand):
         return '%s-high straight flush' % (self._items[0].rank.__repr__(),)
 
     @classmethod
-    def identify(cls, comb:list):
+    def identify(cls, comb:list) -> Optional['StraightFlush']:
         if Flush.identify(comb):
             straight = Straight.identify(comb)
             if straight:

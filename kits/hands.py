@@ -53,11 +53,15 @@ class Hand(ABC):
             raise TypeError('Wrong key type')
 
     @classmethod
-    def identify(cls, comb:list) -> None:
-        return None
+    def precheck(cls, pocket:Pocket, board:Board) -> bool:
+        return True
+
+    @classmethod
+    def identify(cls, comb:list) -> 'Hand':
+        return cls(*comb)
 
     @property
-    def weight(self):
+    def weight(self) -> None:
         return (self.hand_weight,)
 
 
@@ -70,6 +74,9 @@ class Hands(ABC):
         combs = cls.get_combs(pocket, board)
 
         for item in cls.hand_classes:
+            if not item.precheck(pocket, board):
+                continue
+
             best_hand = None
             for comb in combs:
                 hand = item.identify(list(comb))
@@ -80,9 +87,10 @@ class Hands(ABC):
                         best_hand = hand
             if best_hand:
                 return best_hand
+
         raise Exception('Hand is not identified')
 
     @classmethod
-    @abstractmethod
     def get_combs(cls, pocket:Pocket, board:Board) -> iter:
-        return iter([])
+        while False:
+            yield

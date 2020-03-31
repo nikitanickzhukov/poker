@@ -1,11 +1,48 @@
 from itertools import combinations, product
 
-from ..base.hands import Hands as BaseHands, HighCard, OnePair, TwoPair, Trips, Straight, Flush, FullHouse, Quads, StraightFlush
+from ..base import hands
 from .pockets import Pocket
 from .boards import Board
 
 
-class Hands(BaseHands):
+class HighCard(hands.HighCard):
+    pass
+
+
+class OnePair(hands.OnePair):
+    pass
+
+
+class TwoPair(hands.TwoPair):
+    pass
+
+
+class Trips(hands.Trips):
+    pass
+
+
+class Straight(hands.Straight):
+    pass
+
+
+class Flush(hands.Flush):
+    pass
+
+
+class FullHouse(hands.FullHouse):
+    pass
+
+
+class Quads(hands.Quads):
+    pass
+
+
+class StraightFlush(hands.StraightFlush):
+    pass
+
+
+class Hands(hands.Hands):
+    hand_classes = (StraightFlush, Quads, FullHouse, Flush, Straight, Trips, TwoPair, OnePair, HighCard)
     pocket_comb_length = 2
 
     @classmethod
