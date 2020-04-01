@@ -36,3 +36,6 @@ class Street(ABC):
 
     def __iter__(self) -> iter:
         return iter(self._items)
+
+
+__all__ = ('Street',)

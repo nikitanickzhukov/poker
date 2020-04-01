@@ -1,4 +1,4 @@
-from kits import Board as BaseBoard
+from ..base import Board as BaseBoard
 from .streets import Flop, Turn, River
 
 

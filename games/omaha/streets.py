@@ -1,16 +1,16 @@
-from kits import Street as BaseStreet
+from ..base import Street
 
 
-class Preflop(BaseStreet):
+class Preflop(Street):
     length = 4
 
-class Flop(BaseStreet):
+class Flop(Street):
     length = 3
 
-class Turn(BaseStreet):
+class Turn(Street):
     length = 1
 
-class River(BaseStreet):
+class River(Street):
     length = 1
 
 

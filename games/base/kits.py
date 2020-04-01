@@ -37,16 +37,8 @@ class Kit(ABC):
         return iter(self._items)
 
     @property
-    def street_names(self) -> list:
-        return [ x.__name__.lower() for x in self.street_classes ]
-
-    @property
     def streets(self) -> list:
         return self._streets
-
-    @property
-    def is_full(self):
-        return len(self._streets) == len(self.street_classes)
 
     @property
     def _items(self) -> list:

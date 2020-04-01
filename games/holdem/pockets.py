@@ -1,4 +1,4 @@
-from kits import Pocket as BasePocket
+from ..base import Pocket as BasePocket
 from .streets import Preflop
 
 
