@@ -1,7 +1,7 @@
 from typing import Optional
 
 from cards import ranks
-from kits import Hand as BaseHand, Hands as BaseHands
+from kits import Hand as BaseHand, HandIdentifier as BaseHandIdentifier
 
 
 min_rank = min(ranks)
@@ -23,7 +23,7 @@ class HighCard(Hand):
                (self._items[0].rank.__repr__(), ', '.join([ x.rank.__repr__() for x in self._items[1:] ]))
 
     @classmethod
-    def identify(cls, comb:list) -> 'HighCard':
+    def identify(cls, comb:tuple) -> 'HighCard':
         return cls(*comb)
 
 
@@ -36,7 +36,7 @@ class OnePair(Hand):
                (self._items[0].rank.__repr__(), ', '.join([ x.rank.__repr__() for x in self._items[2:] ]))
 
     @classmethod
-    def identify(cls, comb:list) -> Optional['OnePair']:
+    def identify(cls, comb:tuple) -> Optional['OnePair']:
         pair = None
         for i in range(len(comb) - 1):
             if comb[i].rank == comb[i + 1].rank:
@@ -57,7 +57,7 @@ class TwoPair(Hand):
                (self._items[0].rank.__repr__(), self._items[2].rank.__repr__(), self._items[4].rank.__repr__())
 
     @classmethod
-    def identify(cls, comb:list) -> Optional['TwoPair']:
+    def identify(cls, comb:tuple) -> Optional['TwoPair']:
         pair1 = None
         pair2 = None
         for i in range(len(comb) - 1):
@@ -83,7 +83,7 @@ class Trips(Hand):
                (self._items[0].rank.__repr__(), ', '.join([ x.rank.__repr__() for x in self._items[3:] ]))
 
     @classmethod
-    def identify(cls, comb:list) -> Optional['Trips']:
+    def identify(cls, comb:tuple) -> Optional['Trips']:
         three = None
         for i in range(len(comb) - 2):
             if comb[i].rank == comb[i + 1].rank == comb[i + 2].rank:
@@ -103,7 +103,7 @@ class Straight(Hand):
         return '%s-high straight' % (self._items[0].rank.__repr__(),)
 
     @classmethod
-    def identify(cls, comb:list) -> Optional['Straight']:
+    def identify(cls, comb:tuple) -> Optional['Straight']:
         ok = True
         # Looking for a sequence Xabcd with any X
         for i in range(1, len(comb) - 1):
@@ -129,7 +129,7 @@ class Flush(Hand):
                (self._items[0].rank.__repr__(), ', '.join([ x.rank.__repr__() for x in self._items[1:] ]))
 
     @classmethod
-    def identify(cls, comb:list) -> Optional['Flush']:
+    def identify(cls, comb:tuple) -> Optional['Flush']:
         ok = True
         for i in range(len(comb) - 1):
             if comb[i].suit != comb[i + 1].suit:
@@ -148,7 +148,7 @@ class FullHouse(Hand):
         return 'Full house, %ss over %ss' % (self._items[0].rank.__repr__(), self._items[3].rank.__repr__())
 
     @classmethod
-    def identify(cls, comb:list) -> Optional['FullHouse']:
+    def identify(cls, comb:tuple) -> Optional['FullHouse']:
         trips = Trips.identify(comb)
         if trips:
             if trips[3].rank == trips[4].rank:
@@ -164,7 +164,7 @@ class Quads(Hand):
         return 'Four of a kind, %ss, kicker: %s' % (self._items[0].rank.__repr__(), self._items[4].rank.__repr__())
 
     @classmethod
-    def identify(cls, comb:list) -> Optional['Quads']:
+    def identify(cls, comb:tuple) -> Optional['Quads']:
         trips = Trips.identify(comb)
         if trips:
             if trips[3].rank == trips[0].rank:
@@ -184,7 +184,7 @@ class StraightFlush(Hand):
         return '%s-high straight flush' % (self._items[0].rank.__repr__(),)
 
     @classmethod
-    def identify(cls, comb:list) -> Optional['StraightFlush']:
+    def identify(cls, comb:tuple) -> Optional['StraightFlush']:
         if Flush.identify(comb):
             straight = Straight.identify(comb)
             if straight:
@@ -192,9 +192,9 @@ class StraightFlush(Hand):
         return None
 
 
-class Hands(BaseHands):
+class HandIdentifier(BaseHandIdentifier):
     length = 5
     hand_classes = (StraightFlush, Quads, FullHouse, Flush, Straight, Trips, TwoPair, OnePair, HighCard)
 
 
-__all__ = ('Hands', 'HighCard', 'OnePair', 'TwoPair', 'Trips', 'Straight', 'Flush', 'FullHouse', 'Quads', 'StraightFlush')
+__all__ = ('HandIdentifier', 'HighCard', 'OnePair', 'TwoPair', 'Trips', 'Straight', 'Flush', 'FullHouse', 'Quads', 'StraightFlush')

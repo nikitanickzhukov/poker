@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 from abc import ABC, abstractmethod
 
 from cards import Card
@@ -57,7 +57,7 @@ class Hand(ABC):
         return True
 
     @classmethod
-    def identify(cls, comb:list) -> 'Hand':
+    def identify(cls, comb:tuple) -> 'Hand':
         return cls(*comb)
 
     @property
@@ -65,32 +65,44 @@ class Hand(ABC):
         return (self.hand_weight,)
 
 
-class Hands(ABC):
+class HandIdentifier(ABC):
     length = 0
     hand_classes = ()
 
-    @classmethod
-    def identify(cls, pocket:Pocket, board:Board) -> Hand:
-        combs = cls.get_combs(pocket, board)
+    def __init__(self, pocket:Pocket, board:Board) -> None:
+        assert isinstance(pocket, Pocket), 'Pocket cannot contain non-pocket instance'
+        assert isinstance(board, Board), 'Board cannot contain non-board instance'
+        self._pocket = pocket
+        self._board = board
 
-        for item in cls.hand_classes:
-            if not item.precheck(pocket, board):
+    def identify(self) -> Optional[Hand]:
+        for HandClass in self.hand_classes:
+            if not HandClass.precheck(self.pocket, self.board):
                 continue
 
             best_hand = None
-            for comb in combs:
-                hand = item.identify(list(comb))
+            for comb in self.get_combs():
+                hand = HandClass.identify(comb)
                 if hand:
-                    if item.first_is_best:
-                        return hand
+                    if HandClass.first_is_best:
+                        best_hand = hand
+                        break
                     elif not best_hand or hand > best_hand:
                         best_hand = hand
             if best_hand:
                 return best_hand
 
-        raise Exception('Hand is not identified')
+        return None
 
-    @classmethod
-    def get_combs(cls, pocket:Pocket, board:Board) -> iter:
+    @abstractmethod
+    def get_combs(self) -> iter:
         while False:
             yield
+
+    @property
+    def pocket(self):
+        return self._pocket
+
+    @property
+    def board(self):
+        return self._board

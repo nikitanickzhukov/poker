@@ -111,14 +111,20 @@ class StraightFlush(hands.StraightFlush):
         return Flush.precheck(pocket, board) and Straight.precheck(pocket, board)
 
 
-class Hands(hands.Hands):
+class HandIdentifier(hands.HandIdentifier):
     hand_classes = (StraightFlush, Quads, FullHouse, Flush, Straight, Trips, TwoPair, OnePair, HighCard)
 
-    @classmethod
-    def get_combs(cls, pocket:Pocket, board:Board) -> iter:
-        cards = [ *pocket ] + [ *board ]
-        cards.sort(key=lambda x: x.rank, reverse=True)
-        return list(combinations(cards, cls.length))
+    def get_combs(self) -> iter:
+        if not hasattr(self, '__comb_list'):
+            self.__comb_list = []
+        if not hasattr(self, '__comb_iter'):
+            cards = sorted([*self.pocket] + [*self.board], key=lambda x: x.rank, reverse=True)
+            self.__comb_iter = combinations(cards, self.length)
 
+        for comb in self.__comb_list:
+            yield comb
+        for comb in self.__comb_iter:
+            self.__comb_list.append(comb)
+            yield comb
 
-__all__ = ('Hands', 'HighCard', 'OnePair', 'TwoPair', 'Trips', 'Straight', 'Flush', 'FullHouse', 'Quads', 'StraightFlush')
+__all__ = ('HandIdentifier', 'HighCard', 'OnePair', 'TwoPair', 'Trips', 'Straight', 'Flush', 'FullHouse', 'Quads', 'StraightFlush')
