@@ -46,9 +46,9 @@ class Deck(ABC):
             for item in self._items:
                 if item.code == key:
                     return item
-            raise KeyError('Card %s is not found' % (key,))
+            raise KeyError('Card {} is not found'.format(key))
         else:
-            raise TypeError('Wrong key type')
+            raise AssertionError('Wrong key type')
 
     def __delitem__(self, key:Union[int, str]) -> None:
         if isinstance(key, int):
@@ -61,24 +61,24 @@ class Deck(ABC):
                     ok = True
                     break
             if not ok:
-                raise KeyError('Card %s is not found' % (key,))
+                raise KeyError('Card {} is not found'.format(key))
         else:
-            raise TypeError('Wrong key type')
+            raise AssertionError('Wrong key type')
 
     def shuffle(self) -> None:
         random.shuffle(self._items)
 
     def push(self, *args) -> None:
-        assert all([ isinstance(x, Card) for x in args ]), 'Deck cannot contain non-card items'
-        assert all([ x not in self._items for x in args ]), 'Deck already contains such card(s)'
+        assert all(isinstance(x, Card) for x in args), 'Deck cannot contain non-card items'
+        assert all(x not in self._items for x in args), 'Deck already contains such card(s)'
         self._items.extend(args)
 
     def pop(self) -> Card:
         return self._items.pop()
 
     def unshift(self, *args) -> None:
-        assert all([ isinstance(x, Card) for x in args ]), 'Deck cannot contain non-card items'
-        assert all([ x not in self._items for x in args ]), 'Deck already contains such card(s)'
+        assert all(isinstance(x, Card) for x in args), 'Deck cannot contain non-card items'
+        assert all(x not in self._items for x in args), 'Deck already contains such card(s)'
         self._items[0:0] = args
 
     def shift(self) -> Card:

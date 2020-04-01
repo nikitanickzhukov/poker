@@ -53,18 +53,18 @@ class Kit(ABC):
         return [ x for s in self._streets for x in s ]
 
     def append(self, *args) -> None:
-        if any([ isinstance(x, Card) for x in args ]):
+        if any(isinstance(x, Card) for x in args):
             self._append_cards(*args)
         else:
             self._append_streets(*args)
 
     def _append_streets(self, *args) -> None:
         assert len(args) <= len(self.street_classes) - len(self._streets), \
-               '%s cannot contain more than %d streets' % (self.__class__.__name__, len(self.street_classes))
+               '{} cannot contain more than {} streets'.format(self.__class__.__name__, len(self.street_classes))
         idx = len(self._streets)
         for item in args:
             StreetClass = self.street_classes[idx]
-            assert isinstance(item, StreetClass), 'Street %d must be a %s instance' % (idx, StreetClass.__name__)
+            assert isinstance(item, StreetClass), 'Street {} must be a {} instance'.format(idx, StreetClass.__name__)
             idx += 1
         self._streets.extend(args)
 
@@ -73,10 +73,11 @@ class Kit(ABC):
         streets = []
         street_classes = self.street_classes[len(self._streets):]
         for StreetClass in street_classes:
-            assert len(items) >= StreetClass.length, 'Not enough cards to append %s' % (StreetClass.__name__)
+            assert len(items) >= StreetClass.length, \
+                   'Not enough cards to append {}: {} instead of {}'.format(StreetClass.__name__, len(items), StreetClass.length)
             streets.append(StreetClass(*items[0:StreetClass.length]))
             del items[0:StreetClass.length]
             if not items:
                 break
-        assert len(items) == 0, 'Extra cards cannot be added'
+        assert len(items) == 0, 'Extra {} card(s) cannot be added'.format(len(items))
         self._append_streets(*streets)

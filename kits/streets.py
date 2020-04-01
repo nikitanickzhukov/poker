@@ -12,8 +12,8 @@ class Street(ABC):
 
     def __init__(self, *args) -> None:
         assert len(args) == self.length, \
-               'Street %s cannot contain %d card(s) instead of %d' % (self.__class__.__name__, len(args), self.length)
-        assert all([ isinstance(x, Card) for x in args ]), 'Street cannot contain non-card items'
+               'Street %s cannot contain {} card(s) instead of {}'.format(self.__class__.__name__, len(args), self.length)
+        assert all(isinstance(x, Card) for x in args), 'Street cannot contain non-card items'
         self._items = set(args)
 
     def __repr__(self) -> str:

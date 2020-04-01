@@ -159,7 +159,7 @@ class HandIdentifier(hands.HandIdentifier):
     hand_classes = (StraightFlush, Quads, FullHouse, Flush, Straight, Trips, TwoPair, OnePair, HighCard)
     pocket_comb_length = 2
 
-    def get_combs(self) -> iter:
+    def _get_combs(self) -> iter:
         if not hasattr(self, '__comb_list'):
             self.__comb_list = []
         if not hasattr(self, '__comb_iter'):

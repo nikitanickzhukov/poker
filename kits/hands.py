@@ -1,5 +1,5 @@
 from typing import Union, Optional
-from abc import ABC, abstractmethod
+from abc import ABC
 
 from cards import Card
 from .pockets import Pocket
@@ -11,7 +11,7 @@ class Hand(ABC):
     first_is_best = False
 
     def __init__(self, *args) -> None:
-        assert all([ isinstance(x, Card) for x in args ]), 'Hand cannot contain non-card items'
+        assert all(isinstance(x, Card) for x in args), 'Hand cannot contain non-card items'
         self._items = args
 
     def __eq__(self, other:'Hand') -> bool:
@@ -42,15 +42,15 @@ class Hand(ABC):
         return iter(self._items)
 
     def __getitem__(self, key:Union[int, str]) -> Card:
-        if isinstance(key, (int, slice,)):
+        if isinstance(key, (int, slice)):
             return self._items[key]
         elif isinstance(key, str):
             for item in self._items:
                 if item.code == key:
                     return item
-            raise KeyError('Card %s is not found' % (key,))
+            raise KeyError('Card {} is not found'.format(key))
         else:
-            raise TypeError('Wrong key type')
+            raise AssertionError('Wrong key type')
 
     @classmethod
     def precheck(cls, pocket:Pocket, board:Board) -> bool:
@@ -70,8 +70,8 @@ class HandIdentifier(ABC):
     hand_classes = ()
 
     def __init__(self, pocket:Pocket, board:Board) -> None:
-        assert isinstance(pocket, Pocket), 'Pocket cannot contain non-pocket instance'
-        assert isinstance(board, Board), 'Board cannot contain non-board instance'
+        assert isinstance(pocket, Pocket), 'Pocket cannot be a non-pocket instance'
+        assert isinstance(board, Board), 'Board cannot be a non-board instance'
         self._pocket = pocket
         self._board = board
 
@@ -81,7 +81,7 @@ class HandIdentifier(ABC):
                 continue
 
             best_hand = None
-            for comb in self.get_combs():
+            for comb in self._get_combs():
                 hand = HandClass.identify(comb)
                 if hand:
                     if HandClass.first_is_best:
@@ -94,8 +94,7 @@ class HandIdentifier(ABC):
 
         return None
 
-    @abstractmethod
-    def get_combs(self) -> iter:
+    def _get_combs(self) -> iter:
         while False:
             yield
 

@@ -114,7 +114,7 @@ class StraightFlush(hands.StraightFlush):
 class HandIdentifier(hands.HandIdentifier):
     hand_classes = (StraightFlush, Quads, FullHouse, Flush, Straight, Trips, TwoPair, OnePair, HighCard)
 
-    def get_combs(self) -> iter:
+    def _get_combs(self) -> iter:
         if not hasattr(self, '__comb_list'):
             self.__comb_list = []
         if not hasattr(self, '__comb_iter'):
@@ -126,5 +126,6 @@ class HandIdentifier(hands.HandIdentifier):
         for comb in self.__comb_iter:
             self.__comb_list.append(comb)
             yield comb
+
 
 __all__ = ('HandIdentifier', 'HighCard', 'OnePair', 'TwoPair', 'Trips', 'Straight', 'Flush', 'FullHouse', 'Quads', 'StraightFlush')

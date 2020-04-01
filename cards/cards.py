@@ -14,10 +14,10 @@ class Card():
         self._suit = suit
 
     def __repr__(self) -> str:
-        return '%s of %s' % (self.rank.__repr__(), self.suit.__repr__())
+        return '{} of {}'.format(self.rank.__repr__(), self.suit.__repr__())
 
     def __str__(self) -> str:
-        return '%s of %s' % (self.rank.__str__(), self.suit.__str__())
+        return '{} of {}'.format(self.rank.__str__(), self.suit.__str__())
 
     def __hash__(self) -> int:
         return 256 * ord(self.suit.code) + ord(self.rank.code)
@@ -54,4 +54,4 @@ class Card():
 
     @property
     def name(self) -> str:
-        return '%s of %s' % (self.rank.name, self.suit.name)
+        return '{} of {}'.format(self.rank.name, self.suit.name)
