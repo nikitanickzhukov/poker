@@ -51,3 +51,6 @@ class Suit():
     @property
     def weight(self):
         return self._weight
+
+
+__all__ = ('Suit',)

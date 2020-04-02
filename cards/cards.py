@@ -55,3 +55,6 @@ class Card():
     @property
     def name(self) -> str:
         return '{} of {}'.format(self.rank.name, self.suit.name)
+
+
+__all__ = ('Card',)
