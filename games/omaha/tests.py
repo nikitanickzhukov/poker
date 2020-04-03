@@ -1,4 +1,4 @@
-import unittest
+from unittest import TestCase
 from datetime import datetime
 from collections import Counter
 
@@ -8,7 +8,7 @@ from .boards import Board
 from .hands import HandIdentifier, HighCard, OnePair, TwoPair, Trips, Straight, Flush, FullHouse, Quads, StraightFlush
 
 
-class IdentifyTestCase(unittest.TestCase):
+class IdentifyTestCase(TestCase):
     def setUp(self):
         self.deck = StandardDeck()
         self.deck.shuffle()
@@ -54,7 +54,3 @@ class IdentifyTestCase(unittest.TestCase):
         for item, c in count.most_common():
             print(item, c)
         print('time', duration)
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -1,4 +1,4 @@
-import unittest
+from unittest import TestCase
 
 from .ranks import Rank
 from .suits import Suit
@@ -6,7 +6,7 @@ from .cards import Card
 from .decks import StandardDeck
 
 
-class RankTestCase(unittest.TestCase):
+class RankTestCase(TestCase):
     def setUp(self):
         self.a = Rank(code='A', name='rank A', weight=3)
         self.b = Rank(code='B', name='rank B', weight=5)
@@ -51,7 +51,7 @@ class RankTestCase(unittest.TestCase):
         self.assertTrue(self.b <= self.c)
 
 
-class SuitTestCase(unittest.TestCase):
+class SuitTestCase(TestCase):
     def setUp(self):
         self.x = Suit(code='x', name='Suit X', weight=3)
         self.y = Suit(code='y', name='Suit Y', weight=5)
@@ -96,7 +96,7 @@ class SuitTestCase(unittest.TestCase):
         self.assertTrue(self.y <= self.z)
 
 
-class CardTestCase(unittest.TestCase):
+class CardTestCase(TestCase):
     def setUp(self):
         self.a = Rank(code='A', name='rank A', weight=1)
         self.b = Rank(code='B', name='rank B', weight=2)
@@ -157,7 +157,7 @@ class CardTestCase(unittest.TestCase):
         self.assertTrue(self.bx <= self.by)
 
 
-class DeckTestCase(unittest.TestCase):
+class DeckTestCase(TestCase):
     def setUp(self):
         self.a = StandardDeck()
         self.b = StandardDeck()
@@ -224,7 +224,3 @@ class DeckTestCase(unittest.TestCase):
         c = self.a[0]
         self.assertEqual(c, self.a.shift())
         self.assertNotEqual(c, self.a[0])
-
-
-if __name__ == '__main__':
-    unittest.main()

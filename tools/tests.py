@@ -1,18 +1,18 @@
-import unittest
+from unittest import TestCase
 
 from .players import Player
 from .boxes import Box
 from .tables import Table
 
 
-class PlayerTestCase(unittest.TestCase):
+class PlayerTestCase(TestCase):
     def test_init(self):
         Player(nickname='a')
         with self.assertRaises(AssertionError):
             Player(nickname='')
 
 
-class BoxTestCase(unittest.TestCase):
+class BoxTestCase(TestCase):
     def setUp(self):
         self.x = Player(nickname='x')
 
@@ -52,7 +52,7 @@ class BoxTestCase(unittest.TestCase):
             a.chips -= 1
 
 
-class TableTestCase(unittest.TestCase):
+class TableTestCase(TestCase):
     def setUp(self):
         self.x = Player(nickname='x')
 
@@ -88,7 +88,3 @@ class TableTestCase(unittest.TestCase):
         self.assertFalse(a.box_is_empty(box_num=2))
         a.leave_box(box_num=2)
         self.assertTrue(a.box_is_empty(box_num=2))
-
-
-if __name__ == '__main__':
-    unittest.main()
