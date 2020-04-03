@@ -16,10 +16,10 @@ class Deck(ABC):
         self._items = []
 
     def __repr__(self) -> str:
-        return repr(self._items)
+        return '<{}: {!r}>'.format(self.__class__.__name__, self._items)
 
     def __str__(self) -> str:
-        return str(self._items)
+        return str([ str(x) for x in self._items ])
 
     def __bool__(self) -> bool:
         return bool(self._items)

@@ -13,6 +13,11 @@ class Action(ABC):
             assert amount == 0, 'Amount must be zero for {}'.format(self.__class__.__name__)
         self._amount = amount
 
+    def __repr__(self) -> str:
+        if self.with_amount:
+            return '<{}: {}>'.format(self.__class__.__name__, self._amount)
+        return '<{}>'.format(self.__class__.__name__)
+
     @property
     def amount(self):
         return self._amount

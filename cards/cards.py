@@ -13,14 +13,14 @@ class Card():
         self._rank = rank
         self._suit = suit
 
-    def __repr__(self) -> str:
-        return '{} of {}'.format(self.rank.__repr__(), self.suit.__repr__())
-
     def __str__(self) -> str:
-        return '{} of {}'.format(self.rank.__str__(), self.suit.__str__())
+        return self.code
+
+    def __repr__(self) -> str:
+        return '<{}: {}>'.format(self.__class__.__name__, self.name)
 
     def __hash__(self) -> int:
-        return 256 * ord(self.suit.code) + ord(self.rank.code)
+        return hash(self.code)
 
     def __eq__(self, other:'Card') -> bool:
         return self.rank == other._rank and self.suit == other._suit

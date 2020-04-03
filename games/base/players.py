@@ -7,13 +7,13 @@ class Player():
         self._nickname = nickname
 
     def __repr__(self) -> str:
-        return self.nickname
+        return '<{}: {}>'.format(self.__class__.__name__, self._nickname)
 
     def __str__(self) -> str:
-        return self.nickname
+        return self._nickname
 
     def __hash__(self) -> int:
-        return hash(self.nickname)
+        return hash(self._nickname)
 
     @property
     def nickname(self) -> str:

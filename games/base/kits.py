@@ -16,10 +16,14 @@ class Kit(ABC):
             self.append(*args)
 
     def __repr__(self) -> str:
-        return repr(self._streets)
+        if not self._streets:
+            return '<{}: empty>'.format(self.__class__.__name__)
+        if len(self.street_classes) == 1:
+            return '<{}: {!r}>'.format(self.__class__.__name__, self._streets[0].items)
+        return '<{}: {!r}>'.format(self.__class__.__name__, self._streets)
 
     def __str__(self) -> str:
-        return str(self._streets)
+        return str([ str(x) for x in self.items ])
 
     def __eq__(self, other:'Kit') -> bool:
         return self.__class__ == other.__class__ and self._streets == other._streets
@@ -28,20 +32,20 @@ class Kit(ABC):
         return self.__class__ != other.__class__ or self._streets != other._streets
 
     def __contains__(self, item:Card) -> bool:
-        return item in self._items
+        return item in self.items
 
     def __len__(self) -> int:
-        return len(self._items)
+        return len(self.items)
 
     def __iter__(self) -> iter:
-        return iter(self._items)
+        return iter(self.items)
 
     @property
     def streets(self) -> list:
         return self._streets
 
     @property
-    def _items(self) -> list:
+    def items(self) -> list:
         return [ x for s in self._streets for x in s ]
 
     def append(self, *args) -> None:

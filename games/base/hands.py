@@ -17,6 +17,9 @@ class Hand(ABC):
         assert all(isinstance(x, Card) for x in args), 'Hand cannot contain non-card items'
         self._items = args
 
+    def __repr__(self) -> str:
+        return '<{}: {!r}'.format(self.__class__.__name__, self._items)
+
     def __eq__(self, other:'Hand') -> bool:
         return self.__class__ == other.__class__ and self._items == other._items
 
@@ -73,10 +76,7 @@ class HighCard(Hand):
     first_is_best = True
 
     def __repr__(self) -> str:
-        return 'High card: {}, kickers: {}'.format(
-                   self._items[0].rank.__repr__(),
-                   ', '.join([ x.rank.__repr__() for x in self._items[1:] ]),
-               )
+        return '<High card: {}>'.format(', '.join([ x.rank.name for x in self._items ]))
 
     @classmethod
     def identify(cls, comb:tuple) -> 'HighCard':
@@ -88,9 +88,9 @@ class OnePair(Hand):
     first_is_best = True
 
     def __repr__(self) -> str:
-        return 'One pair: {}s, kickers: {}'.format(
-                   self._items[0].rank.__repr__(),
-                   ', '.join([ x.rank.__repr__() for x in self._items[2:] ]),
+        return '<One pair: {}s, kickers: {}>'.format(
+                   self._items[0].rank.name,
+                   ', '.join([ x.rank.name for x in self._items[2:] ]),
                )
 
     @classmethod
@@ -111,10 +111,10 @@ class TwoPair(Hand):
     first_is_best = True
 
     def __repr__(self) -> str:
-        return 'Two pair: {}s and {}s, kicker: {}'.format(
-                   self._items[0].rank.__repr__(),
-                   self._items[2].rank.__repr__(),
-                   self._items[4].rank.__repr__(),
+        return '<Two pair: {}s and {}s, kicker: {}>'.format(
+                   self._items[0].rank.name,
+                   self._items[2].rank.name,
+                   self._items[4].rank.name,
                )
 
     @classmethod
@@ -140,9 +140,9 @@ class Trips(Hand):
     first_is_best = True
 
     def __repr__(self) -> str:
-        return 'Three of a kind: {}s, kickers: {}'.format(
-                   self._items[0].rank.__repr__(),
-                   ', '.join([ x.rank.__repr__() for x in self._items[3:] ]),
+        return '<Three of a kind: {}s, kickers: {}>'.format(
+                   self._items[0].rank.name,
+                   ', '.join([ x.rank.name for x in self._items[3:] ]),
                )
 
     @classmethod
@@ -163,7 +163,7 @@ class Straight(Hand):
     first_is_best = False
 
     def __repr__(self) -> str:
-        return '%s-high straight'.format(self._items[0].rank.__repr__())
+        return '<Straight: %s-high>'.format(self._items[0].rank.name)
 
     @classmethod
     def identify(cls, comb:tuple) -> Optional['Straight']:
@@ -188,10 +188,7 @@ class Flush(Hand):
     first_is_best = True
 
     def __repr__(self) -> str:
-        return '%s-high flush, %s'.format(
-                   self._items[0].rank.__repr__(),
-                   ', '.join([ x.rank.__repr__() for x in self._items[1:] ])
-               )
+        return '<Flush: %s>'.format(', '.join([ x.rank.name for x in self._items ]))
 
     @classmethod
     def identify(cls, comb:tuple) -> Optional['Flush']:
@@ -210,9 +207,9 @@ class FullHouse(Hand):
     first_is_best = True
 
     def __repr__(self) -> str:
-        return 'Full house: {}s over {}s'.format(
-                   self._items[0].rank.__repr__(),
-                   self._items[3].rank.__repr__(),
+        return '<Full house: {}s over {}s>'.format(
+                   self._items[0].rank.name,
+                   self._items[3].rank.name,
                )
 
     @classmethod
@@ -229,9 +226,9 @@ class Quads(Hand):
     first_is_best = True
 
     def __repr__(self) -> str:
-        return 'Four of a kind: {}s, kicker: {}'.format(
-                   self._items[0].rank.__repr__(),
-                   self._items[4].rank.__repr__(),
+        return '<Four of a kind: {}s, kicker: {}>'.format(
+                   self._items[0].rank.name,
+                   self._items[4].rank.name,
                )
 
     @classmethod
@@ -251,8 +248,8 @@ class StraightFlush(Hand):
 
     def __repr__(self) -> str:
         if self._items[0].rank == max_rank:
-            return 'Royal flush'
-        return '%s-high straight flush'.format(self._items[0].rank.__repr__())
+            return '<Royal flush>'
+        return '<Straight flush: %s-high>'.format(self._items[0].rank.name)
 
     @classmethod
     def identify(cls, comb:tuple) -> Optional['StraightFlush']:

@@ -13,14 +13,14 @@ class Suit():
         self._name = name
         self._weight = weight
 
+    def __str__(self) -> str:
+        return self._code
+
     def __repr__(self) -> str:
-        return self._name
+        return '<{}: {}>'.format(self.__class__.__name__, self._name)
 
     def __hash__(self) -> int:
-        return ord(self._code)
-
-    def __str__(self) -> str:
-        return self._name
+        return hash(self._code)
 
     def __eq__(self, other:'Suit') -> bool:
         return self._code == other._code
