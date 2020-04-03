@@ -14,12 +14,12 @@ class Box():
     def __repr__(self) -> str:
         if self.is_empty():
             return '<{}: empty>'.format(self.__class__.__name__)
-        return '<{}: {}, {} chip(s)'.format(self.__class__.__name__, repr(self.player), self.chips)
+        return '<{}: {!r}, {} chip(s)'.format(self.__class__.__name__, self.player, self.chips)
 
     def occupy(self, player:Player, chips:int) -> None:
         assert self.is_empty(), 'Box is not empty'
         assert isinstance(player, Player), 'Player must be None or a player instance'
-        assert isinstance(chips, int) and chips >= 0, 'Stack must be a positive integer'
+        assert isinstance(chips, int) and chips >= 0, 'Chips must be a positive integer'
         self._player = player
         self._chips = chips
 
@@ -28,16 +28,13 @@ class Box():
         self._player = None
         self._chips = None
 
-    def win(self, amount:int) -> None:
-        assert not self.is_empty(), 'Empty box cannot win'
-        assert isinstance(amount, int) and amount >= 0, 'Amount must be a positive integer'
-        self._chips += amount
+    def __get_chips(self) -> int:
+        return self._chips
 
-    def lose(self, amount:int) -> None:
-        assert not self.is_empty(), 'Empty box cannot lose'
-        assert isinstance(amount, int) and amount >= 0, 'Amount must be a positive integer'
-        assert amount <= self._chips, 'Box cannot lose more than chips'
-        self._chips -= amount
+    def __set_chips(self, value:int) -> None:
+        assert not self.is_empty(), 'Box is empty'
+        assert isinstance(value, int) and value >= 0, 'Chips must be a positive integer'
+        self._chips = value
 
     def is_empty(self) -> bool:
         return self.player is None
@@ -46,9 +43,7 @@ class Box():
     def player(self) -> Player:
         return self._player
 
-    @property
-    def chips(self) -> int:
-        return self._chips
+    chips = property(__get_chips, __set_chips)
 
 
 __all__ = ('Box',)
