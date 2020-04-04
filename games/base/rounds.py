@@ -2,7 +2,7 @@ from typing import List
 from abc import ABC
 
 from cards import Deck
-from tools import Box
+from rooms import Box
 from .pockets import Pocket
 from .boards import Board
 from .hands import HandIdentifier

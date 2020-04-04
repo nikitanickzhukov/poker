@@ -3,7 +3,7 @@ from datetime import datetime
 from collections import Counter
 
 from cards import StandardDeck
-from tools import Player, Table
+from rooms import Player, Table
 from .pockets import Pocket
 from .boards import Board
 from .hands import HandIdentifier, HighCard, OnePair, TwoPair, Trips, Straight, Flush, FullHouse, Quads, StraightFlush
