@@ -9,6 +9,7 @@ class Street(ABC):
     """
 
     length = 0
+    order = 0
 
     def __init__(self, *args) -> None:
         assert len(args) == self.length, \

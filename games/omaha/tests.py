@@ -2,10 +2,12 @@ from unittest import TestCase
 from datetime import datetime
 from collections import Counter
 
-from cards import StandardDeck, cards
+from cards import StandardDeck
+from tools import Player, Table
 from .pockets import Pocket
 from .boards import Board
 from .hands import HandIdentifier, HighCard, OnePair, TwoPair, Trips, Straight, Flush, FullHouse, Quads, StraightFlush
+from .rounds import Round
 
 
 class IdentifyTestCase(TestCase):
@@ -42,7 +44,7 @@ class IdentifyTestCase(TestCase):
         start = datetime.now()
 
         count = Counter()
-        for i in range(10000):
+        for i in range(1000):
             self.deck.shuffle()
             pocket = Pocket(*self.deck[0:4])
             board = Board(*self.deck[4:9])
@@ -54,3 +56,20 @@ class IdentifyTestCase(TestCase):
         for item, c in count.most_common():
             print(item, c)
         print('time', duration)
+
+
+class RoundTestCase(TestCase):
+    def setUp(self):
+        a = Player(nickname='a')
+        b = Player(nickname='b')
+        c = Player(nickname='c')
+        d = Player(nickname='d')
+        self.t = Table()
+        self.t.occupy_box(0, player=a, chips=10)
+        self.t.occupy_box(2, player=b, chips=20)
+        self.t.occupy_box(4, player=c, chips=30)
+        self.t.occupy_box(6, player=d, chips=40)
+
+    def test_init(self):
+        r = Round(self.t.active_boxes, 2, 1)
+        r.start()
