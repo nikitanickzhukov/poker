@@ -24,7 +24,7 @@ class Table():
         self._boxes[box_num].leave()
 
     def box_is_empty(self, box_num:int) -> bool:
-        return self._boxes[box_num].is_empty()
+        return self._boxes[box_num].is_empty
 
     def next_round(self):
         pass
@@ -35,11 +35,11 @@ class Table():
 
     @property
     def empty_boxes(self):
-        return tuple(x for x in self._boxes if x.is_empty())
+        return tuple(x for x in self._boxes if x.is_empty)
 
     @property
     def active_boxes(self):
-        return tuple(x for x in self._boxes if x.is_active())
+        return tuple(x for x in self._boxes if x.is_active)
 
 
 __all__ = ('Table',)

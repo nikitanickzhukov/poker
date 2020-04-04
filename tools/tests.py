@@ -80,3 +80,15 @@ class TableTestCase(TestCase):
         self.assertFalse(a.box_is_empty(box_num=2))
         a.leave_box(box_num=2)
         self.assertTrue(a.box_is_empty(box_num=2))
+
+    def test_empty_boxes(self):
+        a = Table()
+        self.assertEqual(a.boxes, a.empty_boxes)
+        a.occupy_box(box_num=2, player=self.x, chips=1)
+        self.assertNotIn(a.boxes[2], a.empty_boxes)
+
+    def test_active_boxes(self):
+        a = Table()
+        self.assertEqual(len(a.active_boxes), 0)
+        a.occupy_box(box_num=2, player=self.x, chips=1)
+        self.assertIn(a.boxes[2], a.active_boxes)
