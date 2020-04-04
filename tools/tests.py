@@ -21,14 +21,6 @@ class BoxTestCase(TestCase):
 
     def test_init(self):
         Box()
-        Box(player=self.x, chips=1)
-        Box(player=self.x, chips=0)
-        with self.assertRaises(AssertionError):
-            Box(player=None, chips=1)
-        with self.assertRaises(AssertionError):
-            Box(player=self.x, chips=None)
-        with self.assertRaises(AssertionError):
-            Box(player=self.x, chips=-1)
 
     def test_occupy(self):
         a = Box()
@@ -37,13 +29,13 @@ class BoxTestCase(TestCase):
             a.occupy(player=self.x, chips=1)
 
     def test_leave(self):
-        a = Box(player=self.x, chips=1)
-        a.leave()
+        a = Box()
         with self.assertRaises(AssertionError):
             a.leave()
 
     def test_chips(self):
-        a = Box(player=self.x, chips=1)
+        a = Box()
+        a.occupy(player=self.x, chips=1)
         a.chips += 1
         self.assertEqual(a.chips, 2)
         a.chips -= 2

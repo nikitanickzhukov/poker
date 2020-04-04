@@ -7,7 +7,8 @@ class Table():
     max_boxes = 10
 
     def __init__(self) -> None:
-        self._boxes = [ Box() for _ in range(self.max_boxes) ]
+        self._boxes = tuple(Box() for _ in range(self.max_boxes))
+        self._button_idx = 0
 
     def __repr__(self) -> str:
         return '<{}: {!r}>'.format(self.__class__.__name__, self._boxes)
@@ -25,9 +26,20 @@ class Table():
     def box_is_empty(self, box_num:int) -> bool:
         return self._boxes[box_num].is_empty()
 
+    def next_round(self):
+        pass
+
     @property
     def boxes(self):
         return self._boxes
+
+    @property
+    def empty_boxes(self):
+        return tuple(x for x in self._boxes if x.is_empty())
+
+    @property
+    def active_boxes(self):
+        return tuple(x for x in self._boxes if x.is_active())
 
 
 __all__ = ('Table',)
