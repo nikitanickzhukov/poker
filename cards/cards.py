@@ -1,15 +1,47 @@
-from .ranks import Rank
-from .suits import Suit
+from functools import total_ordering
+
+from utils.attrs import Attr
+from .ranks import Rank, ranks
+from .suits import Suit, suits
 
 
+@total_ordering
 class Card():
     """
-    Representation of abstract card
+    A card in a deck
+
+    Parameters
+    ----------
+        rank : Rank
+            A card rank
+        suit : Suit
+            A card suit
+
+    Attributes
+    ----------
+        rank : Rank
+            A card rank (read only)
+        suit : Suit
+            A card suit (read only)
+        code : str
+            A code name (read only)
+        name : str
+            A full name (read only)
+
+    Methods
+    -------
+        __str__()
+        __repr__()
+        __hash__()
+        Comparing operations
     """
 
+    rank = Attr()
+    suit = Attr()
+
     def __init__(self, rank:Rank, suit:Suit) -> None:
-        assert isinstance(rank, Rank), 'Rank cannot be non-rank instance'
-        assert isinstance(suit, Suit), 'Suit cannot be non-suit instance'
+        assert isinstance(rank, Rank), '`rank` must be a `Rank` instance'
+        assert isinstance(suit, Suit), '`suit` must be a `Suit` instance'
         self._rank = rank
         self._suit = suit
 
@@ -25,28 +57,8 @@ class Card():
     def __eq__(self, other:'Card') -> bool:
         return self.rank == other._rank and self.suit == other._suit
 
-    def __ne__(self, other:'Card') -> bool:
-        return self.rank != other._rank or self.suit != other._suit
-
     def __gt__(self, other:'Card') -> bool:
         return (self.rank, self.suit) > (other._rank, other._suit)
-
-    def __ge__(self, other:'Card') -> bool:
-        return (self.rank, self.suit) >= (other._rank, other._suit)
-
-    def __lt__(self, other:'Card') -> bool:
-        return (self.rank, self.suit) < (other._rank, other._suit)
-
-    def __le__(self, other:'Card') -> bool:
-        return (self.rank, self.suit) <= (other._rank, other._suit)
-
-    @property
-    def rank(self) -> str:
-        return self._rank
-
-    @property
-    def suit(self) -> str:
-        return self._suit
 
     @property
     def code(self) -> str:
@@ -57,4 +69,7 @@ class Card():
         return '{} of {}'.format(self.rank.name, self.suit.name)
 
 
-__all__ = ('Card',)
+cards = tuple(Card(rank=r, suit=s) for s in suits for r in ranks)
+
+
+__all__ = ('Card', 'cards')

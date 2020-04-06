@@ -35,21 +35,6 @@ class RankTestCase(TestCase):
         self.assertTrue(self.b > self.a)
         self.assertFalse(self.b > self.c)
 
-    def test_ge(self):
-        self.assertTrue(self.b >= self.b)
-        self.assertTrue(self.b >= self.a)
-        self.assertFalse(self.b >= self.c)
-
-    def test_lt(self):
-        self.assertFalse(self.b < self.b)
-        self.assertFalse(self.b < self.a)
-        self.assertTrue(self.b < self.c)
-
-    def test_le(self):
-        self.assertTrue(self.b <= self.b)
-        self.assertFalse(self.b <= self.a)
-        self.assertTrue(self.b <= self.c)
-
 
 class SuitTestCase(TestCase):
     def setUp(self):
@@ -79,21 +64,6 @@ class SuitTestCase(TestCase):
         self.assertFalse(self.y > self.y)
         self.assertTrue(self.y > self.x)
         self.assertFalse(self.y > self.z)
-
-    def test_ge(self):
-        self.assertTrue(self.y >= self.y)
-        self.assertTrue(self.y >= self.x)
-        self.assertFalse(self.y >= self.z)
-
-    def test_lt(self):
-        self.assertFalse(self.y < self.y)
-        self.assertFalse(self.y < self.x)
-        self.assertTrue(self.y < self.z)
-
-    def test_le(self):
-        self.assertTrue(self.y <= self.y)
-        self.assertFalse(self.y <= self.x)
-        self.assertTrue(self.y <= self.z)
 
 
 class CardTestCase(TestCase):
@@ -138,24 +108,6 @@ class CardTestCase(TestCase):
         self.assertFalse(self.bx > self.bx)
         self.assertFalse(self.bx > self.by)
 
-    def test_ge(self):
-        self.assertTrue(self.bx >= self.ax)
-        self.assertTrue(self.bx >= self.ay)
-        self.assertTrue(self.bx >= self.bx)
-        self.assertFalse(self.bx >= self.by)
-
-    def test_lt(self):
-        self.assertFalse(self.bx < self.ax)
-        self.assertFalse(self.bx < self.ay)
-        self.assertFalse(self.bx < self.bx)
-        self.assertTrue(self.bx < self.by)
-
-    def test_le(self):
-        self.assertFalse(self.bx <= self.ax)
-        self.assertFalse(self.bx <= self.ay)
-        self.assertTrue(self.bx <= self.bx)
-        self.assertTrue(self.bx <= self.by)
-
 
 class DeckTestCase(TestCase):
     def setUp(self):
@@ -165,11 +117,6 @@ class DeckTestCase(TestCase):
     def tearDown(self):
         del self.a
         del self.b
-
-    def test_eq(self):
-        self.assertEqual(self.a, self.b)
-        self.b.shuffle()
-        self.assertNotEqual(self.a, self.b)
 
     def test_contains(self):
         c = self.a[0]
