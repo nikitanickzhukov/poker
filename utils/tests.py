@@ -1,35 +1,45 @@
 from unittest import TestCase
 
-from .attrs import Attr, WritableAttr, ValidatedAttr, TypedAttr, StringAttr, IntegerAttr
+from .attrs import Attr, ValidatedAttr, TypedAttr, StringAttr, IntegerAttr
 
 
 class AttrTestCase(TestCase):
     def test_attr(self):
+        def set_bb(obj, val):
+            obj.b = val
+
         class Test():
             a = Attr()
-            def __init__(self, a):
+            b = Attr(readable=False)
+            c = Attr(writable=False)
+            bb = Attr(setter=set_bb)
+            cc = Attr(getter=lambda obj: obj.c)
+
+            def __init__(self, a, b, c):
                 self._a = a
+                self._b = b
+                self._c = c
 
-        test = Test(a=1)
+        test = Test(a=1, b=2, c=3)
         self.assertEqual(test.a, 1)
-        with self.assertRaises(NotImplementedError):
-            test.a = 2
-
-    def test_writable(self):
-        class Test():
-            a = WritableAttr()
-            def __init__(self, a):
-                self._a = a
-
-        test = Test(a=1)
-        self.assertEqual(test.a, 1)
-        test.a = 2
-        self.assertEqual(test.a, 2)
+        with self.assertRaises(AttributeError):
+            b = test.b
+        self.assertEqual(test.c, 3)
+        self.assertEqual(test.cc, 3)
+        test.a = 4
+        self.assertEqual(test.a, 4)
+        test.b = 5
+        self.assertEqual(test._b, 5)
+        with self.assertRaises(AttributeError):
+            test.c = 6
+        test._c = 6
+        self.assertEqual(test.c, 6)
+        self.assertEqual(test.cc, 6)
 
     def test_validated(self):
         class Test():
-            a = ValidatedAttr(validate=lambda x: x == 'a')
-            r24 = ValidatedAttr(validate=(lambda x: x >= 2, lambda x: x <= 4))
+            a = ValidatedAttr(validate=lambda obj, val: val == 'a')
+            r24 = ValidatedAttr(validate=(lambda obj, val: val >= 2, lambda obj, val: val <= 4))
 
         test = Test()
         test.a = 'a'
@@ -45,29 +55,28 @@ class AttrTestCase(TestCase):
     def test_typed(self):
         class Test():
             a = TypedAttr(type=str)
-            b = TypedAttr(type=int, validate=lambda x: x == 1)
+            b = TypedAttr(type=int, nullable=True)
 
         test = Test()
         test.a = 'a'
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             test.a = 1
+        with self.assertRaises(TypeError):
+            test.a = None
         test.a = 'b'
 
         test.b = 1
-        with self.assertRaises(ValueError):
-            test.b = 2
+        test.b = None
 
     def test_string(self):
         class Test():
             a = StringAttr()
             b = StringAttr(min_length=1, max_length=2)
-            c = StringAttr(validate=lambda x: x == 'c')
-            d = StringAttr(max_length=2, validate=lambda x: x.startswith('d'))
 
         test = Test()
         test.a = 'a'
-        with self.assertRaises(ValueError):
-            test.a = 1
+        with self.assertRaises(TypeError):
+            test.a = b'a'
         test.a = 'b'
 
         test.b = 'b'
@@ -76,26 +85,14 @@ class AttrTestCase(TestCase):
         with self.assertRaises(ValueError):
             test.b = 'bbb'
 
-        test.c = 'c'
-        with self.assertRaises(ValueError):
-            test.c = 'cc'
-
-        test.d = 'dd'
-        with self.assertRaises(ValueError):
-            test.d = 'ddd'
-        with self.assertRaises(ValueError):
-            test.d = 'cd'
-
     def test_integer(self):
         class Test():
             a = IntegerAttr()
             b = IntegerAttr(min_value=1, max_value=2)
-            c = IntegerAttr(validate=lambda x: x == 1)
-            d = IntegerAttr(max_value=2, validate=lambda x: x != 1)
 
         test = Test()
         test.a = 1
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             test.a = 1.1
         test.a = 2
 
@@ -104,13 +101,3 @@ class AttrTestCase(TestCase):
             test.b = 0
         with self.assertRaises(ValueError):
             test.b = 3
-
-        test.c = 1
-        with self.assertRaises(ValueError):
-            test.c = 2
-
-        test.d = 2
-        with self.assertRaises(ValueError):
-            test.d = 3
-        with self.assertRaises(ValueError):
-            test.d = 1
