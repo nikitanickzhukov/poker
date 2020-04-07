@@ -22,8 +22,7 @@ class IdentifyTestCase(TestCase):
         # High card in the pocket
         pocket = Pocket(self.deck['As'], self.deck['2s'], self.deck['4d'], self.deck['3c'])
         board = Board(self.deck['Qs'], self.deck['7d'], self.deck['Jh'], self.deck['Kd'], self.deck['6s'])
-        identifier = HandIdentifier(pocket, board)
-        hand = identifier.identify()
+        hand = HandIdentifier.identify(pocket, board)
         self.assertIsInstance(hand, HighCard)
         self.assertEqual(hand[0], self.deck['As'])
         self.assertEqual(hand[1], self.deck['Kd'])
@@ -32,8 +31,7 @@ class IdentifyTestCase(TestCase):
         # High card on the board
         pocket = Pocket(self.deck['7s'], self.deck['2s'], self.deck['6c'], self.deck['Tc'])
         board = Board(self.deck['3s'], self.deck['4d'], self.deck['Jh'], self.deck['Qd'], self.deck['8s'])
-        identifier = HandIdentifier(pocket, board)
-        hand = identifier.identify()
+        hand = HandIdentifier.identify(pocket, board)
         self.assertIsInstance(hand, HighCard)
         self.assertEqual(hand[0], self.deck['Qd'])
         self.assertEqual(hand[1], self.deck['Jh'])
@@ -43,19 +41,20 @@ class IdentifyTestCase(TestCase):
     def test_speed(self):
         start = datetime.now()
 
+        test_count = 10000
         count = Counter()
-        for i in range(1000):
+        for i in range(test_count):
             self.deck.shuffle()
             pocket = Pocket(*self.deck[0:4])
             board = Board(*self.deck[4:9])
-            identifier = HandIdentifier(pocket, board)
-            hand = identifier.identify()
+            hand = HandIdentifier.identify(pocket, board)
             count.update([hand.__class__])
 
         duration = datetime.now() - start
         for item, c in count.most_common():
             print(item, c)
         print('time', duration)
+        print('per second', round(test_count / duration.total_seconds()))
 
 
 class RoundTestCase(TestCase):

@@ -70,8 +70,7 @@ class Round(ABC):
     def _showdown(self) -> None:
         print('Showdown')
         for i, pocket in enumerate(self._pockets):
-            identifier = self.identifier_class(board=self._board, pocket=pocket)
-            hand = identifier.identify()
+            hand = self.identifier_class.identify(pocket, self._board)
             print('Pocket', i, ': ', pocket, ' == ', repr(hand))
 
     @property
