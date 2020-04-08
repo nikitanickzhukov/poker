@@ -1,7 +1,7 @@
 from abc import ABC
 from functools import total_ordering
 
-from utils.attrs import Attr
+from utils.attrs import StringAttr, IntegerAttr
 
 
 @total_ordering
@@ -30,14 +30,14 @@ class Prop(ABC):
         Comparing operations
     """
 
-    code = Attr()
-    name = Attr()
-    weight = Attr()
+    code = StringAttr(min_length=1, max_length=1, writable=False)
+    name = StringAttr(min_length=1, writable=False)
+    weight = IntegerAttr(min_value=0, writable=False)
 
     def __init__(self, code:str, name:str, weight:int) -> None:
-        assert isinstance(code, str) and len(code) == 1, '`code` must be a single char'
-        assert isinstance(name, str) and len(name) > 0, '`name` must be specified'
-        assert isinstance(weight, int) and weight > 0, '`weight` must be a positive integer'
+        self.__class__.code.validate(self, code)
+        self.__class__.name.validate(self, name)
+        self.__class__.weight.validate(self, weight)
 
         self._code = code
         self._name = name

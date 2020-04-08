@@ -1,3 +1,4 @@
+from utils.attrs import StringAttr
 from .props import Prop
 
 
@@ -6,9 +7,12 @@ class Rank(Prop):
     A card rank (see Prop docs for more information)
     """
 
-    def __init__(self, code:str, name:str, weight:int) -> None:
-        assert 'A' <= code <= 'Z' or '0' <= code <= '9', '`code` must be an uppercase latin letter or a digit'
-        super().__init__(code, name, weight)
+    code = StringAttr(
+        min_length=1,
+        max_length=1,
+        validate=lambda obj, val: 'A' <= val <= 'Z' or '0' <= val <= '9',
+        writable=False,
+    )
 
 
 ranks = (

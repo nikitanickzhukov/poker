@@ -2,6 +2,7 @@ from typing import Union
 from abc import ABC
 import random
 
+from utils.attrs import ListAttr
 from .cards import Card, cards
 
 
@@ -15,7 +16,8 @@ class Deck(ABC):
 
     Attributes
     ----------
-        None
+        cards : list
+            A list of cards (read only)
 
     Methods
     -------
@@ -41,32 +43,39 @@ class Deck(ABC):
             Removes and returns one card from the head of the deck
     """
 
+    cards = ListAttr(
+        type=list,
+        item_type=Card,
+        validate=lambda obj, val: len(set(val)) == len(val),
+        writable=False,
+    )
+
     def __init__(self) -> None:
-        self._items = []
+        self._cards = []
 
     def __str__(self) -> str:
-        return str([ str(x) for x in self._items ])
+        return str([ str(x) for x in self._cards ])
 
     def __repr__(self) -> str:
-        return '<{}: {!r}>'.format(self.__class__.__name__, self._items)
+        return '<{}: {!r}>'.format(self.__class__.__name__, self._cards)
 
     def __bool__(self) -> bool:
-        return bool(self._items)
+        return bool(self._cards)
 
     def __contains__(self, item:Card) -> bool:
-        return item in self._items
+        return item in self._cards
 
     def __len__(self) -> int:
-        return len(self._items)
+        return len(self._cards)
 
     def __iter__(self) -> iter:
-        return iter(self._items)
+        return iter(self._cards)
 
     def __getitem__(self, key:Union[slice, int, str]) -> Card:
         if isinstance(key, (slice, int)):
-            return self._items[key]
+            return self._cards[key]
         elif isinstance(key, str):
-            for item in self._items:
+            for item in self._cards:
                 if item.code == key:
                     return item
             raise KeyError('Card {} is not found'.format(key))
@@ -75,12 +84,12 @@ class Deck(ABC):
 
     def __delitem__(self, key:Union[slice, int, str]) -> None:
         if isinstance(key, (slice, int)):
-            del self._items[key]
+            del self._cards[key]
         elif isinstance(key, str):
             ok = False
-            for i in range(len(self._items)):
-                if self._items[i].code == key:
-                    del self._items[i]
+            for i in range(len(self._cards)):
+                if self._cards[i].code == key:
+                    del self._cards[i]
                     ok = True
                     break
             if not ok:
@@ -89,23 +98,23 @@ class Deck(ABC):
             raise AssertionError('Wrong key type')
 
     def shuffle(self) -> None:
-        random.shuffle(self._items)
+        random.shuffle(self._cards)
 
     def push(self, *cards) -> None:
-        assert all(isinstance(x, Card) for x in cards), 'Deck must contain `Card` items only'
-        assert all(x not in self._items for x in cards), 'Deck already contains such card(s)'
-        self._items.extend(cards)
+        items = self._cards + list(cards)
+        self.__class__.cards.validate(self, items)
+        self._cards = items
 
     def pop(self) -> Card:
-        return self._items.pop()
+        return self._cards.pop()
 
     def unshift(self, *cards) -> None:
-        assert all(isinstance(x, Card) for x in cards), 'Deck must contain `Card` items only'
-        assert all(x not in self._items for x in cards), 'Deck already contains such card(s)'
-        self._items[0:0] = cards
+        items = list(cards) + self._cards
+        self.__class__.cards.validate(self, items)
+        self._cards = items
 
     def shift(self) -> Card:
-        return self._items.pop(0)
+        return self._cards.pop(0)
 
 
 class StandardDeck(Deck):
@@ -114,8 +123,10 @@ class StandardDeck(Deck):
     """
 
     def __init__(self) -> None:
+        items = list(cards)
+        self.__class__.cards.validate(self, items)
         super().__init__()
-        self._items = list(cards)
+        self._cards = items
 
 
 __all__ = ('Deck', 'StandardDeck')

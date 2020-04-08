@@ -1,8 +1,10 @@
 from typing import List
 from abc import ABC
 
+from utils.attrs import TypedAttr, IntegerAttr, ListAttr
 from cards import Deck
 from rooms import Box
+from .streets import Street
 from .pockets import Pocket
 from .boards import Board
 from .hands import HandIdentifier
@@ -12,27 +14,57 @@ class Round(ABC):
     deck_class = None
     pocket_class = None
     board_class = None
-    identifier_class = None
+    hand_class = None
+
+    boxes = ListAttr(
+        type=tuple,
+        item_type=Box,
+        writable=False
+    )
+    bb = IntegerAttr(min_value=0, writable=False)
+    sb = IntegerAttr(min_value=0, writable=False)
+    ante = IntegerAttr(min_value=0, writable=False)
+    deck = TypedAttr(type=Deck, writable=False)
+    board = TypedAttr(type=Board, writable=False)
+    pockets = ListAttr(
+        type=tuple,
+        item_type=Pocket,
+        writable=False
+    )
+    street_classes = ListAttr(
+        type=tuple,
+        item_type=Street,
+        getter=lambda obj: sorted(obj.pocket_class.street_classes + obj.board_class.street_classes, key=lambda x: x.order),
+    )
+    street_idx = IntegerAttr(min_value=0, writable=False)
 
     def __init__(self, boxes:List[Box], bb:int, sb:int, ante:int=0) -> None:
-        assert issubclass(self.deck_class, Deck), 'Deck class must be a deck subclass'
-        assert issubclass(self.pocket_class, Pocket), 'Pocket class must be a pocket subclass'
-        assert issubclass(self.board_class, Board), 'Board class must be a board subclass'
-        assert issubclass(self.identifier_class, HandIdentifier), 'Identifier class must be a hand identifier subclass'
+        if not issubclass(self.hand_class, HandIdentifier):
+            raise TypeError('`hand_class` must be a {} subclass'.format(HandIdentifier))
 
-        assert all(isinstance(x, Box) for x in boxes), 'Boxes cannot contain non-box items'
-        assert isinstance(bb, int) and bb > 0, 'BB must be a positive integer'
-        assert isinstance(sb, int) and 0 < sb <= bb, 'SB must be a positive integer less or equal to BB'
-        assert isinstance(ante, int) and ante >= 0, 'Ante must be a zero or a positive integer'
+        self.__class__.boxes.validate(self, boxes)
+        self.__class__.bb.validate(self, bb)
+        self.__class__.sb.validate(self, sb)
+        self.__class__.ante.validate(self, ante)
 
-        self._boxes = tuple(boxes)
+        self._boxes = boxes
         self._bb = bb
         self._sb = sb
         self._ante = ante
-        self._deck = self.deck_class()
+
+        deck = self.deck_class()
+        self.__class__.deck.validate(self, deck)
+        self._deck = deck
         self._deck.shuffle()
-        self._pockets = tuple(self.pocket_class() for _ in range(len(self._boxes)))
-        self._board = self.board_class()
+
+        board = self.board_class()
+        self.__class__.board.validate(self, board)
+        self._board = board
+
+        pockets = tuple(self.pocket_class() for _ in range(len(self._boxes)))
+        self.__class__.pockets.validate(self, pockets)
+        self._pockets = pockets
+
         self._street_idx = 0
 
     def start(self) -> None:
@@ -70,24 +102,8 @@ class Round(ABC):
     def _showdown(self) -> None:
         print('Showdown')
         for i, pocket in enumerate(self._pockets):
-            hand = self.identifier_class.identify(pocket, self._board)
+            hand = self.hand_class.identify(pocket, self._board)
             print('Pocket', i, ': ', pocket, ' == ', repr(hand))
-
-    @property
-    def boxes(self) -> tuple:
-        return self._boxes
-
-    @property
-    def bb(self) -> int:
-        return self._bb
-
-    @property
-    def sb(self) -> int:
-        return self._sb
-
-    @property
-    def ante(self) -> int:
-        return self._ante
 
     @property
     def street_classes(self) -> list:

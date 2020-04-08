@@ -19,11 +19,11 @@ class RankTestCase(TestCase):
 
     def test_init(self):
         Rank(code='A', name='Rank A', weight=1)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Rank(code='AA', name='Rank A', weight=1)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Rank(code='a', name='Rank A', weight=1)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Rank(code='aa', name='Rank A', weight=1)
 
     def test_eq(self):
@@ -49,11 +49,11 @@ class SuitTestCase(TestCase):
 
     def test_init(self):
         Suit(code='x', name='Suit X', weight=1)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Suit(code='xx', name='Suit X', weight=1)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Suit(code='X', name='Suit X', weight=1)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Suit(code='XX', name='Suit X', weight=1)
 
     def test_eq(self):
@@ -89,11 +89,11 @@ class CardTestCase(TestCase):
 
     def test_init(self):
         Card(rank=self.a, suit=self.x)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(TypeError):
             Card(rank=self.a, suit=self.b)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(TypeError):
             Card(rank=self.y, suit=self.x)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(TypeError):
             Card(rank=self.y, suit=self.a)
 
     def test_eq(self):
@@ -146,7 +146,7 @@ class DeckTestCase(TestCase):
 
     def test_push(self):
         c = self.a[-1]
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             self.a.push(c)
         del self.a[-1]
         self.assertNotEqual(c, self.a[-1])
@@ -160,7 +160,7 @@ class DeckTestCase(TestCase):
 
     def test_unshift(self):
         c = self.a[0]
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             self.a.unshift(c)
         del self.a[0]
         self.assertNotEqual(c, self.a[0])

@@ -9,7 +9,7 @@ class Round(BaseRound):
     deck_class = StandardDeck
     pocket_class = Pocket
     board_class = Board
-    identifier_class = HandIdentifier
+    hand_class = HandIdentifier
 
 
 __all__ = ('Round',)

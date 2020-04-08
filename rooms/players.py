@@ -1,9 +1,11 @@
+from utils.attrs import StringAttr
+
+
 class Player():
-    nickname_length = 127
+    nickname = StringAttr(min_length=1, max_length=63, writable=False)
 
     def __init__(self, nickname:str) -> None:
-        assert isinstance(nickname, str) and 1 <= len(nickname) <= self.nickname_length, \
-               'Nickname must be a string from 1 to {} chars'.format(self.nickname_length)
+        self.__class__.nickname.validate(self, nickname)
         self._nickname = nickname
 
     def __repr__(self) -> str:
@@ -14,10 +16,6 @@ class Player():
 
     def __hash__(self) -> int:
         return hash(self._nickname)
-
-    @property
-    def nickname(self) -> str:
-        return self._nickname
 
 
 __all__ = ('Player',)

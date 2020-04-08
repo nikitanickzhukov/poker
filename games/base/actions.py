@@ -1,26 +1,26 @@
 from abc import ABC
 
+from utils.attrs import IntegerAttr
+
 
 class Action(ABC):
     is_aggressive = False
     with_amount = False
 
+    amount = IntegerAttr(
+        min_value=0,
+        validate=lambda obj, val: obj.with_amount == (val != 0),
+        writable=False,
+    )
+
     def __init__(self, amount:int=0) -> None:
-        assert isinstance(amount, int), 'Amount must be an integer'
-        if self.with_amount:
-            assert amount > 0, 'Amount is required for {}'.format(self.__class__.__name__)
-        else:
-            assert amount == 0, 'Amount must be zero for {}'.format(self.__class__.__name__)
+        self.__class__.amount.validate(self, amount)
         self._amount = amount
 
     def __repr__(self) -> str:
         if self.with_amount:
             return '<{}: {}>'.format(self.__class__.__name__, self._amount)
         return '<{}>'.format(self.__class__.__name__)
-
-    @property
-    def amount(self):
-        return self._amount
 
 
 class Fold(Action):

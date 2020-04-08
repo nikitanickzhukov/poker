@@ -29,20 +29,12 @@ class StreetTestCase(TestCase):
         n = self.d.shift()
         o = self.d.shift()
         TestStreet1(m, n)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             TestStreet1(m)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             TestStreet1(m, n, o)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(TypeError):
             TestStreet1(m, self.d)
-
-    def test_eq(self):
-        m = self.d.shift()
-        n = self.d.shift()
-        o = self.d.shift()
-        self.assertEqual(TestStreet1(m, n), TestStreet1(m, n))
-        self.assertEqual(TestStreet1(m, n), TestStreet1(n, m))
-        self.assertNotEqual(TestStreet1(m, n), TestStreet1(m, o))
 
     def test_contains(self):
         m = self.d.shift()
@@ -71,25 +63,14 @@ class KitTestCase(TestCase):
         TestKit()
         TestKit(street1)
         TestKit(street1, street2)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(TypeError):
             TestKit(street2, street1)
         TestKit(m, n)
         TestKit(m, n, o)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             TestKit(m)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             TestKit(m, n, o, p)
-
-    def test_eq(self):
-        m = self.d.shift()
-        n = self.d.shift()
-        o = self.d.shift()
-        p = self.d.shift()
-        q = self.d.shift()
-        self.assertEqual(TestKit(TestStreet1(m, n)), TestKit(TestStreet1(m, n)))
-        self.assertEqual(TestKit(TestStreet1(m, n)), TestKit(TestStreet1(n, m)))
-        self.assertEqual(TestKit(TestStreet1(m, n), TestStreet2(o)), TestKit(TestStreet1(m, n), TestStreet2(o)))
-        self.assertNotEqual(TestKit(TestStreet1(m, n), TestStreet2(o)), TestKit(TestStreet1(m, o), TestStreet2(n)))
 
     def test_contains(self):
         m = self.d.shift()
@@ -110,9 +91,9 @@ class KitTestCase(TestCase):
         self.assertIn(m, b)
         b.append(o)
         self.assertIn(o, b)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             b.append(TestStreet2(p))
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             b.append(p)
 
 
@@ -120,42 +101,42 @@ class ActionTestCase(TestCase):
     def test_fold(self):
         Fold()
         Fold(amount=0)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Fold(amount=1)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Fold(amount=-1)
 
     def test_check(self):
         Check()
         Check(amount=0)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Check(amount=1)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Check(amount=-1)
 
     def test_call(self):
         Call(amount=1)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Call()
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Call(amount=0)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Call(amount=-1)
 
     def test_bet(self):
         Bet(amount=1)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Bet()
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Bet(amount=0)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Bet(amount=-1)
 
     def test_raise(self):
         Raise(amount=1)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Raise()
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Raise(amount=0)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Raise(amount=-1)

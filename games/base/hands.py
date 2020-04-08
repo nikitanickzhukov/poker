@@ -4,6 +4,7 @@ from functools import total_ordering
 from itertools import combinations, product
 from collections import Counter, defaultdict
 
+from utils.attrs import TypedAttr, ListAttr
 from cards import Card, ranks
 from .pockets import Pocket
 from .boards import Board
@@ -13,22 +14,20 @@ max_rank = max(ranks)
 
 
 class HandComb():
+    pocket = TypedAttr(type=Pocket, writable=False)
+    board = TypedAttr(type=Board, writable=False)
+
     def __init__(self, pocket:Pocket, board:Board) -> None:
+        self.__class__.pocket.validate(self, pocket)
+        self.__class__.board.validate(self, board)
+
         self._pocket = pocket
         self._board = board
 
     @property
-    def pocket(self):
-        return self._pocket
-
-    @property
-    def board(self):
-        return self._board
-
-    @property
     def cards(self):
         if not hasattr(self, '_cards'):
-            self._cards = tuple(sorted(self._pocket.items + self._board.items, reverse=True))
+            self._cards = tuple(sorted(self._pocket.cards + self._board.cards, reverse=True))
         return self._cards
 
     @property
@@ -133,33 +132,39 @@ class Hand(ABC):
     hand_length = 5
     hand_weight = 0
 
-    def __init__(self, *args) -> None:
-        assert all(isinstance(x, Card) for x in args), 'Hand must contain `Card` instances only'
-        self._items = args
+    cards = ListAttr(
+        type=tuple,
+        item_type=Card,
+        writable=False,
+    )
+
+    def __init__(self, *cards) -> None:
+        self.__class__.cards.validate(self, cards)
+        self._cards = cards
 
     def __repr__(self) -> str:
-        return '<{}: {!r}'.format(self.__class__.__name__, self._items)
+        return '<{}: {!r}'.format(self.__class__.__name__, self._cards)
 
     def __eq__(self, other:'Hand') -> bool:
-        return self.__class__ == other.__class__ and self._items == other._items
+        return self.weight == other.weight
 
     def __gt__(self, other:'Hand') -> bool:
         return self.weight > other.weight
 
     def __contains__(self, item:Card) -> bool:
-        return item in self._items
+        return item in self._cards
 
     def __len__(self) -> int:
-        return len(self._items)
+        return len(self._cards)
 
     def __iter__(self) -> iter:
-        return iter(self._items)
+        return iter(self._cards)
 
     def __getitem__(self, key:Union[slice, int, str]) -> Card:
         if isinstance(key, (slice, int)):
-            return self._items[key]
+            return self._cards[key]
         elif isinstance(key, str):
-            for item in self._items:
+            for item in self._cards:
                 if item.code == key:
                     return item
             raise KeyError('Card {} is not found'.format(key))
@@ -184,14 +189,14 @@ class Hand(ABC):
 
     @property
     def weight(self) -> tuple:
-        return (self.hand_weight, *[ x.rank.weight for x in self._items ])
+        return (self.hand_weight, *[ x.rank.weight for x in self._cards ])
 
 
 class HighCard(Hand):
     hand_weight = 1
 
     def __repr__(self) -> str:
-        return '<High card: {}>'.format(', '.join([ x.rank.name for x in self._items ]))
+        return '<High card: {}>'.format(', '.join([ x.rank.name for x in self._cards ]))
 
     @classmethod
     def get_combs(cls, hand:HandComb) -> iter:
@@ -203,8 +208,8 @@ class OnePair(Hand):
 
     def __repr__(self) -> str:
         return '<One pair: {}s, kickers: {}>'.format(
-                   self._items[0].rank.name,
-                   ', '.join([ x.rank.name for x in self._items[2:] ]),
+                   self._cards[0].rank.name,
+                   ', '.join([ x.rank.name for x in self._cards[2:] ]),
                )
 
     @classmethod
@@ -223,9 +228,9 @@ class TwoPair(Hand):
 
     def __repr__(self) -> str:
         return '<Two pair: {}s and {}s, kicker: {}>'.format(
-                   self._items[0].rank.name,
-                   self._items[2].rank.name,
-                   self._items[4].rank.name,
+                   self._cards[0].rank.name,
+                   self._cards[2].rank.name,
+                   self._cards[4].rank.name,
                )
 
     @classmethod
@@ -245,8 +250,8 @@ class Trips(Hand):
 
     def __repr__(self) -> str:
         return '<Three of a kind: {}s, kickers: {}>'.format(
-                   self._items[0].rank.name,
-                   ', '.join([ x.rank.name for x in self._items[3:] ]),
+                   self._cards[0].rank.name,
+                   ', '.join([ x.rank.name for x in self._cards[3:] ]),
                )
 
     @classmethod
@@ -264,7 +269,7 @@ class Straight(Hand):
     hand_weight = 5
 
     def __repr__(self) -> str:
-        return '<Straight: {}-high>'.format(self._items[0].rank.name)
+        return '<Straight: {}-high>'.format(self._cards[0].rank.name)
 
     @classmethod
     def get_combs(cls, hand:HandComb) -> iter:
@@ -280,7 +285,7 @@ class Flush(Hand):
     hand_weight = 6
 
     def __repr__(self) -> str:
-        return '<Flush: {}>'.format(', '.join([ x.rank.name for x in self._items ]))
+        return '<Flush: {}>'.format(', '.join([ x.rank.name for x in self._cards ]))
 
     @classmethod
     def get_combs(cls, hand:HandComb) -> iter:
@@ -295,8 +300,8 @@ class FullHouse(Hand):
 
     def __repr__(self) -> str:
         return '<Full house: {}s over {}s>'.format(
-                   self._items[0].rank.name,
-                   self._items[3].rank.name,
+                   self._cards[0].rank.name,
+                   self._cards[3].rank.name,
                )
 
     @classmethod
@@ -317,8 +322,8 @@ class Quads(Hand):
 
     def __repr__(self) -> str:
         return '<Four of a kind: {}s, kicker: {}>'.format(
-                   self._items[0].rank.name,
-                   self._items[4].rank.name,
+                   self._cards[0].rank.name,
+                   self._cards[4].rank.name,
                )
 
     @classmethod
@@ -336,9 +341,9 @@ class StraightFlush(Hand):
     hand_weight = 9
 
     def __repr__(self) -> str:
-        if self._items[0].rank == max_rank:
+        if self._cards[0].rank == max_rank:
             return '<Royal flush>'
-        return '<Straight flush: {}-high>'.format(self._items[0].rank.name)
+        return '<Straight flush: {}-high>'.format(self._cards[0].rank.name)
 
     @classmethod
     def get_combs(cls, hand:HandComb) -> iter:
@@ -353,8 +358,6 @@ class HandIdentifier(ABC):
 
     @classmethod
     def identify(cls, pocket:Pocket, board:Board) -> Optional[Hand]:
-        assert isinstance(pocket, Pocket), '`pocket` must be a `Pocket` instance'
-        assert isinstance(board, Board), '`board` must be a `Board` instance'
         handset = HandComb(pocket, board)
         for HandClass in cls.hand_classes:
             hand = HandClass.identify(handset)

@@ -8,7 +8,7 @@ from .tables import Table
 class PlayerTestCase(TestCase):
     def test_init(self):
         Player(nickname='a')
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             Player(nickname='')
 
 
@@ -40,7 +40,7 @@ class BoxTestCase(TestCase):
         self.assertEqual(a.chips, 2)
         a.chips -= 2
         self.assertEqual(a.chips, 0)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             a.chips -= 1
 
 
@@ -60,7 +60,7 @@ class TableTestCase(TestCase):
         self.assertFalse(a.box_is_empty(box_num=2))
         self.assertEqual(a.boxes[2].player, self.x)
         self.assertEqual(a.boxes[2].chips, 1)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             a.occupy_box(box_num=3, player=self.x, chips=1)
 
         y = Player(nickname='y')

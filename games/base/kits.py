@@ -1,6 +1,8 @@
 from abc import ABC
 
+from utils.attrs import ListAttr
 from cards import Card
+from .streets import Street
 
 
 class Kit(ABC):
@@ -10,70 +12,71 @@ class Kit(ABC):
 
     street_classes = ()
 
-    def __init__(self, *args) -> None:
+    streets = ListAttr(
+        type=list,
+        item_type=Street,
+        writable=False,
+    )
+    cards = ListAttr(
+        type=tuple,
+        item_type=Card,
+        getter=lambda obj: tuple(x for s in obj.streets for x in s),
+        writable=False,
+    )
+
+    def __init__(self, *items) -> None:
         self._streets = []
-        if args:
-            self.append(*args)
+        if items:
+            self.append(*items)
 
     def __repr__(self) -> str:
         if not self._streets:
             return '<{}: empty>'.format(self.__class__.__name__)
         if len(self.street_classes) == 1:
-            return '<{}: {!r}>'.format(self.__class__.__name__, self._streets[0].items)
+            return '<{}: {!r}>'.format(self.__class__.__name__, self._streets[0].cards)
         return '<{}: {!r}>'.format(self.__class__.__name__, self._streets)
 
     def __str__(self) -> str:
-        return str([ str(x) for x in self.items ])
-
-    def __eq__(self, other:'Kit') -> bool:
-        return self.__class__ == other.__class__ and self._streets == other._streets
-
-    def __ne__(self, other:'Kit') -> bool:
-        return self.__class__ != other.__class__ or self._streets != other._streets
+        return str([ str(x) for x in self.cards ])
 
     def __contains__(self, item:Card) -> bool:
-        return item in self.items
+        return item in self.cards
 
     def __len__(self) -> int:
-        return len(self.items)
+        return len(self.cards)
 
     def __iter__(self) -> iter:
-        return iter(self.items)
+        return iter(self.cards)
 
-    @property
-    def streets(self) -> list:
-        return self._streets
-
-    @property
-    def items(self) -> list:
-        return [ x for s in self._streets for x in s ]
-
-    def append(self, *args) -> None:
-        if any(isinstance(x, Card) for x in args):
-            self._append_cards(*args)
+    def append(self, *items) -> None:
+        if any(isinstance(x, Card) for x in items):
+            self._append_cards(*items)
         else:
-            self._append_streets(*args)
+            self._append_streets(*items)
 
-    def _append_streets(self, *args) -> None:
-        assert len(args) <= len(self.street_classes) - len(self._streets), \
-               '{} cannot contain more than {} streets'.format(self.__class__.__name__, len(self.street_classes))
+    def _append_streets(self, *streets) -> None:
+        if len(streets) > len(self.street_classes) - len(self._streets):
+            raise ValueError('{} cannot contain more than {} streets'.format(self.__class__, len(self.street_classes)))
         idx = len(self._streets)
-        for item in args:
+        for street in streets:
             StreetClass = self.street_classes[idx]
-            assert isinstance(item, StreetClass), 'Street {} must be a {} instance'.format(idx, StreetClass.__name__)
+            if not isinstance(street, StreetClass):
+                raise TypeError('Must be a {} instance'.format(StreetClass))
             idx += 1
-        self._streets.extend(args)
+        self._streets.extend(streets)
 
-    def _append_cards(self, *args) -> None:
-        items = [ x for x in args ]
+    def _append_cards(self, *cards) -> None:
+        cards = list(cards)
         streets = []
         street_classes = self.street_classes[len(self._streets):]
         for StreetClass in street_classes:
-            assert len(items) >= StreetClass.length, \
-                   'Not enough cards to append {}: {} instead of {}'.format(StreetClass.__name__, len(items), StreetClass.length)
-            streets.append(StreetClass(*items[0:StreetClass.length]))
-            del items[0:StreetClass.length]
-            if not items:
+            streets.append(StreetClass(*cards[0:StreetClass.length]))
+            del cards[0:StreetClass.length]
+            if not cards:
                 break
-        assert len(items) == 0, 'Extra {} card(s) cannot be added'.format(len(items))
+        if cards:
+            raise ValueError('Extra {} card(s) cannot be added'.format(cards))
         self._append_streets(*streets)
+
+
+__all__ = ('Kit',)
