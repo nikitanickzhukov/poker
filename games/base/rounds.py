@@ -3,22 +3,20 @@ from abc import ABC
 
 from utils.attrs import TypedAttr, IntegerAttr, ListAttr
 from cards import Deck
-from rooms import Box
 from .streets import Street
-from .pockets import Pocket
 from .boards import Board
+from .players import Player
 from .hands import HandIdentifier
 
 
 class Round(ABC):
     deck_class = None
-    pocket_class = None
     board_class = None
     hand_class = None
 
-    boxes = ListAttr(
+    players = ListAttr(
         type=tuple,
-        item_type=Box,
+        item_type=Player,
         writable=False
     )
     bb = IntegerAttr(min_value=0, writable=False)
@@ -26,28 +24,23 @@ class Round(ABC):
     ante = IntegerAttr(min_value=0, writable=False)
     deck = TypedAttr(type=Deck, writable=False)
     board = TypedAttr(type=Board, writable=False)
-    pockets = ListAttr(
-        type=tuple,
-        item_type=Pocket,
-        writable=False
-    )
     street_classes = ListAttr(
         type=tuple,
         item_type=Street,
-        getter=lambda obj: sorted(obj.pocket_class.street_classes + obj.board_class.street_classes, key=lambda x: x.order),
+        getter=lambda obj: sorted(obj._players[0].pocket_class.street_classes + obj.board_class.street_classes, key=lambda x: x.order),
     )
     street_idx = IntegerAttr(min_value=0, writable=False)
 
-    def __init__(self, boxes:List[Box], bb:int, sb:int, ante:int=0) -> None:
+    def __init__(self, players:List[Player], bb:int, sb:int, ante:int=0) -> None:
         if not issubclass(self.hand_class, HandIdentifier):
             raise TypeError('`hand_class` must be a {} subclass'.format(HandIdentifier))
 
-        self.__class__.boxes.validate(self, boxes)
+        self.__class__.players.validate(self, players)
         self.__class__.bb.validate(self, bb)
         self.__class__.sb.validate(self, sb)
         self.__class__.ante.validate(self, ante)
 
-        self._boxes = boxes
+        self._players = players
         self._bb = bb
         self._sb = sb
         self._ante = ante
@@ -61,10 +54,6 @@ class Round(ABC):
         self.__class__.board.validate(self, board)
         self._board = board
 
-        pockets = tuple(self.pocket_class() for _ in range(len(self._boxes)))
-        self.__class__.pockets.validate(self, pockets)
-        self._pockets = pockets
-
         self._street_idx = 0
 
     def start(self) -> None:
@@ -75,45 +64,45 @@ class Round(ABC):
 
         self._showdown()
 
-    def _run_street(self, street):
+    def _run_street(self, street:Street) -> None:
         self._deal_cards(street)
         self._run_actions(street)
 
-    def _deal_cards(self, street) -> None:
-        if self._is_pocket_street(street):
-            cards = [ [] for _ in range(len(self._pockets)) ]
-            for _ in range(street.length):
-                for card in cards:
-                    card.append(self._deck.pop())
-            for pocket, card in zip(self._pockets, cards):
-                pocket.append(*card)
+    def _deal_cards(self, street:Street) -> None:
+        if self._is_board_street(street):
+            self._deal_board_cards(street)
         else:
-            cards = []
-            for _ in range(street.length):
-                cards.append(self._deck.pop())
-            self._board.append(*cards)
+            self._deal_pocket_cards(street)
 
-    def _run_actions(self, street) -> None:
-        print(street)
-        print('Board: ', self._board)
-        for i, pocket in enumerate(self._pockets):
-            print('Pocket', i, ': ', pocket)
+    def _deal_board_cards(self, street:Street) -> None:
+        cards = []
+        for _ in range(street.length):
+            cards.append(self._deck.pop())
+        self._board.append(*cards)
+
+    def _deal_pocket_cards(self, street:Street) -> None:
+        cards = [ [] for _ in range(len(self._players)) ]
+        for _ in range(street.length):
+            for card in cards:
+                card.append(self._deck.pop())
+        for player, card in zip(self._players, cards):
+            player.append(*card)
+
+    def _run_actions(self, street:Street) -> None:
+        print(repr(street))
+        print(repr(self._board))
+        for player in self._players:
+            print(repr(player))
 
     def _showdown(self) -> None:
         print('Showdown')
-        for i, pocket in enumerate(self._pockets):
-            hand = self.hand_class.identify(pocket, self._board)
-            print('Pocket', i, ': ', pocket, ' == ', repr(hand))
+        print(repr(self._board))
+        for player in self._players:
+            hand = self.hand_class.identify(player.pocket, self._board)
+            print(repr(player), ' == ', repr(hand))
 
-    @property
-    def street_classes(self) -> list:
-        return sorted(
-            [ x for x in self.pocket_class.street_classes + self.board_class.street_classes ],
-            key=lambda x: x.order,
-        )
-
-    def _is_pocket_street(self, street) -> bool:
-        return street in self.pocket_class.street_classes
+    def _is_board_street(self, street:Street) -> bool:
+        return street in self.board_class.street_classes
 
 
 __all__ = ('Round',)
