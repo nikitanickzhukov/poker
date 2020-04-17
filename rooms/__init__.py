@@ -1,3 +1,3 @@
-from .players import *
+from .gamblers import *
 from .boxes import *
 from .tables import *

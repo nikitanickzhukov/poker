@@ -1,7 +1,7 @@
 from utils.attrs import StringAttr
 
 
-class Player():
+class Gambler():
     nickname = StringAttr(min_length=1, max_length=63, writable=False)
 
     def __init__(self, nickname:str) -> None:
@@ -18,4 +18,4 @@ class Player():
         return hash(self._nickname)
 
 
-__all__ = ('Player',)
+__all__ = ('Gambler',)

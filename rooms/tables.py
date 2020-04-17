@@ -1,5 +1,5 @@
 from utils.attrs import ListAttr, IntegerAttr
-from .players import Player
+from .gamblers import Gambler
 from .boxes import Box
 
 
@@ -33,19 +33,16 @@ class Table():
     def __repr__(self) -> str:
         return '<{}: {!r}>'.format(self.__class__.__name__, self._boxes)
 
-    def occupy_box(self, box_num:int, player:Player, chips:int) -> None:
-        if any(x.player == player for x in self._boxes):
-            raise ValueError('{!r} is already at the table'.format(player))
-        self._boxes[box_num].occupy(player, chips)
+    def occupy_box(self, box_num:int, gambler:Gambler, chips:int) -> None:
+        if any(x.gambler == gambler for x in self._boxes):
+            raise ValueError('{!r} is already at the table'.format(gambler))
+        self._boxes[box_num].occupy(gambler, chips)
 
     def leave_box(self, box_num:int) -> None:
         self._boxes[box_num].leave()
 
     def box_is_empty(self, box_num:int) -> bool:
         return self._boxes[box_num].is_empty
-
-    def next_round(self):
-        pass
 
 
 __all__ = ('Table',)
