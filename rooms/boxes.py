@@ -31,7 +31,7 @@ class Box():
     def __repr__(self) -> str:
         if self.is_empty:
             return '<{}: empty>'.format(self.__class__.__name__)
-        return '<{}: {!r}, {} chip(s)'.format(self.__class__.__name__, self._gambler, self._chips)
+        return '<{}: {}, {} chip(s)'.format(self.__class__.__name__, str(self._gambler), self._chips)
 
     def occupy(self, gambler:Gambler, chips:int=0) -> None:
         assert self.is_empty, 'Box is not empty'

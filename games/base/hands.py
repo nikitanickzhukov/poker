@@ -143,7 +143,10 @@ class Hand(ABC):
         self._cards = cards
 
     def __repr__(self) -> str:
-        return '<{}: {!r}'.format(self.__class__.__name__, self._cards)
+        return '<{}: {}'.format(self.__class__.__name__, str(self))
+
+    def __str__(self) -> str:
+        return str([ str(x) for x in self._cards ])
 
     def __eq__(self, other:'Hand') -> bool:
         return self.weight == other.weight

@@ -32,9 +32,7 @@ class Kit(ABC):
     def __repr__(self) -> str:
         if not self._streets:
             return '<{}: empty>'.format(self.__class__.__name__)
-        if len(self.street_classes) == 1:
-            return '<{}: {!r}>'.format(self.__class__.__name__, self._streets[0].cards)
-        return '<{}: {!r}>'.format(self.__class__.__name__, self._streets)
+        return '<{}: {}>'.format(self.__class__.__name__, str(self))
 
     def __str__(self) -> str:
         return str([ str(x) for x in self.cards ])
