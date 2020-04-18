@@ -1,8 +1,8 @@
 from unittest import TestCase
-from datetime import datetime
 from collections import Counter
 
-from cards import StandardDeck
+from utils.timer import Timer
+from cards import StandardDeck, cardset
 from .pockets import Pocket
 from .boards import Board
 from .hands import HandIdentifier, HighCard, OnePair, TwoPair, Trips, Straight, Flush, FullHouse, Quads, StraightFlush
@@ -10,51 +10,47 @@ from .players import Player
 from .rounds import Round
 
 
+SPEED_TEST_COUNT = 10000
+
+
 class IdentifyTestCase(TestCase):
-    def setUp(self):
-        self.deck = StandardDeck()
-        self.deck.shuffle()
-
-    def tearDown(self):
-        del self.deck
-
     def test_high_card(self):
         # High card in the pocket
-        pocket = Pocket(self.deck['As'], self.deck['2s'], self.deck['4d'], self.deck['3c'])
-        board = Board(self.deck['Qs'], self.deck['7d'], self.deck['Jh'], self.deck['Kd'], self.deck['6s'])
+        pocket = Pocket(cardset['As'], cardset['2s'], cardset['4d'], cardset['3c'])
+        board = Board(cardset['Qs'], cardset['7d'], cardset['Jh'], cardset['Kd'], cardset['6s'])
         hand = HandIdentifier.identify(pocket, board)
         self.assertIsInstance(hand, HighCard)
-        self.assertEqual(hand[0], self.deck['As'])
-        self.assertEqual(hand[1], self.deck['Kd'])
-        self.assertIn(self.deck['4d'], hand)
+        self.assertEqual(hand[0], cardset['As'])
+        self.assertEqual(hand[1], cardset['Kd'])
+        self.assertIn(cardset['4d'], hand)
 
         # High card on the board
-        pocket = Pocket(self.deck['7s'], self.deck['2s'], self.deck['6c'], self.deck['Tc'])
-        board = Board(self.deck['3s'], self.deck['4d'], self.deck['Jh'], self.deck['Qd'], self.deck['8s'])
+        pocket = Pocket(cardset['7s'], cardset['2s'], cardset['6c'], cardset['Tc'])
+        board = Board(cardset['3s'], cardset['4d'], cardset['Jh'], cardset['Qd'], cardset['8s'])
         hand = HandIdentifier.identify(pocket, board)
         self.assertIsInstance(hand, HighCard)
-        self.assertEqual(hand[0], self.deck['Qd'])
-        self.assertEqual(hand[1], self.deck['Jh'])
-        self.assertIn(self.deck['Tc'], hand)
-        self.assertIn(self.deck['7s'], hand)
+        self.assertEqual(hand[0], cardset['Qd'])
+        self.assertEqual(hand[1], cardset['Jh'])
+        self.assertIn(cardset['Tc'], hand)
+        self.assertIn(cardset['7s'], hand)
 
     def test_speed(self):
-        start = datetime.now()
+        timer = Timer()
 
-        test_count = 10000
         count = Counter()
-        for i in range(test_count):
-            self.deck.shuffle()
-            pocket = Pocket(*self.deck[0:4])
-            board = Board(*self.deck[4:9])
-            hand = HandIdentifier.identify(pocket, board)
+        for i in range(SPEED_TEST_COUNT):
+            deck = StandardDeck()
+            deck.shuffle()
+            pocket = Pocket(deck.pop(), deck.pop(), deck.pop(), deck.pop())
+            board = Board(deck.pop(), deck.pop(), deck.pop(), deck.pop(), deck.pop())
+            with timer:
+                hand = HandIdentifier.identify(pocket, board)
             count.update([hand.__class__])
 
-        duration = datetime.now() - start
         for item, c in count.most_common():
             print(item, c)
-        print('time', duration)
-        print('per second', round(test_count / duration.total_seconds()))
+        print('time', timer.elapsed)
+        print('per second', round(SPEED_TEST_COUNT / timer.elapsed))
 
 
 class RoundTestCase(TestCase):

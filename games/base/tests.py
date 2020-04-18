@@ -25,9 +25,9 @@ class StreetTestCase(TestCase):
         del self.d
 
     def test_init(self):
-        m = self.d.shift()
-        n = self.d.shift()
-        o = self.d.shift()
+        m = self.d.pop()
+        n = self.d.pop()
+        o = self.d.pop()
         TestStreet1(m, n)
         with self.assertRaises(ValueError):
             TestStreet1(m)
@@ -37,9 +37,9 @@ class StreetTestCase(TestCase):
             TestStreet1(m, self.d)
 
     def test_contains(self):
-        m = self.d.shift()
-        n = self.d.shift()
-        o = self.d.shift()
+        m = self.d.pop()
+        n = self.d.pop()
+        o = self.d.pop()
         self.assertIn(m, TestStreet1(m, n))
         self.assertIn(m, TestStreet1(n, m))
         self.assertNotIn(o, TestStreet1(m, n))
@@ -54,10 +54,10 @@ class KitTestCase(TestCase):
         del self.d
 
     def test_init(self):
-        m = self.d.shift()
-        n = self.d.shift()
-        o = self.d.shift()
-        p = self.d.shift()
+        m = self.d.pop()
+        n = self.d.pop()
+        o = self.d.pop()
+        p = self.d.pop()
         street1 = TestStreet1(m, n)
         street2 = TestStreet2(o)
         TestKit()
@@ -73,19 +73,19 @@ class KitTestCase(TestCase):
             TestKit(m, n, o, p)
 
     def test_contains(self):
-        m = self.d.shift()
-        n = self.d.shift()
-        o = self.d.shift()
-        p = self.d.shift()
+        m = self.d.pop()
+        n = self.d.pop()
+        o = self.d.pop()
+        p = self.d.pop()
         self.assertIn(m, TestKit(TestStreet1(m, n)))
         self.assertIn(o, TestKit(TestStreet1(m, n), TestStreet2(o)))
         self.assertNotIn(p, TestKit(TestStreet1(m, n), TestStreet2(o)))
 
     def test_append(self):
-        m = self.d.shift()
-        n = self.d.shift()
-        o = self.d.shift()
-        p = self.d.shift()
+        m = self.d.pop()
+        n = self.d.pop()
+        o = self.d.pop()
+        p = self.d.pop()
         b = TestKit()
         b.append(TestStreet1(m, n))
         self.assertIn(m, b)

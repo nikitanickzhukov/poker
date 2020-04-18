@@ -1,3 +1,4 @@
+from typing import List
 from functools import total_ordering
 
 from utils.attrs import TypedAttr, StringAttr
@@ -64,7 +65,17 @@ class Card():
         return (self._rank, self.suit) > (other._rank, other._suit)
 
 
+class CardSet(frozenset):
+    def __getitem__(self, key:str) -> Card:
+        if not hasattr(self, '_mapping'):
+            self._mapping = {}
+            for card in self:
+                self._mapping[card.code] = card
+        return self._mapping[key]
+
+
 cards = tuple(Card(rank=r, suit=s) for s in suits for r in ranks)
+cardset = CardSet(cards)
 
 
-__all__ = ('Card', 'cards')
+__all__ = ('Card', 'cards', 'cardset')

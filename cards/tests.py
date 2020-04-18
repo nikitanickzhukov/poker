@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from .ranks import Rank
 from .suits import Suit
-from .cards import Card
+from .cards import Card, cardset
 from .decks import StandardDeck
 
 
@@ -109,65 +109,22 @@ class CardTestCase(TestCase):
         self.assertFalse(self.bx > self.by)
 
 
+class CardSetTestCase(TestCase):
+    def test_getitem(self):
+        cardset['Ah']
+        with self.assertRaises(KeyError):
+            cardset['Xy']
+
+    def test_contains(self):
+        self.assertIn(cardset['Ah'], cardset)
+
+
 class DeckTestCase(TestCase):
     def setUp(self):
         self.a = StandardDeck()
-        self.b = StandardDeck()
 
     def tearDown(self):
         del self.a
-        del self.b
-
-    def test_contains(self):
-        c = self.a[0]
-        self.assertIn(c, self.a)
-        c = self.a.shift()
-        self.assertNotIn(c, self.a)
-
-    def test_getitem(self):
-        c = self.a[0]
-        with self.assertRaises(IndexError):
-            self.a[len(self.a)]
-        self.assertEqual(self.a[c.code], c)
-        with self.assertRaises(KeyError):
-            self.a['Xy']
-
-    def test_delitem(self):
-        c = self.a[0]
-        del self.a[0]
-        self.assertNotIn(c, self.a)
-        with self.assertRaises(IndexError):
-            del self.a[len(self.a)]
-        d = self.a[0]
-        del self.a[d.code]
-        self.assertNotIn(d, self.a)
-        with self.assertRaises(KeyError):
-            del self.a['Xy']
-
-    def test_push(self):
-        c = self.a[-1]
-        with self.assertRaises(ValueError):
-            self.a.push(c)
-        del self.a[-1]
-        self.assertNotEqual(c, self.a[-1])
-        self.a.push(c)
-        self.assertEqual(c, self.a[-1])
 
     def test_pop(self):
-        c = self.a[-1]
-        self.assertEqual(c, self.a.pop())
-        self.assertNotEqual(c, self.a[-1])
-
-    def test_unshift(self):
-        c = self.a[0]
-        with self.assertRaises(ValueError):
-            self.a.unshift(c)
-        del self.a[0]
-        self.assertNotEqual(c, self.a[0])
-        self.a.unshift(c)
-        self.assertEqual(c, self.a[0])
-
-    def test_shift(self):
-        c = self.a[0]
-        self.assertEqual(c, self.a.shift())
-        self.assertNotEqual(c, self.a[0])
+        self.a.pop()
