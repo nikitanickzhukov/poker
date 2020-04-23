@@ -1,7 +1,6 @@
 from typing import List, Optional
 from abc import ABC
 
-from utils.attrs import TypedAttr, IntegerAttr, ListAttr
 from cards import Deck, StandardDeck
 from .dealers import Dealer
 from .pots import Pot
@@ -11,6 +10,7 @@ from .hands import HandIdentifier
 
 
 class Round(ABC):
+    __slots__ = ('_players', '_bb', '_sb', '_ante', '_board', '_pot', '_deck', '_dealer')
     deck_class = StandardDeck
     dealer_class = Dealer
     pot_class = Pot
@@ -18,28 +18,7 @@ class Round(ABC):
     pocket_class = None
     hand_class = None
 
-    players = ListAttr(
-        type=tuple,
-        item_type=Player,
-        writable=False,
-        validate=lambda obj, val: len(set(map(lambda x: len(x.pocket or []), val))) == 1
-    )
-    bb = IntegerAttr(min_value=0, writable=False)
-    sb = IntegerAttr(min_value=0, writable=False)
-    ante = IntegerAttr(min_value=0, writable=False)
-    deck = TypedAttr(type=Deck, writable=False)
-    board = TypedAttr(type=Board, writable=False)
-    pot = TypedAttr(type=Pot, writable=False)
-
-    def __init__(self, players:List[Player], bb:int, sb:int, ante:int=0, board:Optional[Board]=None, pot:Optional[Pot]=None) -> None:
-        if not issubclass(self.hand_class, HandIdentifier):
-            raise TypeError('`hand_class` must be a {} subclass'.format(HandIdentifier))
-
-        self.__class__.players.validate(self, players)
-        self.__class__.bb.validate(self, bb)
-        self.__class__.sb.validate(self, sb)
-        self.__class__.ante.validate(self, ante)
-
+    def __init__(self, players:List[Player], bb:int, sb:int, ante:int=0, board:Optional[Board]=None, pot:Optional[Pot]=None, deck:Optional[Deck]=None) -> None:
         self._players = players
         for player in self._players:
             if player.pocket is None:
@@ -48,19 +27,17 @@ class Round(ABC):
         self._sb = sb
         self._ante = ante
 
-        deck = self.deck_class()
-        self.__class__.deck.validate(self, deck)
+        if deck is None:
+            deck = self.deck_class()
         self._deck = deck
         self._deck.shuffle()
 
         if board is None:
             board = self.board_class()
-        self.__class__.board.validate(self, board)
         self._board = board
 
         if pot is None:
             pot = self.pot_class(players=players, chips=0)
-        self.__class__.pot.validate(self, pot)
         self._pot = pot
 
         self._dealer = self.dealer_class()
@@ -103,11 +80,11 @@ class Round(ABC):
 
         for i, street_class in enumerate(street_classes):
             if street_class in self.board_class.street_classes:
-                for street in self.board.streets:
+                for street in self._board.streets:
                     if isinstance(street, street_class):
                         idx = i + 1
             else:
-                for street in self.players[0].pocket.streets:
+                for street in self._players[0].pocket.streets:
                     if isinstance(street, street_class):
                         idx = i + 1
         return idx

@@ -1,19 +1,13 @@
-from typing import List, Optional
+from typing import List
 
-from utils.attrs import IntegerAttr, ListAttr
 from .players import Player
 
 
 class Pot():
-    players = ListAttr(type=set, item_type=Player, min_size=1, writable=False)
-    chips = IntegerAttr(min_value=0, writable=False)
+    __slots__ = ('_players', '_chips')
 
     def __init__(self, players:List[Player], chips:int=0) -> None:
-        players = set(players)
-        self.__class__.players.validate(self, players)
-        self.__class__.chips.validate(self, chips)
-
-        self._players = players
+        self._players = set(players)
         self._chips = chips
 
     def __repr__(self) -> str:

@@ -4,7 +4,6 @@ from functools import total_ordering
 from itertools import combinations, product
 from collections import Counter, defaultdict
 
-from utils.attrs import TypedAttr, ListAttr
 from cards import Card, ranks
 from .pockets import Pocket
 from .boards import Board
@@ -14,15 +13,17 @@ max_rank = max(ranks)
 
 
 class HandComb():
-    pocket = TypedAttr(type=Pocket, writable=False)
-    board = TypedAttr(type=Board, writable=False)
-
     def __init__(self, pocket:Pocket, board:Board) -> None:
-        self.__class__.pocket.validate(self, pocket)
-        self.__class__.board.validate(self, board)
-
         self._pocket = pocket
         self._board = board
+
+    @property
+    def pocket(self):
+        return self._pocket
+
+    @property
+    def board(self):
+        return self._board
 
     @property
     def cards(self):
@@ -129,17 +130,11 @@ class HandComb():
 
 @total_ordering
 class Hand(ABC):
+    __slots__ = ('_cards',)
     hand_length = 5
     hand_weight = 0
 
-    cards = ListAttr(
-        type=tuple,
-        item_type=Card,
-        writable=False,
-    )
-
     def __init__(self, *cards) -> None:
-        self.__class__.cards.validate(self, cards)
         self._cards = cards
 
     def __repr__(self) -> str:

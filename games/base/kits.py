@@ -1,6 +1,5 @@
 from abc import ABC
 
-from utils.attrs import ListAttr
 from cards import Card
 from .streets import Street
 
@@ -10,19 +9,8 @@ class Kit(ABC):
     Representation of abstract kit (a parent class for boards and hands)
     """
 
+    __slots__ = ('_streets',)
     street_classes = ()
-
-    streets = ListAttr(
-        type=list,
-        item_type=Street,
-        writable=False,
-    )
-    cards = ListAttr(
-        type=tuple,
-        item_type=Card,
-        getter=lambda obj: tuple(x for s in obj.streets for x in s),
-        writable=False,
-    )
 
     def __init__(self, *items) -> None:
         self._streets = []
@@ -75,6 +63,14 @@ class Kit(ABC):
         if cards:
             raise ValueError('Extra {} card(s) cannot be added'.format(cards))
         self._append_streets(*streets)
+
+    @property
+    def streets(self) -> tuple:
+        return tuple(self._streets)
+
+    @property
+    def cards(self) -> tuple:
+        return tuple(x for s in self._streets for x in s)
 
 
 __all__ = ('Kit',)
