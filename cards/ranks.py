@@ -7,12 +7,7 @@ class Rank(Prop):
     A card rank (see Prop docs for more information)
     """
 
-    code = StringAttr(
-        min_length=1,
-        max_length=1,
-        validate=lambda obj, val: 'A' <= val <= 'Z' or '0' <= val <= '9',
-        writable=False,
-    )
+    pass
 
 
 ranks = (

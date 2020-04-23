@@ -1,112 +1,61 @@
 from unittest import TestCase
 
+from .props import Prop
 from .ranks import Rank
 from .suits import Suit
 from .cards import Card, cardset
 from .decks import StandardDeck
 
 
-class RankTestCase(TestCase):
+class PropTestCase(TestCase):
     def setUp(self):
-        self.a = Rank(code='A', name='rank A', weight=3)
-        self.b = Rank(code='B', name='rank B', weight=5)
-        self.c = Rank(code='C', name='rank C', weight=7)
+        self.prop = Prop(code='A', name='Prop A', weight=3)
 
     def tearDown(self):
-        del self.a
-        del self.b
-        del self.c
+        del self.prop
 
-    def test_init(self):
-        Rank(code='A', name='Rank A', weight=1)
-        with self.assertRaises(ValueError):
-            Rank(code='AA', name='Rank A', weight=1)
-        with self.assertRaises(ValueError):
-            Rank(code='a', name='Rank A', weight=1)
-        with self.assertRaises(ValueError):
-            Rank(code='aa', name='Rank A', weight=1)
+    def test_attrs(self):
+        self.assertEqual(self.prop.code, 'A')
+        self.assertEqual(self.prop.name, 'Prop A')
+        self.assertEqual(self.prop.weight, 3)
 
     def test_eq(self):
-        self.assertEqual(self.a, Rank(code='A', name='Rank M', weight=4))
-        self.assertNotEqual(self.a, Rank(code='M', name='Rank A', weight=3))
+        self.assertEqual(self.prop, Prop(code='B', name='Prop B', weight=3))
+        self.assertNotEqual(self.prop, Prop(code='B', name='Prop B', weight=1))
+        self.assertNotEqual(self.prop, Prop(code='B', name='Prop B', weight=5))
 
     def test_gt(self):
-        self.assertFalse(self.b > self.b)
-        self.assertTrue(self.b > self.a)
-        self.assertFalse(self.b > self.c)
-
-
-class SuitTestCase(TestCase):
-    def setUp(self):
-        self.x = Suit(code='x', name='Suit X', weight=3)
-        self.y = Suit(code='y', name='Suit Y', weight=5)
-        self.z = Suit(code='z', name='Suit Z', weight=7)
-
-    def tearDown(self):
-        del self.x
-        del self.y
-        del self.z
-
-    def test_init(self):
-        Suit(code='x', name='Suit X', weight=1)
-        with self.assertRaises(ValueError):
-            Suit(code='xx', name='Suit X', weight=1)
-        with self.assertRaises(ValueError):
-            Suit(code='X', name='Suit X', weight=1)
-        with self.assertRaises(ValueError):
-            Suit(code='XX', name='Suit X', weight=1)
-
-    def test_eq(self):
-        self.assertEqual(self.x, Suit(code='x', name='Suit M', weight=4))
-        self.assertNotEqual(self.x, Suit(code='m', name='Suit X', weight=3))
-
-    def test_gt(self):
-        self.assertFalse(self.y > self.y)
-        self.assertTrue(self.y > self.x)
-        self.assertFalse(self.y > self.z)
+        self.assertFalse(self.prop > Prop(code='B', name='Prop B', weight=3))
+        self.assertTrue(self.prop > Prop(code='B', name='Prop B', weight=1))
+        self.assertFalse(self.prop > Prop(code='B', name='Prop B', weight=5))
 
 
 class CardTestCase(TestCase):
     def setUp(self):
-        self.a = Rank(code='A', name='rank A', weight=1)
-        self.b = Rank(code='B', name='rank B', weight=2)
-        self.x = Suit(code='x', name='suit X', weight=1)
-        self.y = Suit(code='y', name='suit Y', weight=2)
-        self.ax = Card(rank=self.a, suit=self.x)
-        self.ay = Card(rank=self.a, suit=self.y)
-        self.bx = Card(rank=self.b, suit=self.x)
-        self.by = Card(rank=self.b, suit=self.y)
+        self.rank = Rank(code='A', name='Rank A', weight=3)
+        self.suit = Suit(code='x', name='Suit X', weight=3)
+        self.card = Card(rank=self.rank, suit=self.suit)
 
     def tearDown(self):
-        del self.a
-        del self.b
-        del self.x
-        del self.y
-        del self.ax
-        del self.ay
-        del self.bx
-        del self.by
+        del self.card
+        del self.suit
+        del self.rank
 
-    def test_init(self):
-        Card(rank=self.a, suit=self.x)
-        with self.assertRaises(TypeError):
-            Card(rank=self.a, suit=self.b)
-        with self.assertRaises(TypeError):
-            Card(rank=self.y, suit=self.x)
-        with self.assertRaises(TypeError):
-            Card(rank=self.y, suit=self.a)
+    def test_attrs(self):
+        self.assertEqual(self.card.rank, self.rank)
+        self.assertEqual(self.card.suit, self.suit)
 
     def test_eq(self):
-        self.assertEqual(self.ax, self.ax)
-        self.assertNotEqual(self.ax, self.ay)
-        self.assertNotEqual(self.ax, self.bx)
-        self.assertNotEqual(self.ax, self.by)
+        self.assertEqual(self.card, Card(rank=Rank(code='B', name='Rank B', weight=3), suit=Suit(code='y', name='Suit Y', weight=3)))
+        self.assertNotEqual(self.card, Card(rank=Rank(code='B', name='Rank B', weight=5), suit=Suit(code='y', name='Suit Y', weight=3)))
+        self.assertNotEqual(self.card, Card(rank=Rank(code='B', name='Rank B', weight=3), suit=Suit(code='y', name='Suit Y', weight=1)))
+        self.assertNotEqual(self.card, Card(rank=Rank(code='B', name='Rank B', weight=1), suit=Suit(code='y', name='Suit Y', weight=5)))
 
     def test_gt(self):
-        self.assertTrue(self.bx > self.ax)
-        self.assertTrue(self.bx > self.ay)
-        self.assertFalse(self.bx > self.bx)
-        self.assertFalse(self.bx > self.by)
+        self.assertFalse(self.card > Card(rank=Rank(code='B', name='Rank B', weight=3), suit=Suit(code='y', name='Suit Y', weight=3)))
+        self.assertFalse(self.card > Card(rank=Rank(code='B', name='Rank B', weight=5), suit=Suit(code='y', name='Suit Y', weight=3)))
+        self.assertTrue(self.card > Card(rank=Rank(code='B', name='Rank B', weight=3), suit=Suit(code='y', name='Suit Y', weight=1)))
+        self.assertTrue(self.card > Card(rank=Rank(code='B', name='Rank B', weight=1), suit=Suit(code='y', name='Suit Y', weight=5)))
 
 
 class CardSetTestCase(TestCase):
@@ -121,10 +70,13 @@ class CardSetTestCase(TestCase):
 
 class DeckTestCase(TestCase):
     def setUp(self):
-        self.a = StandardDeck()
+        self.deck = StandardDeck()
 
     def tearDown(self):
-        del self.a
+        del self.deck
+
+    def test_shuffle(self):
+        self.deck.shuffle()
 
     def test_pop(self):
-        self.a.pop()
+        self.assertEqual(self.deck.pop(), cardset['Kc'])

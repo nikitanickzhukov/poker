@@ -1,8 +1,6 @@
 from abc import ABC
 from functools import total_ordering
 
-from utils.attrs import StringAttr, IntegerAttr
-
 
 @total_ordering
 class Prop(ABC):
@@ -30,15 +28,9 @@ class Prop(ABC):
         Comparing operations
     """
 
-    code = StringAttr(min_length=1, max_length=1, writable=False)
-    name = StringAttr(min_length=1, writable=False)
-    weight = IntegerAttr(min_value=0, writable=False)
+    __slots__ = ('_code', '_name', '_weight')
 
     def __init__(self, code:str, name:str, weight:int) -> None:
-        self.__class__.code.validate(self, code)
-        self.__class__.name.validate(self, name)
-        self.__class__.weight.validate(self, weight)
-
         self._code = code
         self._name = name
         self._weight = weight
@@ -55,12 +47,24 @@ class Prop(ABC):
     def __eq__(self, other:'Prop') -> bool:
         if self.__class__ != other.__class__:
             raise TypeError()
-        return self._code == other._code
+        return self._weight == other._weight
 
     def __gt__(self, other:'Prop') -> bool:
         if self.__class__ != other.__class__:
             raise TypeError()
         return self._weight > other._weight
+
+    @property
+    def code(self):
+        return self._code
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def weight(self):
+        return self._weight
 
 
 __all__ = ('Prop',)
