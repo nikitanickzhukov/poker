@@ -100,43 +100,43 @@ class KitTestCase(TestCase):
 class ActionTestCase(TestCase):
     def test_fold(self):
         Fold()
-        Fold(amount=0)
+        Fold(chips=0)
         with self.assertRaises(ValueError):
-            Fold(amount=1)
+            Fold(chips=1)
         with self.assertRaises(ValueError):
-            Fold(amount=-1)
+            Fold(chips=-1)
 
     def test_check(self):
         Check()
-        Check(amount=0)
+        Check(chips=0)
         with self.assertRaises(ValueError):
-            Check(amount=1)
+            Check(chips=1)
         with self.assertRaises(ValueError):
-            Check(amount=-1)
+            Check(chips=-1)
 
     def test_call(self):
-        Call(amount=1)
+        Call(chips=1)
         with self.assertRaises(ValueError):
             Call()
         with self.assertRaises(ValueError):
-            Call(amount=0)
+            Call(chips=0)
         with self.assertRaises(ValueError):
-            Call(amount=-1)
+            Call(chips=-1)
 
     def test_bet(self):
-        Bet(amount=1)
+        Bet(chips=1)
         with self.assertRaises(ValueError):
             Bet()
         with self.assertRaises(ValueError):
-            Bet(amount=0)
+            Bet(chips=0)
         with self.assertRaises(ValueError):
-            Bet(amount=-1)
+            Bet(chips=-1)
 
     def test_raise(self):
-        Raise(amount=1)
+        Raise(chips=1)
         with self.assertRaises(ValueError):
             Raise()
         with self.assertRaises(ValueError):
-            Raise(amount=0)
+            Raise(chips=0)
         with self.assertRaises(ValueError):
-            Raise(amount=-1)
+            Raise(chips=-1)
