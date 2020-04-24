@@ -1,11 +1,8 @@
-from utils.attrs import StringAttr
-
-
 class Gambler():
-    nickname = StringAttr(min_length=1, max_length=63, writable=False)
+    __slots__ = ('_nickname',)
 
     def __init__(self, nickname:str) -> None:
-        self.__class__.nickname.validate(self, nickname)
+        assert len(nickname) > 0, '{} nickname cannot be empty'.format(self.__class__.__name__)
         self._nickname = nickname
 
     def __repr__(self) -> str:
