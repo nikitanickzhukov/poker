@@ -1,6 +1,5 @@
 from abc import ABC
 
-from utils.attrs import ListAttr
 from cards import Card
 
 

@@ -1,4 +1,3 @@
-from utils.attrs import StringAttr
 from .props import Prop
 
 
