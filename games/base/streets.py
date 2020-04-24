@@ -1,6 +1,5 @@
 from abc import ABC
 
-from utils.attrs import ListAttr
 from cards import Card
 
 
@@ -9,20 +8,14 @@ class Street(ABC):
     Representation of abstract street on a board or in a hand
     """
 
+    __slots__ = ('_cards',)
     length = 0
     order = 0
 
-    cards = ListAttr(
-        type=set,
-        item_type=Card,
-        validate=lambda obj, val: len(val) == obj.length,
-        writable=False,
-    )
-
     def __init__(self, *cards) -> None:
-        items = set(cards)
-        self.__class__.cards.validate(self, items)
-        self._cards = items
+        assert len(cards) == self.length, \
+               '{} cannot contain {} card(s)'.format(self.__class__.__name__, len(cards))
+        self._cards = set(cards)
 
     def __repr__(self) -> str:
         return '<{}: {}>'.format(self.__class__.__name__, str(self))
@@ -38,6 +31,10 @@ class Street(ABC):
 
     def __iter__(self) -> iter:
         return iter(self._cards)
+
+    @property
+    def cards(self):
+        return self._cards
 
 
 __all__ = ('Street',)

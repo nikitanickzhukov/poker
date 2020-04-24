@@ -1,19 +1,14 @@
 from abc import ABC
 
-from utils.attrs import IntegerAttr
-
 
 class Action(ABC):
+    __slots__ = ('_chips',)
     with_chips = False
 
-    chips = IntegerAttr(
-        min_value=0,
-        validate=lambda obj, val: obj.with_chips == (val != 0),
-        writable=False,
-    )
-
     def __init__(self, chips:int=0) -> None:
-        self.__class__.chips.validate(self, chips)
+        assert chips >= 0 and self.with_chips == (chips > 0), \
+            '{} cannot contain {} chip(s)'.format(self.__class__.__name__, chips)
+
         self._chips = chips
 
     def __repr__(self) -> str:

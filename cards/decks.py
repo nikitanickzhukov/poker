@@ -1,7 +1,6 @@
 from abc import ABC
 import random
 
-from utils.attrs import ListAttr
 from .cards import Card, cards
 
 
@@ -12,11 +11,6 @@ class Deck(ABC):
     Parameters
     ----------
         None
-
-    Attributes
-    ----------
-        cards : list
-            A list of cards (read only)
 
     Methods
     -------
@@ -31,11 +25,7 @@ class Deck(ABC):
             Removes and returns one card from the tail of the deck
     """
 
-    cards = ListAttr(
-        type=list,
-        item_type=Card,
-        writable=False,
-    )
+    __slots__ = ('_cards',)
 
     def __init__(self) -> None:
         self._cards = []
@@ -68,9 +58,7 @@ class StandardDeck(Deck):
     """
 
     def __init__(self) -> None:
-        items = list(cards)
-        self.__class__.cards.validate(self, items)
-        self._cards = items
+        self._cards = list(cards)
 
 
 __all__ = ('Deck', 'StandardDeck')

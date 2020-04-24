@@ -1,7 +1,5 @@
-from typing import List
 from functools import total_ordering
 
-from utils.attrs import TypedAttr, StringAttr
 from .ranks import Rank, ranks
 from .suits import Suit, suits
 
@@ -37,15 +35,9 @@ class Card():
         Comparing operations
     """
 
-    rank = TypedAttr(type=Rank, writable=False)
-    suit = TypedAttr(type=Suit, writable=False)
-    code = StringAttr(getter=lambda obj: obj.rank.code + obj.suit.code, writable=False)
-    name = StringAttr(getter=lambda obj: '{} of {}'.format(obj.rank.name, obj.suit.name), writable=False)
+    __slots__ = ('_rank', '_suit')
 
     def __init__(self, rank:Rank, suit:Suit) -> None:
-        self.__class__.rank.validate(self, rank)
-        self.__class__.suit.validate(self, suit)
-
         self._rank = rank
         self._suit = suit
 
@@ -62,7 +54,23 @@ class Card():
         return self._rank == other._rank and self._suit == other._suit
 
     def __gt__(self, other:'Card') -> bool:
-        return (self._rank, self.suit) > (other._rank, other._suit)
+        return (self._rank, self._suit) > (other._rank, other._suit)
+
+    @property
+    def rank(self):
+        return self._rank
+
+    @property
+    def suit(self):
+        return self._suit
+
+    @property
+    def code(self):
+        return self._rank._code + self._suit.code
+
+    @property
+    def name(self):
+        return '{} of {}'.format(self._rank.name, self._suit.name)
 
 
 class CardSet(frozenset):

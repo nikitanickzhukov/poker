@@ -1,4 +1,3 @@
-from utils.attrs import StringAttr
 from .props import Prop
 
 
@@ -7,12 +6,7 @@ class Suit(Prop):
     A card suit (see Prop docs for more information)
     """
 
-    code = StringAttr(
-        min_length=1,
-        max_length=1,
-        validate=lambda obj, val: 'a' <= val <= 'z',
-        writable=False,
-    )
+    pass
 
 
 suits = (

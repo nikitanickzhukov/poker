@@ -1,28 +1,8 @@
-from typing import Optional
-
-from utils.attrs import TypedAttr, IntegerAttr, BooleanAttr
 from .gamblers import Gambler
 
 
 class Box():
-    gambler = TypedAttr(
-        type=Gambler,
-        nullable=True,
-        writable=False
-    )
-    chips = IntegerAttr(
-        min_value=0,
-        nullable=True,
-        validate=lambda obj, val: (val is None) == obj.is_empty
-    )
-    is_empty = BooleanAttr(
-        getter=lambda obj: obj.gambler is None,
-        writable=False
-    )
-    is_active = BooleanAttr(
-        getter=lambda obj: obj.gambler is not None,
-        writable=False
-    )
+    __slots__ = ('_gambler', '_chips', '_is_active')
 
     def __init__(self) -> None:
         self._gambler = None
@@ -31,18 +11,49 @@ class Box():
     def __repr__(self) -> str:
         if self.is_empty:
             return '<{}: empty>'.format(self.__class__.__name__)
-        return '<{}: {}, {} chip(s)'.format(self.__class__.__name__, str(self._gambler), self._chips)
+        return '<{}: {}, {} chip(s)'.format(self.__class__.__name__, str(self), self._chips)
+
+    def __str__(self) -> str:
+        return str(self._gambler)
 
     def occupy(self, gambler:Gambler, chips:int=0) -> None:
         assert self.is_empty, 'Box is not empty'
-        self.__class__.gambler.validate(self, gambler)
+        assert chips >= 0, 'Chips must be positive'
+
         self._gambler = gambler
-        self.chips = chips
+        self._chips = chips
 
     def leave(self):
-        assert not self.is_empty, 'Box is empty'
+        assert self.is_active, 'Box is not active'
         self._gambler = None
         self._chips = None
+
+    def win_chips(self, chips:int) -> None:
+        assert self.is_active, 'Box is not active'
+        assert chips >= 0, 'Chips must be positive'
+        self._chips += chips
+
+    def lose_chips(self, chips:int) -> None:
+        assert self.is_active, 'Box is not active'
+        assert chips >= 0, 'Chips must be positive'
+        assert chips <= self._chips, 'Box cannot lose more chips than it has'
+        self._chips -= chips
+
+    @property
+    def gambler(self):
+        return self._gambler
+
+    @property
+    def chips(self):
+        return self._chips
+
+    @property
+    def is_empty(self):
+        return self._gambler is None
+
+    @property
+    def is_active(self):
+        return self._gambler is not None
 
 
 __all__ = ('Box',)
