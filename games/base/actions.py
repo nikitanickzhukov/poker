@@ -6,6 +6,9 @@ class Action(ABC):
     with_chips = False
 
     def __init__(self, chips:int=0) -> None:
+        assert chips >= 0 and self.with_chips == (chips > 0), \
+            '{} cannot contain {} chip(s)'.format(self.__class__.__name__, chips)
+
         self._chips = chips
 
     def __repr__(self) -> str:

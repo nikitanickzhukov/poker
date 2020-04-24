@@ -31,6 +31,10 @@ class Prop(ABC):
     __slots__ = ('_code', '_name', '_weight')
 
     def __init__(self, code:str, name:str, weight:int) -> None:
+        assert len(code) == 1, '{} code must be a single char'.format(self.__class__.__name__)
+        assert len(name) > 0, '{} name must not be empty'.format(self.__class__.__name__)
+        assert weight > 0, '{} weight must be positive'.format(self.__class__.__name__)
+
         self._code = code
         self._name = name
         self._weight = weight

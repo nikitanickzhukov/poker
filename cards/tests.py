@@ -14,6 +14,14 @@ class PropTestCase(TestCase):
     def tearDown(self):
         del self.prop
 
+    def test_init(self):
+        with self.assertRaises(AssertionError):
+            Prop(code='AA', name='Prop A', weight=3)
+        with self.assertRaises(AssertionError):
+            Prop(code='A', name='', weight=3)
+        with self.assertRaises(AssertionError):
+            Prop(code='A', name='Prop A', weight=-1)
+
     def test_attrs(self):
         self.assertEqual(self.prop.code, 'A')
         self.assertEqual(self.prop.name, 'Prop A')

@@ -14,6 +14,8 @@ class Street(ABC):
     order = 0
 
     def __init__(self, *cards) -> None:
+        assert len(cards) == self.length, \
+               '{} cannot contain {} card(s)'.format(self.__class__.__name__, len(cards))
         self._cards = set(cards)
 
     def __repr__(self) -> str:
