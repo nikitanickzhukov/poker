@@ -40,4 +40,4 @@ class Timer():
         self.stop()
 
 
-__all__ = ('Timer')
+__all__ = ('Timer',)
