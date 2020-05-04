@@ -1,47 +1,57 @@
-from ..base import hands
+from ..base.hands import (
+    HandComb, Hand as BaseHand,
+    HighCard as BaseHighCard, OnePair as BaseOnePair, TwoPair as BaseTwoPair,
+    Trips as BaseTrips, Straight as BaseStraight, Flush as BaseFlush,
+    FullHouse as BaseFullHouse, Quads as BaseQuads, StraightFlush as BaseStraightFlush,
+    Identifier as BaseIdentifier,
+)
 
 
-class HighCard(hands.HighCard):
+class Hand(BaseHand):
     pass
 
 
-class OnePair(hands.OnePair):
+class HighCard(Hand, BaseHighCard):
     pass
 
 
-class TwoPair(hands.TwoPair):
+class OnePair(Hand, BaseOnePair):
     pass
 
 
-class Trips(hands.Trips):
+class TwoPair(Hand, BaseTwoPair):
     pass
 
 
-class Straight(hands.Straight):
+class Trips(Hand, BaseTrips):
     pass
 
 
-class Flush(hands.Flush):
+class Straight(Hand, BaseStraight):
     pass
 
 
-class FullHouse(hands.FullHouse):
+class Flush(Hand, BaseFlush):
     pass
 
 
-class Quads(hands.Quads):
+class FullHouse(Hand, BaseFullHouse):
     pass
 
 
-class StraightFlush(hands.StraightFlush):
+class Quads(Hand, BaseQuads):
     pass
 
 
-class Identifier(hands.Identifier):
+class StraightFlush(Hand, BaseStraightFlush):
+    pass
+
+
+class Identifier(BaseIdentifier):
     hand_classes = (StraightFlush, Quads, FullHouse, Flush, Straight, Trips, TwoPair, OnePair, HighCard)
 
 
 __all__ = (
-    'HighCard', 'OnePair', 'TwoPair', 'Trips', 'Straight', 'Flush',
-    'FullHouse', 'Quads', 'StraightFlush', 'Identifier',
+    'HandComb', 'Hand', 'HighCard', 'OnePair', 'TwoPair', 'Trips',
+    'Straight', 'Flush', 'FullHouse', 'Quads', 'StraightFlush', 'Identifier',
 )

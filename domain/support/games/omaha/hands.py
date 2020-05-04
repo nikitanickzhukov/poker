@@ -1,9 +1,15 @@
-from ..base import hands
+from ..base.hands import (
+    HandComb, Hand as BaseHand,
+    HighCard as BaseHighCard, OnePair as BaseOnePair, TwoPair as BaseTwoPair,
+    Trips as BaseTrips, Straight as BaseStraight, Flush as BaseFlush,
+    FullHouse as BaseFullHouse, Quads as BaseQuads, StraightFlush as BaseStraightFlush,
+    Identifier as BaseIdentifier,
+)
 
 
-class OmahaMixin:
+class Hand(BaseHand):
     @classmethod
-    def check_comb(cls, hand: hands.HandComb, comb: tuple) -> bool:
+    def check_comb(cls, hand: HandComb, comb: tuple) -> bool:
         pocket_count = 0
         for card in hand.pocket:
             if card in comb:
@@ -13,47 +19,47 @@ class OmahaMixin:
         return pocket_count == 2
 
 
-class HighCard(OmahaMixin, hands.HighCard):
+class HighCard(Hand, BaseHighCard):
     pass
 
 
-class OnePair(OmahaMixin, hands.OnePair):
+class OnePair(Hand, BaseOnePair):
     pass
 
 
-class TwoPair(OmahaMixin, hands.TwoPair):
+class TwoPair(Hand, BaseTwoPair):
     pass
 
 
-class Trips(OmahaMixin, hands.Trips):
+class Trips(Hand, BaseTrips):
     pass
 
 
-class Straight(OmahaMixin, hands.Straight):
+class Straight(Hand, BaseStraight):
     pass
 
 
-class Flush(OmahaMixin, hands.Flush):
+class Flush(Hand, BaseFlush):
     pass
 
 
-class FullHouse(OmahaMixin, hands.FullHouse):
+class FullHouse(Hand, BaseFullHouse):
     pass
 
 
-class Quads(OmahaMixin, hands.Quads):
+class Quads(Hand, BaseQuads):
     pass
 
 
-class StraightFlush(OmahaMixin, hands.StraightFlush):
+class StraightFlush(Hand, BaseStraightFlush):
     pass
 
 
-class Identifier(hands.Identifier):
+class Identifier(BaseIdentifier):
     hand_classes = (StraightFlush, Quads, FullHouse, Flush, Straight, Trips, TwoPair, OnePair, HighCard)
 
 
 __all__ = (
-    'HighCard', 'OnePair', 'TwoPair', 'Trips', 'Straight', 'Flush',
-    'FullHouse', 'Quads', 'StraightFlush', 'Identifier',
+    'HandComb', 'Hand', 'HighCard', 'OnePair', 'TwoPair', 'Trips',
+    'Straight', 'Flush', 'FullHouse', 'Quads', 'StraightFlush', 'Identifier',
 )

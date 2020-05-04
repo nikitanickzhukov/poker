@@ -133,14 +133,9 @@ class HandComb:
 @total_ordering
 class Hand(ABC):
     __slots__ = ('_cards',)
-    hand_length = 5
-    hand_weight = 0
 
     def __init__(self, *cards) -> None:
         self._cards = cards
-
-    def __repr__(self) -> str:
-        return '<{}: {}'.format(self.__class__.__name__, str(self))
 
     def __str__(self) -> str:
         return str([str(x) for x in self._cards])
@@ -172,11 +167,6 @@ class Hand(ABC):
             raise AssertionError('Wrong key type')
 
     @classmethod
-    def get_combs(cls, hand: HandComb) -> iter:
-        while False:
-            yield
-
-    @classmethod
     def check_comb(cls, hand: HandComb, comb: tuple) -> bool:
         return True
 
@@ -192,8 +182,9 @@ class Hand(ABC):
         return self.hand_weight, *[x.rank.weight for x in self._cards]
 
 
-class HighCard(Hand):
+class HighCard(ABC):
     hand_weight = 1
+    hand_length = 5
 
     def __repr__(self) -> str:
         return '<High card: {}>'.format(', '.join([x.rank.name for x in self._cards]))
@@ -203,8 +194,9 @@ class HighCard(Hand):
         yield from combinations(hand.cards, cls.hand_length)
 
 
-class OnePair(Hand):
+class OnePair(ABC):
     hand_weight = 2
+    hand_length = 5
 
     def __repr__(self) -> str:
         return '<One pair: {}s, kickers: {}>'.format(
@@ -223,8 +215,9 @@ class OnePair(Hand):
                     yield pair + kicker
 
 
-class TwoPair(Hand):
+class TwoPair(ABC):
     hand_weight = 3
+    hand_length = 5
 
     def __repr__(self) -> str:
         return '<Two pair: {}s and {}s, kicker: {}>'.format(
@@ -245,8 +238,9 @@ class TwoPair(Hand):
                     yield pair1 + pair2 + kicker
 
 
-class Trips(Hand):
+class Trips(ABC):
     hand_weight = 4
+    hand_length = 5
 
     def __repr__(self) -> str:
         return '<Three of a kind: {}s, kickers: {}>'.format(
@@ -265,8 +259,9 @@ class Trips(Hand):
                     yield triple + kicker
 
 
-class Straight(Hand):
+class Straight(ABC):
     hand_weight = 5
+    hand_length = 5
 
     def __repr__(self) -> str:
         return '<Straight: {}-high>'.format(self._cards[0].rank.name)
@@ -281,8 +276,9 @@ class Straight(Hand):
                 yield from product(*cards)
 
 
-class Flush(Hand):
+class Flush(ABC):
     hand_weight = 6
+    hand_length = 5
 
     def __repr__(self) -> str:
         return '<Flush: {}>'.format(', '.join([x.rank.name for x in self._cards]))
@@ -295,8 +291,9 @@ class Flush(Hand):
             yield from combinations(flush, cls.hand_length)
 
 
-class FullHouse(Hand):
+class FullHouse(ABC):
     hand_weight = 7
+    hand_length = 5
 
     def __repr__(self) -> str:
         return '<Full house: {}s over {}s>'.format(
@@ -322,8 +319,9 @@ class FullHouse(Hand):
                                 yield triple + pair + kicker
 
 
-class Quads(Hand):
+class Quads(ABC):
     hand_weight = 8
+    hand_length = 5
 
     def __repr__(self) -> str:
         return '<Four of a kind: {}s, kicker: {}>'.format(
@@ -342,8 +340,9 @@ class Quads(Hand):
                     yield quad + kicker
 
 
-class StraightFlush(Hand):
+class StraightFlush(ABC):
     hand_weight = 9
+    hand_length = 5
 
     def __repr__(self) -> str:
         if self._cards[0].rank == max_rank:
