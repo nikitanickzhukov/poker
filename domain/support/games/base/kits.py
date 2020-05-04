@@ -24,9 +24,9 @@ class Kit(ABC):
         return '<{}: {}>'.format(self.__class__.__name__, str(self))
 
     def __str__(self) -> str:
-        return str([ str(x) for x in self.cards ])
+        return str([str(x) for x in self.cards])
 
-    def __contains__(self, item:Card) -> bool:
+    def __contains__(self, item: Card) -> bool:
         return item in self.cards
 
     def __len__(self) -> int:
@@ -43,12 +43,12 @@ class Kit(ABC):
 
     def _append_streets(self, *streets) -> None:
         assert len(streets) <= len(self.street_classes) - len(self._streets), \
-               '{} cannot contain more than {} streets'.format(self.__class__, len(self.street_classes))
+            '{} cannot contain more than {} streets'.format(self.__class__, len(self.street_classes))
 
         idx = len(self._streets)
         for street in streets:
-            StreetClass = self.street_classes[idx]
-            assert isinstance(street, StreetClass), 'Must be a {} instance'.format(StreetClass)
+            street_class = self.street_classes[idx]
+            assert isinstance(street, street_class), 'Must be a {} instance'.format(street_class)
             idx += 1
         self._streets.extend(streets)
 

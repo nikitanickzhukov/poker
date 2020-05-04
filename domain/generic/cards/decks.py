@@ -31,7 +31,7 @@ class Deck(ABC):
         self._cards = []
 
     def __str__(self) -> str:
-        return str([ str(x) for x in self._cards ])
+        return str([str(x) for x in self._cards])
 
     def __repr__(self) -> str:
         return '<{}: {!r}>'.format(self.__class__.__name__, self._cards)
@@ -58,6 +58,7 @@ class StandardDeck(Deck):
     """
 
     def __init__(self) -> None:
+        super().__init__()
         self._cards = list(cards)
 
 

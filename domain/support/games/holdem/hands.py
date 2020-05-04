@@ -20,6 +20,7 @@ class Trips(hands.Trips):
 class Straight(hands.Straight):
     pass
 
+
 class Flush(hands.Flush):
     pass
 
@@ -40,4 +41,7 @@ class Identifier(hands.Identifier):
     hand_classes = (StraightFlush, Quads, FullHouse, Flush, Straight, Trips, TwoPair, OnePair, HighCard)
 
 
-__all__ = ('Identifier', 'HighCard', 'OnePair', 'TwoPair', 'Trips', 'Straight', 'Flush', 'FullHouse', 'Quads', 'StraightFlush')
+__all__ = (
+    'HighCard', 'OnePair', 'TwoPair', 'Trips', 'Straight', 'Flush',
+    'FullHouse', 'Quads', 'StraightFlush', 'Identifier',
+)

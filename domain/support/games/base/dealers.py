@@ -1,3 +1,5 @@
+from typing import Optional
+
 from domain.generic.cards import Deck
 
 from .actions import Fold, Check, Bet, Raise
@@ -8,16 +10,19 @@ from .pots import Pot
 from .hands import Identifier
 
 
-class Dealer():
-    def shuffle_deck(self, deck:Deck) -> None:
+class Dealer:
+    def __init__(self) -> None:
+        pass
+
+    def shuffle_deck(self, deck: Deck) -> None:
         deck.shuffle()
 
     def deal_cards(
         self,
-        street:Street,
-        board:Board,
-        layout:Layout,
-        deck:Deck,
+        street: Street,
+        board: Board,
+        layout: Layout,
+        deck: Deck,
     ) -> None:
         if self._is_board_street(street=street, board=board):
             self._deal_board_cards(street=street, board=board, deck=deck)
@@ -27,13 +32,13 @@ class Dealer():
             for player in layout:
                 print(repr(player))
 
-    def collect_ante(self, layout:Layout, pot:Pot, ante:int) -> iter:
+    def collect_ante(self, layout: Layout, pot: Pot, ante: int) -> iter:
         for player in layout:
             action = player.post_ante(chips=ante)
             pot.add_chips(chips)
             yield action
 
-    def collect_blinds(self, layout:Layout, pot:Pot, bb:int, sb:int, ante:int=0) -> iter:
+    def collect_blinds(self, layout: Layout, pot: Pot, bb: int, sb: int) -> iter:
         action = layout.sb_player.post_blind(chips=sb)
         pot.add_chips(action.chips)
         yield action
@@ -48,10 +53,10 @@ class Dealer():
 
     def request_actions(
         self,
-        street:Street,
-        board:Board,
-        layout:Layout,
-        pot:Pot,
+        street: Street,
+        board: Board,
+        layout: Layout,
+        pot: Pot,
     ) -> iter:
         print(repr(street))
 
@@ -94,14 +99,20 @@ class Dealer():
 
         pot.reset()
 
-    def showdown(self, layout:Layout, board:Board, pot:Pot, identifier:Identifier) -> None:
+    def showdown(
+        self,
+        layout: Layout,
+        board: Board,
+        pot: Pot,
+        identifier: Identifier,
+    ) -> None:
         print(repr(board))
         for player in layout.active_players:
             hand = identifier.identify(player.pocket, board)
             print(player, ' == ', repr(hand))
         print(repr(pot))
 
-    def define_next_street(self, layout:Layout, board:Board) -> Street:
+    def define_next_street(self, layout: Layout, board: Board) -> Optional[Street]:
         street_classes = self._get_street_classes(layout=layout, board=board)
         idx = 0
 
@@ -119,17 +130,17 @@ class Dealer():
             return street_classes[idx]
         return None
 
-    def _get_street_classes(self, layout:Layout, board:Board) -> tuple:
+    def _get_street_classes(self, layout: Layout, board: Board) -> tuple:
         classes = self._get_pocket_classes(layout=layout) + self._get_board_classes(board=board)
         return tuple(sorted(classes, key=lambda x: x.order))
 
-    def _deal_board_cards(self, street:Street, board:Board, deck:'Deck') -> None:
+    def _deal_board_cards(self, street: Street, board: Board, deck: Deck) -> None:
         cards = []
         for _ in range(street.length):
             cards.append(deck.pop())
         board.append(*cards)
 
-    def _deal_pocket_cards(self, street:Street, layout:Layout, deck:'Deck') -> None:
+    def _deal_pocket_cards(self, street: Street, layout: Layout, deck: Deck) -> None:
         deck.pop()
         for player in layout.active_players:
             cards = []
@@ -137,16 +148,16 @@ class Dealer():
                 cards.append(deck.pop())
             player.pocket.append(*cards)
 
-    def _is_board_street(self, board:Board, street:Street) -> bool:
+    def _is_board_street(self, board: Board, street: Street) -> bool:
         return street in self._get_board_classes(board=board)
 
-    def _define_start_idx(self, street:Street, layout:Layout) -> int:
+    def _define_start_idx(self, street: Street, layout: Layout) -> int:
         return 0
 
-    def _get_board_classes(self, board:Board) -> tuple:
+    def _get_board_classes(self, board: Board) -> tuple:
         return board.street_classes
 
-    def _get_pocket_classes(self, layout:Layout) -> tuple:
+    def _get_pocket_classes(self, layout: Layout) -> tuple:
         return layout.players[0].pocket.street_classes
 
 

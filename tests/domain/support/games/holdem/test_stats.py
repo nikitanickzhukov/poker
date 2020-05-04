@@ -15,7 +15,7 @@ class StatTestCase(TestCase):
         timer = Timer()
 
         count = Counter()
-        for i in range(TEST_COUNT):
+        for _ in range(TEST_COUNT):
             deck = StandardDeck()
             deck.shuffle()
             pocket = Pocket(deck.pop(), deck.pop())

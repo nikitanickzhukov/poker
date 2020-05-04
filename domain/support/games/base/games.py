@@ -11,21 +11,21 @@ from .actions import Action
 from .dealers import Dealer
 
 
-class Game():
+class Game:
     __slots__ = ('_layout', '_dealer', '_board', '_pot', '_identifier', '_deck', '_bb', '_sb', '_ante', '_actions')
 
     def __init__(
         self,
-        layout:Layout,
-        dealer:Dealer,
-        board:Board,
-        pot:Pot,
-        identifier:Identifier,
-        deck:Deck,
-        bb:int,
-        sb:int,
-        ante:int=0,
-        actions:Optional[List[Action]]=None,
+        layout: Layout,
+        dealer: Dealer,
+        board: Board,
+        pot: Pot,
+        identifier: Identifier,
+        deck: Deck,
+        bb: int,
+        sb: int,
+        ante: int = 0,
+        actions: Optional[List[Action]] = None,
     ) -> None:
         self._layout = layout
         self._dealer = dealer

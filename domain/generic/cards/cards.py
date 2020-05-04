@@ -5,7 +5,7 @@ from .suits import Suit, suits
 
 
 @total_ordering
-class Card():
+class Card:
     """
     A card in a deck
 
@@ -37,7 +37,7 @@ class Card():
 
     __slots__ = ('_rank', '_suit')
 
-    def __init__(self, rank:Rank, suit:Suit) -> None:
+    def __init__(self, rank: Rank, suit: Suit) -> None:
         self._rank = rank
         self._suit = suit
 
@@ -50,10 +50,10 @@ class Card():
     def __hash__(self) -> int:
         return hash(self.code)
 
-    def __eq__(self, other:'Card') -> bool:
+    def __eq__(self, other: 'Card') -> bool:
         return self._rank == other._rank and self._suit == other._suit
 
-    def __gt__(self, other:'Card') -> bool:
+    def __gt__(self, other: 'Card') -> bool:
         return (self._rank, self._suit) > (other._rank, other._suit)
 
     @property
@@ -66,7 +66,7 @@ class Card():
 
     @property
     def code(self):
-        return self._rank._code + self._suit.code
+        return self._rank.code + self._suit.code
 
     @property
     def name(self):
@@ -74,7 +74,7 @@ class Card():
 
 
 class CardSet(frozenset):
-    def __getitem__(self, key:str) -> Card:
+    def __getitem__(self, key: str) -> Card:
         if not hasattr(self, '_mapping'):
             self._mapping = {}
             for card in self:
@@ -82,8 +82,8 @@ class CardSet(frozenset):
         return self._mapping[key]
 
 
-cards = tuple(Card(rank=r, suit=s) for s in suits for r in ranks)
-cardset = CardSet(cards)
+cards: tuple = tuple(Card(rank=r, suit=s) for s in suits for r in ranks)
+cardset: CardSet = CardSet(cards)
 
 
 __all__ = ('Card', 'cards', 'cardset')

@@ -1,9 +1,9 @@
 from ..base import hands
 
 
-class OmahaMixin():
+class OmahaMixin:
     @classmethod
-    def check_comb(cls, hand:hands.HandComb, comb:tuple) -> bool:
+    def check_comb(cls, hand: hands.HandComb, comb: tuple) -> bool:
         pocket_count = 0
         for card in hand.pocket:
             if card in comb:
@@ -32,6 +32,7 @@ class Trips(OmahaMixin, hands.Trips):
 class Straight(OmahaMixin, hands.Straight):
     pass
 
+
 class Flush(OmahaMixin, hands.Flush):
     pass
 
@@ -52,4 +53,7 @@ class Identifier(hands.Identifier):
     hand_classes = (StraightFlush, Quads, FullHouse, Flush, Straight, Trips, TwoPair, OnePair, HighCard)
 
 
-__all__ = ('Identifier', 'HighCard', 'OnePair', 'TwoPair', 'Trips', 'Straight', 'Flush', 'FullHouse', 'Quads', 'StraightFlush')
+__all__ = (
+    'HighCard', 'OnePair', 'TwoPair', 'Trips', 'Straight', 'Flush',
+    'FullHouse', 'Quads', 'StraightFlush', 'Identifier',
+)

@@ -2,17 +2,17 @@ from typing import List
 from .players import Player
 
 
-class Layout():
+class Layout:
     __slots__ = ('_players',)
 
-    def __init__(self, players:List[Player]) -> None:
+    def __init__(self, players: List[Player]) -> None:
         self._players = players
 
     def __repr__(self) -> str:
         return '<{}: {}'.format(self.__class__.__name__, str(self))
 
     def __str__(self) -> str:
-        return str([ str(x) for x in self._players ])
+        return str([str(x) for x in self._players])
 
     def __len__(self) -> int:
         return len(self._players)
@@ -20,7 +20,7 @@ class Layout():
     def __iter__(self) -> iter:
         return iter(self._players)
 
-    def __getitem__(self, key:int) -> Player:
+    def __getitem__(self, key: int) -> Player:
         return self._players[key]
 
     @property

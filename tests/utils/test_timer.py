@@ -7,19 +7,21 @@ from utils.timer import Timer
 class TimerTestCase(TestCase):
     def setUp(self):
         self.timer = Timer()
+        self.delay = 1
+        self.eps = 0.025
 
     def tearDown(self):
         del self.timer
 
     def test_timer(self):
         self.timer.start()
-        time.sleep(1)
+        time.sleep(self.delay)
         self.timer.stop()
-        self.assertTrue(0.95 <= self.timer.elapsed <= 1.05)
+        self.assertTrue(self.delay - self.eps <= self.timer.elapsed <= self.delay + self.eps)
 
         self.timer.reset()
         self.assertEqual(self.timer.elapsed, 0.0)
 
         with self.timer:
             time.sleep(1)
-        self.assertTrue(0.95 <= self.timer.elapsed <= 1.05)
+        self.assertTrue(self.delay - self.eps <= self.timer.elapsed <= self.delay + self.eps)

@@ -7,6 +7,7 @@ from domain.support.games.base.streets import Street
 class TestStreet1(Street):
     length = 2
 
+
 class TestStreet2(Street):
     length = 1
 

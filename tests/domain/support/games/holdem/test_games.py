@@ -16,7 +16,7 @@ class GameTestCase(TestCase):
             board=Board(),
             dealer=Dealer(),
             pot=Pot(players=(a, b, c, d), chips=0),
-            identifier=Identifier,
+            identifier=Identifier(),
             deck=StandardDeck(),
             bb=2,
             sb=1,

@@ -5,9 +5,9 @@ class Action(ABC):
     __slots__ = ('_player', '_street', '_chips')
     with_chips = False
 
-    def __init__(self, chips:int=0) -> None:
+    def __init__(self, chips: int = 0) -> None:
         assert chips >= 0 and self.with_chips == (chips > 0), \
-               '{} cannot contain {} chip(s)'.format(self.__class__.__name__, chips)
+            '{} cannot contain {} chip(s)'.format(self.__class__.__name__, chips)
         self._chips = chips
 
     def __repr__(self) -> str:

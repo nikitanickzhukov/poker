@@ -2,11 +2,11 @@ from typing import List
 from domain.support.base import Game
 
 
-class Runner():
-    def __init__(self, game:Game) -> None:
+class Runner:
+    def __init__(self, game: Game) -> None:
         self._game = game
 
-    def run(self, attempts:int) -> iter:
+    def run(self, attempts: int) -> iter:
         for _ in range(attempts):
             yield self._run_attempt()
 

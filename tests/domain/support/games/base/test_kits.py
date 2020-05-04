@@ -8,8 +8,10 @@ from domain.support.games.base.kits import Kit
 class TestStreet1(Street):
     length = 2
 
+
 class TestStreet2(Street):
     length = 1
+
 
 class TestKit(Kit):
     street_classes = (TestStreet1, TestStreet2)

@@ -19,21 +19,45 @@ class CardTestCase(TestCase):
         self.assertEqual(self.card.suit, self.suit)
 
     def test_eq(self):
-        self.assertEqual(self.card, Card(rank=Rank(code='B', name='Rank B', weight=3), suit=Suit(code='y', name='Suit Y', weight=3)))
-        self.assertNotEqual(self.card, Card(rank=Rank(code='B', name='Rank B', weight=5), suit=Suit(code='y', name='Suit Y', weight=3)))
-        self.assertNotEqual(self.card, Card(rank=Rank(code='B', name='Rank B', weight=3), suit=Suit(code='y', name='Suit Y', weight=1)))
-        self.assertNotEqual(self.card, Card(rank=Rank(code='B', name='Rank B', weight=1), suit=Suit(code='y', name='Suit Y', weight=5)))
+        self.assertEqual(self.card, Card(
+            rank=Rank(code='B', name='Rank B', weight=3),
+            suit=Suit(code='y', name='Suit Y', weight=3),
+        ))
+        self.assertNotEqual(self.card, Card(
+            rank=Rank(code='B', name='Rank B', weight=5),
+            suit=Suit(code='y', name='Suit Y', weight=3),
+        ))
+        self.assertNotEqual(self.card, Card(
+            rank=Rank(code='B', name='Rank B', weight=3),
+            suit=Suit(code='y', name='Suit Y', weight=1),
+        ))
+        self.assertNotEqual(self.card, Card(
+            rank=Rank(code='B', name='Rank B', weight=1),
+            suit=Suit(code='y', name='Suit Y', weight=5),
+        ))
 
     def test_gt(self):
-        self.assertFalse(self.card > Card(rank=Rank(code='B', name='Rank B', weight=3), suit=Suit(code='y', name='Suit Y', weight=3)))
-        self.assertFalse(self.card > Card(rank=Rank(code='B', name='Rank B', weight=5), suit=Suit(code='y', name='Suit Y', weight=3)))
-        self.assertTrue(self.card > Card(rank=Rank(code='B', name='Rank B', weight=3), suit=Suit(code='y', name='Suit Y', weight=1)))
-        self.assertTrue(self.card > Card(rank=Rank(code='B', name='Rank B', weight=1), suit=Suit(code='y', name='Suit Y', weight=5)))
+        self.assertFalse(self.card > Card(
+            rank=Rank(code='B', name='Rank B', weight=3),
+            suit=Suit(code='y', name='Suit Y', weight=3),
+        ))
+        self.assertFalse(self.card > Card(
+            rank=Rank(code='B', name='Rank B', weight=5),
+            suit=Suit(code='y', name='Suit Y', weight=3)
+        ))
+        self.assertTrue(self.card > Card(
+            rank=Rank(code='B', name='Rank B', weight=3),
+            suit=Suit(code='y', name='Suit Y', weight=1),
+        ))
+        self.assertTrue(self.card > Card(
+            rank=Rank(code='B', name='Rank B', weight=1),
+            suit=Suit(code='y', name='Suit Y', weight=5),
+        ))
 
 
 class CardSetTestCase(TestCase):
     def test_getitem(self):
-        cardset['Ah']
+        self.assertEqual(cardset['Ah'].code, 'Ah')
         with self.assertRaises(KeyError):
             cardset['Xy']
 
