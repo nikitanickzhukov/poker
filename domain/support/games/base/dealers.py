@@ -64,9 +64,16 @@ class Dealer(ABC):
         identifier: Identifier,
     ) -> None:
         print(repr(board))
-        for player in table:
+        best_hand = None
+        for player in table.active_players:
             hand = identifier.identify(player.pocket, board)
-            print(repr(player), ' has ', repr(hand))
+            if best_hand is None or hand > best_hand[1]:
+                if best_hand:
+                    best_hand[0].deactivate()
+                best_hand = player, hand
+            elif hand < best_hand[1]:
+                player.deactivate()
+            print(repr(player), 'has', repr(hand))
         print(repr(pot))
 
     def _get_next_event(
@@ -100,14 +107,12 @@ class Dealer(ABC):
                     player = self._get_next_player(table=table, player=None)
                     return self._ask_player(
                         player=player,
-                        history=history,
                         street_class=event.street.__class__,
                     )
             else:
                 player = self._get_next_player(table=table, player=None)
                 return self._ask_player(
                     player=player,
-                    history=history,
                     street_class=event.street.__class__,
                 )
         elif isinstance(event, Decision):
@@ -115,7 +120,6 @@ class Dealer(ABC):
             if player:
                 return self._ask_player(
                     player=player,
-                    history=history,
                     street_class=event.street_class,
                 )
             else:
@@ -149,12 +153,12 @@ class Dealer(ABC):
     def _ask_player(
         self,
         player: Player,
-        history: History,
         street_class: Type[Street],
     ):
+        action = player.do_action()
         return Decision(
             player=player,
-            action=Check(),
+            action=action,
             street_class=street_class,
         )
 
@@ -189,17 +193,20 @@ class Dealer(ABC):
     ) -> None:
         if isinstance(action, Blind):
             pot.add_chips(action.chips)
+            player.lose_chips(action.chips)
         elif isinstance(action, Fold):
-            table.remove_player(player)
-            pot.remove_player(player)
+            player.deactivate()
         elif isinstance(action, Check):
             pass
         elif isinstance(action, Call):
             pot.add_chips(action.chips)
+            player.lose_chips(action.chips)
         elif isinstance(action, Bet):
             pot.add_chips(action.chips)
+            player.lose_chips(action.chips)
         elif isinstance(action, Raise):
             pot.add_chips(action.chips)
+            player.lose_chips(action.chips)
         else:
             raise TypeError(action)
 
@@ -207,12 +214,14 @@ class Dealer(ABC):
         return history[-1]
 
     def _get_next_player(self, table: Table, player: Optional[Player], cyclic: bool = False) -> Optional[Player]:
-        if player is None:
-            return table[0]
-        idx = table.index(player) + 1
-        if idx >= len(table):
-            return table[0] if cyclic else None
-        return table[idx]
+        for item in table.players:
+            if item.is_active and player is None:
+                return item
+            if item == player:
+                player = None
+        if cyclic:
+            return None if not len(table.active_players) else table.active_players[0]
+        return None
 
     def _get_next_street_class(
         self,

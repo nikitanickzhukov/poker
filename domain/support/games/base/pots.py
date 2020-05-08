@@ -14,7 +14,7 @@ class Pot:
         return '<{}: {}, players: {}>'.format(
             self.__class__.__name__,
             str(self),
-            str([str(x) for x in self._players])
+            str([str(x) for x in self.active_players])
         )
 
     def __str__(self) -> str:
@@ -32,12 +32,22 @@ class Pot:
     def add_player(self, player: Player) -> None:
         self._players.add(player)
 
-    def remove_player(self, player: Player) -> None:
-        self._players.remove(player)
-
     def add_chips(self, chips: int) -> None:
-        assert chips > 0, 'Cannot add negative chips to {}'.format(self.__class__.__name__)
+        assert chips > 0, 'Cannot add negative chips amount'
         self._chips += chips
+
+    def get_winners(self) -> iter:
+        count = len(self.active_players)
+        chips = round(self._chips / count)
+        return tuple((x, chips) for x in self.active_players)
+
+    @property
+    def players(self) -> Sequence[Player]:
+        return tuple(self._players)
+
+    @property
+    def active_players(self) -> Sequence[Player]:
+        return tuple(x for x in self._players if x.is_active)
 
 
 __all__ = ('Pot',)

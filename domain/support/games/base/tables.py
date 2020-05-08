@@ -5,7 +5,7 @@ from .pockets import Pocket
 
 
 class Player:
-    __slots__ = ('_pocket', '_nickname', '_chips')
+    __slots__ = ('_pocket', '_nickname', '_chips', '_is_active')
 
     def __init__(
         self,
@@ -16,6 +16,7 @@ class Player:
         self._pocket = pocket
         self._nickname = nickname
         self._chips = chips
+        self._is_active = True
 
     def __repr__(self) -> str:
         return '<{}: {}, {} chip(s), {}>'.format(
@@ -29,11 +30,23 @@ class Player:
         return self._nickname
 
     def do_action(self) -> Action:
+        assert self._is_active, '{} is not active'.format(self)
         return Check()
 
     def win_chips(self, chips: int) -> None:
-        assert chips > 0, '{} cannot win negative chips'.format(self.__class__.__name__)
+        assert self._is_active, '{} is not active'.format(self)
+        assert chips > 0, 'Cannot win negative chips'
         self._chips += chips
+
+    def lose_chips(self, chips: int) -> None:
+        assert self._is_active, '{} is not active'.format(self)
+        assert chips > 0, 'Cannot lose negative chips'
+        assert chips <= self._chips, 'Cannot lose more chips than has'
+        self._chips -= chips
+
+    def deactivate(self) -> None:
+        assert self._is_active, '{} is not active'.format(self)
+        self._is_active = False
 
     @property
     def pocket(self) -> Pocket:
@@ -46,6 +59,10 @@ class Player:
     @property
     def chips(self) -> int:
         return self._chips
+
+    @property
+    def is_active(self) -> int:
+        return self._is_active
 
 
 class Table:
@@ -80,15 +97,16 @@ class Table:
     def add_player(self, player: Player) -> None:
         self._players.append(player)
 
-    def remove_player(self, player: Player) -> None:
-        self._players.remove(player)
-
     def index(self, player: Player) -> int:
         return self._players.index(player)
 
     @property
     def players(self) -> Sequence[Player]:
-        return self._players
+        return tuple(self._players)
+
+    @property
+    def active_players(self) -> Sequence[Player]:
+        return tuple(x for x in self._players if x.is_active)
 
 
 __all__ = ('Player', 'Table')
