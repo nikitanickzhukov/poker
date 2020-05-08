@@ -1,5 +1,9 @@
-from typing import Optional, Sequence
+from typing import Optional, Sequence, Type
 from abc import ABC
+
+from .streets import Street
+from .actions import Action
+from .tables import Player
 
 
 class Event(ABC):
@@ -8,92 +12,69 @@ class Event(ABC):
 
 
 class Seat(Event):
-    __slots__ = ('_nickname', '_chips')
+    __slots__ = ('_player',)
 
-    def __init__(self, nickname: str, chips: int) -> None:
-        self._nickname = nickname
-        self._chips = chips
+    def __init__(self, player: Player) -> None:
+        self._player = player
 
     def __str__(self) -> str:
-        return '{}, {} chips'.format(self._nickname, self._chips)
+        return str(self._player)
 
     @property
-    def nickname(self) -> str:
-        return self._nickname
-
-    @property
-    def chips(self) -> int:
-        return self._chips
+    def player(self) -> Player:
+        return self._player
 
 
 class Deal(Event):
-    __slots__ = ('_street', '_cards', '_nickname')
+    __slots__ = ('_street', '_player')
 
-    def __init__(self, street: str, cards: Sequence[str], nickname: Optional[str] = None) -> None:
+    def __init__(self, street: Street, player: Optional[Player] = None) -> None:
         self._street = street
-        self._cards = cards
-        self._nickname = nickname
-
-    def __repr__(self) -> str:
-        return '<{}: {}>'.format(self.__class__.__name__, str(self))
+        self._player = player
 
     def __str__(self) -> str:
-        if self._nickname:
-            return '{}, {}, {}'.format(self._street, self._cards, self._nickname)
-        return '{}, {}'.format(self._street, self._cards)
+        if self._player:
+            return '{}, {}'.format(str(self._street), str(self._player))
+        return str(self._street)
 
     @property
-    def street(self) -> str:
+    def street(self) -> Street:
         return self._street
 
     @property
-    def cards(self) -> Sequence[str]:
-        return self._cards
-
-    @property
-    def nickname(self) -> str:
-        return self._nickname
+    def player(self) -> Player:
+        return self._player
 
 
 class Decision(Event):
-    __slots__ = ('_nickname', '_street', '_action', '_chips')
+    __slots__ = ('_player', '_action', '_street_class')
 
-    def __init__(self, nickname: str, street: str, action: str, chips: int) -> None:
-        self._nickname = nickname
-        self._street = street
+    def __init__(self, player: Player, action: Action, street_class: Type[Street]) -> None:
+        self._player = player
         self._action = action
-        self._chips = chips
-
-    def __repr__(self) -> str:
-        return '<{}: {}>'.format(self.__class__.__name__, str(self))
+        self._street_class = street_class
 
     def __str__(self) -> str:
-        if self._chips:
-            return '{}, {}, {} {}'.format(self._street, self._nickname, self._action, self._chips)
-        return '{}, {}, {}'.format(self._street, self._nickname, self._action)
+        return '{}, {}'.format(str(self._player), str(self._action))
 
     @property
-    def nickname(self) -> str:
-        return self._nickname
+    def player(self) -> Player:
+        return self._player
 
     @property
-    def street(self) -> str:
-        return self._street
-
-    @property
-    def action(self) -> str:
+    def action(self) -> Action:
         return self._action
 
     @property
-    def chips(self) -> int:
-        return self._chips
+    def street_class(self) -> Type[Street]:
+        return self._street_class
 
 
 class History:
     __slots__ = ('_events',)
 
     def __init__(self, events: Optional[Sequence[Event]] = None) -> None:
-        self._events = events or []
+        self._events = list(events) or []
 
     def __repr__(self) -> str:
         return '<{}: {}>'.format(self.__class__.__name__, str(self))
@@ -110,8 +91,8 @@ class History:
     def __getitem__(self, key: int) -> Event:
         return self._events[key]
 
-    def push(self, item: Event) -> None:
-        self._events.append(item)
+    def push(self, event: Event) -> None:
+        self._events.append(event)
 
     @property
     def events(self) -> Sequence[Event]:

@@ -5,7 +5,7 @@ from .pockets import Pocket
 
 
 class Player:
-    __slots__ = ('_pocket', '_nickname', '_chips', '_is_active')
+    __slots__ = ('_pocket', '_nickname', '_chips')
 
     def __init__(
         self,
@@ -16,7 +16,6 @@ class Player:
         self._pocket = pocket
         self._nickname = nickname
         self._chips = chips
-        self._is_active = True
 
     def __repr__(self) -> str:
         return '<{}: {}, {} chip(s), {}>'.format(
@@ -30,14 +29,9 @@ class Player:
         return self._nickname
 
     def do_action(self) -> Action:
-        assert self.is_active, '{} is not active'.format(self.__class__.__name__)
         return Check()
 
-    def leave_round(self) -> None:
-        self._is_active = False
-
     def win_chips(self, chips: int) -> None:
-        assert self.is_active, '{} is not active'.format(self.__class__.__name__)
         assert chips > 0, '{} cannot win negative chips'.format(self.__class__.__name__)
         self._chips += chips
 
@@ -52,10 +46,6 @@ class Player:
     @property
     def chips(self) -> int:
         return self._chips
-
-    @property
-    def is_active(self) -> bool:
-        return self._is_active
 
 
 class Table:
@@ -87,16 +77,18 @@ class Table:
         else:
             raise TypeError(key)
 
-    def seat_player(self, player: Player) -> None:
+    def add_player(self, player: Player) -> None:
         self._players.append(player)
+
+    def remove_player(self, player: Player) -> None:
+        self._players.remove(player)
+
+    def index(self, player: Player) -> int:
+        return self._players.index(player)
 
     @property
     def players(self) -> Sequence[Player]:
         return self._players
-
-    @property
-    def active_players(self) -> Sequence[Player]:
-        return tuple(x for x in self._players if x.is_active)
 
 
 __all__ = ('Player', 'Table')

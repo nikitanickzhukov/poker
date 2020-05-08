@@ -2,8 +2,7 @@ from domain.generic.cards import Deck
 
 from .events import History
 from .boards import Board
-from .pockets import Pocket
-from .tables import Player, Table
+from .tables import Table
 from .dealers import Dealer
 from .pots import Pot
 
@@ -13,9 +12,7 @@ class Game:
     street_classes = None
     identifier_class = None
     board_class = Board
-    pocket_class = Pocket
     table_class = Table
-    player_class = Player
     dealer_class = Dealer
     pot_class = Pot
 
@@ -36,11 +33,7 @@ class Game:
 
     def prepare(self) -> None:
         self._dealer.restore_state(
-            street_classes=self.street_classes,
-            player_class=self.player_class,
-            pocket_class=self.pocket_class,
             history=self._history,
-            deck=self._deck,
             table=self._table,
             board=self._board,
             pot=self._pot,

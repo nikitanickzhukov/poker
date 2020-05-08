@@ -15,6 +15,11 @@ class Action(ABC):
             return '<{}, {} chip(s)>'.format(self.__class__.__name__, self._chips)
         return '<{}>'.format(self.__class__.__name__)
 
+    def __str__(self) -> str:
+        if self.with_chips:
+            return '{} {}'.format(self.__class__.__name__, self._chips)
+        return self.__class__.__name__
+
     @property
     def chips(self):
         return self._chips
@@ -40,16 +45,8 @@ class Raise(Bet):
     pass
 
 
-class AllIn(Action):
-    with_chips = True
-
-
 class Blind(Bet):
     pass
 
 
-class Ante(Action):
-    with_chips = True
-
-
-__all__ = ('Action', 'Fold', 'Check', 'Call', 'Bet', 'Raise', 'AllIn', 'Blind', 'Ante')
+__all__ = ('Action', 'Fold', 'Check', 'Call', 'Bet', 'Raise', 'Blind')
