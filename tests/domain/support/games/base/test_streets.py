@@ -21,19 +21,15 @@ class StreetTestCase(TestCase):
         del self.deck
 
     def test_init(self):
-        a = self.deck.pop()
-        b = self.deck.pop()
-        c = self.deck.pop()
-        TestStreet1(a, b)
+        a, b, c = self.deck[0:3]
+        TestStreet1(cards=(a, b))
         with self.assertRaises(AssertionError):
-            TestStreet1(a)
+            TestStreet1(cards=(a,))
         with self.assertRaises(AssertionError):
-            TestStreet1(a, b, c)
+            TestStreet1(cards=(a, b, c))
 
     def test_contains(self):
-        a = self.deck.pop()
-        b = self.deck.pop()
-        c = self.deck.pop()
-        self.assertIn(a, TestStreet1(a, b))
-        self.assertIn(a, TestStreet1(b, a))
-        self.assertNotIn(c, TestStreet1(a, b))
+        a, b, c = self.deck[0:3]
+        self.assertIn(a, TestStreet1(cards=(a, b)))
+        self.assertIn(a, TestStreet1(cards=(b, a)))
+        self.assertNotIn(c, TestStreet1(cards=(a, b)))

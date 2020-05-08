@@ -1,39 +1,57 @@
 from unittest import TestCase
 
-from domain.generic.cards import cardset
-from domain.support.games.holdem import Pocket, Board, Identifier, FullHouse
+from domain.generic.cards import StandardDeck
+from domain.support.games.holdem import (
+    Preflop, Flop, Turn, River,
+    Pocket, Board, Identifier, FullHouse
+)
 
 
 class FullHouseTestCase(TestCase):
-    def test_full_house(self):
-        # Full house, a set and a pair on the board
-        pocket = Pocket(cardset['As'], cardset['Ad'])
-        board = Board(cardset['3s'], cardset['Ac'], cardset['3c'], cardset['2d'], cardset['6s'])
+    def test_set_and_pair(self):
+        deck = StandardDeck()
+        preflop = Preflop(cards=deck.extract(('As', 'Ad')))
+        pocket = Pocket(streets=(preflop,))
+        flop = Flop(cards=deck.extract(('3s', 'Ac', '3c')))
+        turn = Turn(cards=deck.extract(('2d',)))
+        river = River(cards=deck.extract(('6s',)))
+        board = Board(streets=(flop, turn, river))
         hand = Identifier.identify(pocket, board)
         self.assertIsInstance(hand, FullHouse)
-        self.assertEqual(set(hand[0:3]), set([cardset['As'], cardset['Ad'], cardset['Ac']]))
-        self.assertEqual(set(hand[3:5]), set([cardset['3s'], cardset['3c']]))
+        self.assertEqual([x.code for x in hand], ['As', 'Ad', 'Ac', '3s', '3c'])
 
-        # Full house, a trips and a pair on the board
-        pocket = Pocket(cardset['As'], cardset['2s'])
-        board = Board(cardset['3s'], cardset['Ac'], cardset['2c'], cardset['2d'], cardset['6s'])
+    def test_trips_and_pair(self):
+        deck = StandardDeck()
+        preflop = Preflop(cards=deck.extract(('As', '2s')))
+        pocket = Pocket(streets=(preflop,))
+        flop = Flop(cards=deck.extract(('3s', 'Ac', '2c')))
+        turn = Turn(cards=deck.extract(('2d',)))
+        river = River(cards=deck.extract(('6s',)))
+        board = Board(streets=(flop, turn, river))
         hand = Identifier.identify(pocket, board)
         self.assertIsInstance(hand, FullHouse)
-        self.assertEqual(set(hand[0:3]), set([cardset['2s'], cardset['2d'], cardset['2c']]))
-        self.assertEqual(set(hand[3:5]), set([cardset['As'], cardset['Ac']]))
+        self.assertEqual([x.code for x in hand], ['2s', '2d', '2c', 'As', 'Ac'])
 
-        # Full house, a pocket pair and a trips on the board
-        pocket = Pocket(cardset['As'], cardset['Ad'])
-        board = Board(cardset['3s'], cardset['3c'], cardset['3d'], cardset['2d'], cardset['6s'])
+    def test_pp_and_trips(self):
+        deck = StandardDeck()
+        preflop = Preflop(cards=deck.extract(('As', 'Ad')))
+        pocket = Pocket(streets=(preflop,))
+        flop = Flop(cards=deck.extract(('3s', '3c', '3d')))
+        turn = Turn(cards=deck.extract(('2d',)))
+        river = River(cards=deck.extract(('6s',)))
+        board = Board(streets=(flop, turn, river))
         hand = Identifier.identify(pocket, board)
         self.assertIsInstance(hand, FullHouse)
-        self.assertEqual(set(hand[0:3]), set([cardset['3s'], cardset['3d'], cardset['3c']]))
-        self.assertEqual(set(hand[3:5]), set([cardset['As'], cardset['Ad']]))
+        self.assertEqual([x.code for x in hand], ['3s', '3d', '3c', 'As', 'Ad'])
 
-        # Full house, on the board only
-        pocket = Pocket(cardset['As'], cardset['2s'])
-        board = Board(cardset['3s'], cardset['3c'], cardset['3d'], cardset['6d'], cardset['6s'])
+    def test_on_board(self):
+        deck = StandardDeck()
+        preflop = Preflop(cards=deck.extract(('As', '2s')))
+        pocket = Pocket(streets=(preflop,))
+        flop = Flop(cards=deck.extract(('3s', '3c', '3d')))
+        turn = Turn(cards=deck.extract(('6d',)))
+        river = River(cards=deck.extract(('6s',)))
+        board = Board(streets=(flop, turn, river))
         hand = Identifier.identify(pocket, board)
         self.assertIsInstance(hand, FullHouse)
-        self.assertEqual(set(hand[0:3]), set([cardset['3s'], cardset['3d'], cardset['3c']]))
-        self.assertEqual(set(hand[3:5]), set([cardset['6d'], cardset['6s']]))
+        self.assertEqual([x.code for x in hand], ['3s', '3d', '3c', '6s', '6d'])

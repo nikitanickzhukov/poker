@@ -1,15 +1,12 @@
-from typing import List
-from domain.support.base import Game
+from domain.support.base import Game, Pot
 
 
 class Runner:
-    def __init__(self, game: Game) -> None:
-        self._game = game
-
-    def run(self, attempts: int) -> iter:
+    @classmethod
+    def run(cls, game: Game, attempts: int = 1) -> iter:
         for _ in range(attempts):
-            yield self._run_attempt()
+            yield cls._run_attempt(game=game)
 
-    def _run_attempt(self) -> None:
-        game = self._game.clone()
-        return game.run()
+    @classmethod
+    def _run_attempt(cls, game: Game) -> Pot:
+        return game.clone().run()

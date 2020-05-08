@@ -4,7 +4,7 @@ from collections import Counter
 from utils.timer import Timer
 
 from domain.generic.cards import StandardDeck
-from domain.support.games.omaha import Pocket, Board, Identifier
+from domain.support.games.omaha import Pocket, Board, Preflop, Flop, Turn, River, Identifier
 
 
 TEST_COUNT = 10000
@@ -18,8 +18,12 @@ class StatTestCase(TestCase):
         for _ in range(TEST_COUNT):
             deck = StandardDeck()
             deck.shuffle()
-            pocket = Pocket(deck.pop(), deck.pop(), deck.pop(), deck.pop())
-            board = Board(deck.pop(), deck.pop(), deck.pop(), deck.pop(), deck.pop())
+            preflop = Preflop(cards=deck.extract(slice(0, 4)))
+            pocket = Pocket(streets=(preflop,))
+            flop = Flop(cards=deck.extract(slice(0, 3)))
+            turn = Turn(cards=(deck.extract(0),))
+            river = River(cards=(deck.extract(0),))
+            board = Board(streets=(flop, turn, river))
             with timer:
                 hand = Identifier.identify(pocket, board)
             count.update([hand.__class__])

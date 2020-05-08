@@ -14,7 +14,7 @@ class TestStreet2(Street):
 
 
 class TestKit(Kit):
-    street_classes = (TestStreet1, TestStreet2)
+    pass
 
 
 class KitTestCase(TestCase):
@@ -26,44 +26,27 @@ class KitTestCase(TestCase):
         del self.deck
 
     def test_init(self):
-        a = self.deck.pop()
-        b = self.deck.pop()
-        c = self.deck.pop()
-        d = self.deck.pop()
-        street1 = TestStreet1(a, b)
-        street2 = TestStreet2(c)
+        a, b, c = self.deck[0:3]
+        street1 = TestStreet1(cards=(a, b))
+        street2 = TestStreet2(cards=(c,))
         TestKit()
-        TestKit(street1)
-        TestKit(street1, street2)
-        with self.assertRaises(AssertionError):
-            TestKit(street2, street1)
-        TestKit(a, b)
-        TestKit(a, b, c)
-        with self.assertRaises(AssertionError):
-            TestKit(a)
-        with self.assertRaises(AssertionError):
-            TestKit(a, b, c, d)
+        TestKit(streets=(street1,))
+        TestKit(streets=(street1, street2))
 
     def test_contains(self):
-        a = self.deck.pop()
-        b = self.deck.pop()
-        c = self.deck.pop()
-        d = self.deck.pop()
-        self.assertIn(a, TestKit(TestStreet1(a, b)))
-        self.assertIn(c, TestKit(TestStreet1(a, b), TestStreet2(c)))
-        self.assertNotIn(d, TestKit(TestStreet1(a, b), TestStreet2(c)))
+        a, b, c, d = self.deck[0:4]
+        street1 = TestStreet1(cards=(a, b))
+        street2 = TestStreet2(cards=(c,))
+        self.assertIn(a, TestKit(streets=(street1,)))
+        self.assertIn(c, TestKit(streets=(street1, street2)))
+        self.assertNotIn(d, TestKit(streets=(street1, street2)))
 
     def test_append(self):
-        a = self.deck.pop()
-        b = self.deck.pop()
-        c = self.deck.pop()
-        d = self.deck.pop()
+        a, b, c, d = self.deck[0:4]
         kit = TestKit()
-        kit.append(TestStreet1(a, b))
+        street1 = TestStreet1(cards=(a, b))
+        street2 = TestStreet2(cards=(c,))
+        kit.append(street1)
         self.assertIn(a, kit)
-        kit.append(c)
+        kit.append(street2)
         self.assertIn(c, kit)
-        with self.assertRaises(AssertionError):
-            kit.append(TestStreet2(d))
-        with self.assertRaises(AssertionError):
-            kit.append(d)

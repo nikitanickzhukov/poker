@@ -1,4 +1,5 @@
 from abc import ABC
+from typing import Sequence, Union
 
 from domain.generic.cards import Card
 
@@ -10,11 +11,10 @@ class Street(ABC):
 
     __slots__ = ('_cards',)
     length = 0
-    order = 0
+    is_pocket = False
 
-    def __init__(self, *cards) -> None:
-        assert len(cards) == self.length, \
-            '{} cannot contain {} card(s)'.format(self.__class__.__name__, len(cards))
+    def __init__(self, cards: Sequence[Card]) -> None:
+        assert len(cards) == self.length, 'Must contain {} card(s)'.format(self.length)
         self._cards = set(cards)
 
     def __repr__(self) -> str:
@@ -23,8 +23,12 @@ class Street(ABC):
     def __str__(self) -> str:
         return str([str(x) for x in self._cards])
 
-    def __contains__(self, item: Card) -> bool:
-        return item in self._cards
+    def __contains__(self, item: Union[Card, str]) -> bool:
+        if isinstance(item, Card):
+            return item in self._cards
+        elif isinstance(item, str):
+            return item in [x.code for x in self._cards]
+        raise TypeError(item)
 
     def __len__(self) -> int:
         return len(self._cards)
@@ -33,8 +37,8 @@ class Street(ABC):
         return iter(self._cards)
 
     @property
-    def cards(self):
-        return self._cards
+    def cards(self) -> Sequence[Card]:
+        return tuple(self._cards)
 
 
 __all__ = ('Street',)

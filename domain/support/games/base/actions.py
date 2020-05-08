@@ -40,6 +40,10 @@ class Raise(Bet):
     pass
 
 
+class AllIn(Action):
+    with_chips = True
+
+
 class Blind(Bet):
     pass
 
@@ -48,4 +52,4 @@ class Ante(Action):
     with_chips = True
 
 
-__all__ = ('Action', 'Fold', 'Check', 'Call', 'Bet', 'Raise', 'Blind', 'Ante')
+__all__ = ('Action', 'Fold', 'Check', 'Call', 'Bet', 'Raise', 'AllIn', 'Blind', 'Ante')

@@ -1,42 +1,69 @@
 from unittest import TestCase
 
-from domain.generic.cards import cardset
-from domain.support.games.holdem import Pocket, Board, Identifier, StraightFlush
+from domain.generic.cards import StandardDeck
+from domain.support.games.holdem import (
+    Preflop, Flop, Turn, River,
+    Pocket, Board, Identifier, StraightFlush
+)
 
 
 class StraightFlushTestCase(TestCase):
-    def test_straight_flush(self):
-        # Straight flush, wheel, 2 in the pocket and 3 on the board
-        pocket = Pocket(cardset['As'], cardset['2s'])
-        board = Board(cardset['3s'], cardset['2d'], cardset['Jh'], cardset['4s'], cardset['5s'])
+    def test_wheel_2_pocket(self):
+        deck = StandardDeck()
+        preflop = Preflop(cards=deck.extract(('As', '2s')))
+        pocket = Pocket(streets=(preflop,))
+        flop = Flop(cards=deck.extract(('3s', '2d', 'Jh')))
+        turn = Turn(cards=deck.extract(('4s',)))
+        river = River(cards=deck.extract(('5s',)))
+        board = Board(streets=(flop, turn, river))
         hand = Identifier.identify(pocket, board)
         self.assertIsInstance(hand, StraightFlush)
-        self.assertEqual(hand[0], cardset['5s'])
+        self.assertEqual([x.code for x in hand], ['5s', '4s', '3s', '2s', 'As'])
 
-        # Straight flush, wheel, 1 in the pocket and 4 on the board
-        pocket = Pocket(cardset['Ks'], cardset['2s'])
-        board = Board(cardset['3s'], cardset['As'], cardset['Jh'], cardset['4s'], cardset['5s'])
+    def test_wheel_1_pocket(self):
+        deck = StandardDeck()
+        preflop = Preflop(cards=deck.extract(('Ks', '2s')))
+        pocket = Pocket(streets=(preflop,))
+        flop = Flop(cards=deck.extract(('3s', 'As', 'Jh')))
+        turn = Turn(cards=deck.extract(('4s',)))
+        river = River(cards=deck.extract(('5s',)))
+        board = Board(streets=(flop, turn, river))
         hand = Identifier.identify(pocket, board)
         self.assertIsInstance(hand, StraightFlush)
-        self.assertEqual(hand[0], cardset['5s'])
+        self.assertEqual([x.code for x in hand], ['5s', '4s', '3s', '2s', 'As'])
 
-        # Straight flush, 2 in the pocket and 3 on the board
-        pocket = Pocket(cardset['4s'], cardset['7s'])
-        board = Board(cardset['3s'], cardset['Ad'], cardset['Jh'], cardset['6s'], cardset['5s'])
+    def test_2_pocket(self):
+        deck = StandardDeck()
+        preflop = Preflop(cards=deck.extract(('4s', '7s')))
+        pocket = Pocket(streets=(preflop,))
+        flop = Flop(cards=deck.extract(('3s', 'Ad', '2s')))
+        turn = Turn(cards=deck.extract(('6s',)))
+        river = River(cards=deck.extract(('5s',)))
+        board = Board(streets=(flop, turn, river))
         hand = Identifier.identify(pocket, board)
         self.assertIsInstance(hand, StraightFlush)
-        self.assertEqual(hand[0], cardset['7s'])
+        self.assertEqual([x.code for x in hand], ['7s', '6s', '5s', '4s', '3s'])
 
-        # Straight flush, 1 in the pocket and 4 on the board
-        pocket = Pocket(cardset['As'], cardset['2s'])
-        board = Board(cardset['3s'], cardset['Ts'], cardset['Js'], cardset['Qs'], cardset['Ks'])
+    def test_1_pocket(self):
+        deck = StandardDeck()
+        preflop = Preflop(cards=deck.extract(('As', '2s')))
+        pocket = Pocket(streets=(preflop,))
+        flop = Flop(cards=deck.extract(('Js', 'Ts', 'Th')))
+        turn = Turn(cards=deck.extract(('Qs',)))
+        river = River(cards=deck.extract(('Ks',)))
+        board = Board(streets=(flop, turn, river))
         hand = Identifier.identify(pocket, board)
         self.assertIsInstance(hand, StraightFlush)
-        self.assertEqual(hand[0], cardset['As'])
+        self.assertEqual([x.code for x in hand], ['As', 'Ks', 'Qs', 'Js', 'Ts'])
 
-        # Straight flush, on the board only
-        pocket = Pocket(cardset['Ks'], cardset['Js'])
-        board = Board(cardset['3s'], cardset['4s'], cardset['5s'], cardset['7s'], cardset['6s'])
+    def test_on_board(self):
+        deck = StandardDeck()
+        preflop = Preflop(cards=deck.extract(('As', '2s')))
+        pocket = Pocket(streets=(preflop,))
+        flop = Flop(cards=deck.extract(('3s', '4s', '5s')))
+        turn = Turn(cards=deck.extract(('7s',)))
+        river = River(cards=deck.extract(('6s',)))
+        board = Board(streets=(flop, turn, river))
         hand = Identifier.identify(pocket, board)
         self.assertIsInstance(hand, StraightFlush)
-        self.assertEqual(hand[0], cardset['7s'])
+        self.assertEqual([x.code for x in hand], ['7s', '6s', '5s', '4s', '3s'])

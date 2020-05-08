@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import List, Union, Optional
+from typing import Union, Optional
 from functools import total_ordering
 from itertools import combinations, product
 from collections import Counter, defaultdict
@@ -146,8 +146,8 @@ class Hand(ABC):
     def __gt__(self, other: 'Hand') -> bool:
         return self.weight > other.weight
 
-    def __contains__(self, card: Card) -> bool:
-        return card in self._cards
+    def __contains__(self, item: Card) -> bool:
+        return item in self._cards
 
     def __len__(self) -> int:
         return len(self._cards)
@@ -155,16 +155,8 @@ class Hand(ABC):
     def __iter__(self) -> iter:
         return iter(self._cards)
 
-    def __getitem__(self, key: Union[slice, int, str]) -> Card:
-        if isinstance(key, (slice, int)):
-            return self._cards[key]
-        elif isinstance(key, str):
-            for card in self._cards:
-                if card.code == key:
-                    return card
-            raise KeyError('Card {} is not found'.format(key))
-        else:
-            raise AssertionError('Wrong key type')
+    def __getitem__(self, key: Union[slice, int]) -> Card:
+        return self._cards[key]
 
     @classmethod
     def check_comb(cls, hand: HandComb, comb: tuple) -> bool:

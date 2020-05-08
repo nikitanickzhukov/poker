@@ -1,15 +1,14 @@
-from typing import List
+from typing import Optional, Sequence
 
-from .players import Player
+from .tables import Player
 
 
 class Pot:
-    __slots__ = ('_players', '_chips', 'bet', 'step', 'called')
+    __slots__ = ('_players', '_chips')
 
-    def __init__(self, players: List[Player], chips: int = 0) -> None:
-        self._players = set(players)
+    def __init__(self, players: Optional[Sequence[Player]] = None, chips: int = 0) -> None:
+        self._players = set(players) if players else set()
         self._chips = chips
-        self.reset()
 
     def __repr__(self) -> str:
         return '<{}: {}, players: {}'.format(
@@ -30,17 +29,15 @@ class Pot:
     def __iter__(self) -> iter:
         return iter(self._players)
 
+    def add_player(self, player: Player) -> None:
+        self._players.add(player)
+
     def remove_player(self, player: Player) -> None:
         self._players.remove(player)
 
     def add_chips(self, chips: int) -> None:
         assert chips > 0, 'Cannot add negative chips to {}'.format(self.__class__.__name__)
         self._chips += chips
-
-    def reset(self):
-        self.bet = 0
-        self.step = 0
-        self.called = 0
 
 
 __all__ = ('Pot',)

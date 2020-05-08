@@ -1,3 +1,4 @@
+from typing import Optional, Sequence
 from abc import ABC
 
 from domain.generic.cards import Card
@@ -7,16 +8,13 @@ from .streets import Street
 
 class Kit(ABC):
     """
-    Representation of abstract kit (a parent class for boards and hands)
+    Representation of abstract kit (a parent class for board and pocket)
     """
 
     __slots__ = ('_streets',)
-    street_classes = ()
 
-    def __init__(self, *items) -> None:
-        self._streets = []
-        if items:
-            self.append(*items)
+    def __init__(self, streets: Optional[Sequence[Street]] = None) -> None:
+        self._streets = streets or []
 
     def __repr__(self) -> str:
         if not self._streets:
@@ -35,41 +33,15 @@ class Kit(ABC):
     def __iter__(self) -> iter:
         return iter(self.cards)
 
-    def append(self, *items) -> None:
-        if any(isinstance(x, Card) for x in items):
-            self._append_cards(*items)
-        else:
-            self._append_streets(*items)
-
-    def _append_streets(self, *streets) -> None:
-        assert len(streets) <= len(self.street_classes) - len(self._streets), \
-            '{} cannot contain more than {} streets'.format(self.__class__, len(self.street_classes))
-
-        idx = len(self._streets)
-        for street in streets:
-            street_class = self.street_classes[idx]
-            assert isinstance(street, street_class), 'Must be a {} instance'.format(street_class)
-            idx += 1
-        self._streets.extend(streets)
-
-    def _append_cards(self, *cards) -> None:
-        cards = list(cards)
-        streets = []
-        street_classes = self.street_classes[len(self._streets):]
-        for StreetClass in street_classes:
-            streets.append(StreetClass(*cards[0:StreetClass.length]))
-            del cards[0:StreetClass.length]
-            if not cards:
-                break
-        assert len(cards) == 0, 'Extra {} card(s) cannot be added'.format(cards)
-        self._append_streets(*streets)
+    def append(self, street: Street) -> None:
+        self._streets.append(street)
 
     @property
-    def streets(self) -> tuple:
+    def streets(self) -> Sequence[Street]:
         return tuple(self._streets)
 
     @property
-    def cards(self) -> tuple:
+    def cards(self) -> Sequence[Card]:
         return tuple(x for s in self._streets for x in s)
 
 

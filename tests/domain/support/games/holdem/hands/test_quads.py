@@ -1,31 +1,45 @@
 from unittest import TestCase
 
-from domain.generic.cards import cardset
-from domain.support.games.holdem import Pocket, Board, Identifier, Quads
+from domain.generic.cards import StandardDeck
+from domain.support.games.holdem import (
+    Preflop, Flop, Turn, River,
+    Pocket, Board, Identifier, Quads
+)
 
 
 class QuadsTestCase(TestCase):
-    def test_quads(self):
-        # Quads, a pocket pair
-        pocket = Pocket(cardset['As'], cardset['Ad'])
-        board = Board(cardset['3s'], cardset['Ac'], cardset['Ah'], cardset['Jh'], cardset['6s'])
+    def test_pp(self):
+        deck = StandardDeck()
+        preflop = Preflop(cards=deck.extract(('As', 'Ad')))
+        pocket = Pocket(streets=(preflop,))
+        flop = Flop(cards=deck.extract(('3s', 'Ac', 'Ah')))
+        turn = Turn(cards=deck.extract(('Qd',)))
+        river = River(cards=deck.extract(('6s',)))
+        board = Board(streets=(flop, turn, river))
         hand = Identifier.identify(pocket, board)
         self.assertIsInstance(hand, Quads)
-        self.assertEqual(set(hand[0:4]), set([cardset['As'], cardset['Ad'], cardset['Ac'], cardset['Ah']]))
-        self.assertEqual(hand[4], cardset['Jh'])
+        self.assertEqual([x.code for x in hand], ['As', 'Ah', 'Ad', 'Ac', 'Qd'])
 
-        # Quads, a trips on a board
-        pocket = Pocket(cardset['As'], cardset['2s'])
-        board = Board(cardset['3s'], cardset['Ac'], cardset['Ah'], cardset['Ad'], cardset['6s'])
+    def test_board_trips(self):
+        deck = StandardDeck()
+        preflop = Preflop(cards=deck.extract(('As', '2s')))
+        pocket = Pocket(streets=(preflop,))
+        flop = Flop(cards=deck.extract(('3s', 'Ac', 'Ad')))
+        turn = Turn(cards=deck.extract(('Ah',)))
+        river = River(cards=deck.extract(('6s',)))
+        board = Board(streets=(flop, turn, river))
         hand = Identifier.identify(pocket, board)
         self.assertIsInstance(hand, Quads)
-        self.assertEqual(set(hand[0:4]), set([cardset['As'], cardset['Ad'], cardset['Ac'], cardset['Ah']]))
-        self.assertEqual(hand[4], cardset['6s'])
+        self.assertEqual([x.code for x in hand], ['As', 'Ah', 'Ad', 'Ac', '6s'])
 
-        # Quads, on a board only
-        pocket = Pocket(cardset['As'], cardset['2s'])
-        board = Board(cardset['3s'], cardset['3c'], cardset['3h'], cardset['3d'], cardset['6s'])
+    def test_on_board(self):
+        deck = StandardDeck()
+        preflop = Preflop(cards=deck.extract(('As', '2s')))
+        pocket = Pocket(streets=(preflop,))
+        flop = Flop(cards=deck.extract(('3s', '3c', '3h')))
+        turn = Turn(cards=deck.extract(('3d',)))
+        river = River(cards=deck.extract(('6s',)))
+        board = Board(streets=(flop, turn, river))
         hand = Identifier.identify(pocket, board)
         self.assertIsInstance(hand, Quads)
-        self.assertEqual(set(hand[0:4]), set([cardset['3s'], cardset['3d'], cardset['3c'], cardset['3h']]))
-        self.assertEqual(hand[4], cardset['As'])
+        self.assertEqual([x.code for x in hand], ['3s', '3h', '3d', '3c', 'As'])

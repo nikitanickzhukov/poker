@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from domain.generic.cards import StandardDeck, cardset
+from domain.generic.cards import StandardDeck
 
 
 class DeckTestCase(TestCase):
@@ -11,7 +11,11 @@ class DeckTestCase(TestCase):
         del self.deck
 
     def test_shuffle(self):
+        a, b, c = self.deck[0:3]
         self.deck.shuffle()
+        self.assertNotEqual((a, b, c), self.deck[0:3])
 
-    def test_pop(self):
-        self.assertEqual(self.deck.pop(), cardset['Kc'])
+    def test_extract(self):
+        a, b, c, d = self.deck[0:4]
+        self.assertEqual([a, b, c], self.deck.extract(slice(0, 3)))
+        self.assertEqual(d, self.deck.extract(0))
