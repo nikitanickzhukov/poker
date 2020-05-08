@@ -5,7 +5,7 @@ from .pockets import Pocket
 
 
 class Player:
-    __slots__ = ('_pocket', '_nickname', '_chips', '_is_active', '_is_all_in')
+    __slots__ = ('_pocket', '_nickname', '_chips', '_is_active')
 
     def __init__(
         self,
@@ -17,10 +17,9 @@ class Player:
         self._nickname = nickname
         self._chips = chips
         self._is_active = True
-        self._is_all_in = False
 
     def __repr__(self) -> str:
-        return '<{}: {}, {} chip(s), {}'.format(
+        return '<{}: {}, {} chip(s), {}>'.format(
             self.__class__.__name__,
             self._nickname,
             self._chips,
@@ -66,7 +65,7 @@ class Table:
         self._players = players or []
 
     def __repr__(self) -> str:
-        return '<{}: {}'.format(self.__class__.__name__, str(self))
+        return '<{}: {}>'.format(self.__class__.__name__, str(self))
 
     def __str__(self) -> str:
         return str([str(x) for x in self._players])
@@ -84,9 +83,9 @@ class Table:
             for player in self._players:
                 if player.nickname == key:
                     return player
-            raise KeyError()
+            raise KeyError(key)
         else:
-            raise TypeError()
+            raise TypeError(key)
 
     def seat_player(self, player: Player) -> None:
         self._players.append(player)

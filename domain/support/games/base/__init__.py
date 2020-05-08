@@ -5,6 +5,6 @@ from .boards import *
 from .pockets import *
 from .tables import *
 from .pots import *
-from .histories import *
+from .events import *
 from .dealers import *
 from .games import *

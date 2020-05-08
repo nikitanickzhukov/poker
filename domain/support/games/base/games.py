@@ -1,6 +1,6 @@
 from domain.generic.cards import Deck
 
-from .histories import History
+from .events import History
 from .boards import Board
 from .pockets import Pocket
 from .tables import Player, Table

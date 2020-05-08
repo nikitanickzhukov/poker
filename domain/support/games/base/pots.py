@@ -11,7 +11,7 @@ class Pot:
         self._chips = chips
 
     def __repr__(self) -> str:
-        return '<{}: {}, players: {}'.format(
+        return '<{}: {}, players: {}>'.format(
             self.__class__.__name__,
             str(self),
             str([str(x) for x in self._players])

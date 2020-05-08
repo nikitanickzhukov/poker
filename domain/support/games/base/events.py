@@ -1,15 +1,18 @@
-from typing import Optional, Sequence, Union
+from typing import Optional, Sequence
+from abc import ABC
 
 
-class Seat:
+class Event(ABC):
+    def __repr__(self) -> str:
+        return '<{}: {}>'.format(self.__class__.__name__, str(self))
+
+
+class Seat(Event):
     __slots__ = ('_nickname', '_chips')
 
     def __init__(self, nickname: str, chips: int) -> None:
         self._nickname = nickname
         self._chips = chips
-
-    def __repr__(self) -> str:
-        return '<{}: {}'.format(self.__class__.__name__, str(self))
 
     def __str__(self) -> str:
         return '{}, {} chips'.format(self._nickname, self._chips)
@@ -23,44 +26,20 @@ class Seat:
         return self._chips
 
 
-class PocketDeal:
-    __slots__ = ('_nickname', '_street', '_cards')
+class Deal(Event):
+    __slots__ = ('_street', '_cards', '_nickname')
 
-    def __init__(self, nickname: str, street: str, cards: Sequence[str]) -> None:
+    def __init__(self, street: str, cards: Sequence[str], nickname: Optional[str] = None) -> None:
+        self._street = street
+        self._cards = cards
         self._nickname = nickname
-        self._street = street
-        self._cards = cards
 
     def __repr__(self) -> str:
-        return '<{}: {}'.format(self.__class__.__name__, str(self))
+        return '<{}: {}>'.format(self.__class__.__name__, str(self))
 
     def __str__(self) -> str:
-        return '{}, {}, {}'.format(self._nickname, self._street, self._cards)
-
-    @property
-    def nickname(self) -> str:
-        return self._nickname
-
-    @property
-    def street(self) -> str:
-        return self._street
-
-    @property
-    def cards(self) -> Sequence[str]:
-        return self._cards
-
-
-class BoardDeal:
-    __slots__ = ('_street', '_cards')
-
-    def __init__(self, street: str, cards: Sequence[str]) -> None:
-        self._street = street
-        self._cards = cards
-
-    def __repr__(self) -> str:
-        return '<{}: {}'.format(self.__class__.__name__, str(self))
-
-    def __str__(self) -> str:
+        if self._nickname:
+            return '{}, {}, {}'.format(self._street, self._cards, self._nickname)
         return '{}, {}'.format(self._street, self._cards)
 
     @property
@@ -71,26 +50,35 @@ class BoardDeal:
     def cards(self) -> Sequence[str]:
         return self._cards
 
+    @property
+    def nickname(self) -> str:
+        return self._nickname
 
-class Decision:
-    __slots__ = ('_nickname', '_action', '_chips')
 
-    def __init__(self, nickname: str, action: str, chips: int) -> None:
+class Decision(Event):
+    __slots__ = ('_nickname', '_street', '_action', '_chips')
+
+    def __init__(self, nickname: str, street: str, action: str, chips: int) -> None:
         self._nickname = nickname
+        self._street = street
         self._action = action
         self._chips = chips
 
     def __repr__(self) -> str:
-        return '<{}: {}'.format(self.__class__.__name__, str(self))
+        return '<{}: {}>'.format(self.__class__.__name__, str(self))
 
     def __str__(self) -> str:
         if self._chips:
-            return '{}, {} {}'.format(self._nickname, self._action, self._chips)
-        return '{}, {}'.format(self._nickname, self._action)
+            return '{}, {}, {} {}'.format(self._street, self._nickname, self._action, self._chips)
+        return '{}, {}, {}'.format(self._street, self._nickname, self._action)
 
     @property
     def nickname(self) -> str:
         return self._nickname
+
+    @property
+    def street(self) -> str:
+        return self._street
 
     @property
     def action(self) -> str:
@@ -101,9 +89,6 @@ class Decision:
         return self._chips
 
 
-Event = Union[Seat, PocketDeal, BoardDeal, Decision]
-
-
 class History:
     __slots__ = ('_events',)
 
@@ -111,7 +96,7 @@ class History:
         self._events = events or []
 
     def __repr__(self) -> str:
-        return '<{}: {}'.format(self.__class__.__name__, str(self))
+        return '<{}: {}>'.format(self.__class__.__name__, str(self))
 
     def __str__(self) -> str:
         return str([str(x) for x in self._events])
@@ -137,16 +122,12 @@ class History:
         return [x for x in self._events if isinstance(x, Seat)]
 
     @property
-    def pocket_deals(self) -> Sequence[PocketDeal]:
-        return [x for x in self._events if isinstance(x, PocketDeal)]
-
-    @property
-    def board_deals(self) -> Sequence[BoardDeal]:
-        return [x for x in self._events if isinstance(x, BoardDeal)]
+    def deals(self) -> Sequence[Deal]:
+        return [x for x in self._events if isinstance(x, Deal)]
 
     @property
     def decisions(self) -> Sequence[Decision]:
         return [x for x in self._events if isinstance(x, Decision)]
 
 
-__all__ = ('Seat', 'PocketDeal', 'BoardDeal', 'Decision', 'History')
+__all__ = ('Event', 'Seat', 'Deal', 'Decision', 'History')

@@ -6,5 +6,5 @@ from ..base.boards import *
 from ..base.pockets import *
 from ..base.tables import *
 from ..base.pots import *
-from ..base.histories import *
+from ..base.events import *
 from ..base.dealers import *

@@ -10,11 +10,18 @@ from .boards import Board
 from .pockets import Pocket
 from .tables import Player, Table
 from .pots import Pot
-from .histories import Seat, PocketDeal, BoardDeal, Decision, History
+from .events import Seat, Deal, Decision, History
 from .hands import Identifier
 
 
 class Dealer(ABC):
+    def __init__(self):
+        self._pocket_dealt = defaultdict(dict)
+        self._board_dealt = {}
+        self._current_event = None
+        self._current_street = None
+        self._current_player = None
+
     def shuffle_deck(self, deck: Deck) -> None:
         deck.shuffle()
 
@@ -29,29 +36,42 @@ class Dealer(ABC):
         board: Board,
         pot: Pot,
     ) -> None:
-        for item in history:
-            if isinstance(item, Seat):
-                player = player_class(pocket=pocket_class(), nickname=item.nickname, chips=item.chips)
+        for event in history:
+            self._current_event = event.__class__
+
+            if isinstance(event, Seat):
+                player = player_class(pocket=pocket_class(), nickname=event.nickname, chips=event.chips)
                 table.seat_player(player=player)
                 pot.add_player(player=player)
-            elif isinstance(item, PocketDeal):
-                cards = deck.extract(tuple(item.cards))
-                street_class = self._get_street_class(item.street, street_classes)
+                self._current_street = None
+                self._current_player = player
+            elif isinstance(event, Deal):
+                cards = deck.extract(tuple(event.cards))
+                street_class = self._get_street_class(event.street, street_classes)
                 street = street_class(cards=cards)
-                player = table[item.nickname]
-                player.pocket.append(street)
-            elif isinstance(item, BoardDeal):
-                cards = deck.extract(tuple(item.cards))
-                street_class = self._get_street_class(item.street, street_classes)
-                street = street_class(cards=cards)
-                board.append(street)
-            elif isinstance(item, Decision):
-                player = table[item.nickname]
-                action_class = self._get_action_class(item.action)
-                action = action_class(chips=item.chips)
-                self._process_action(player=player, action=action, pot=pot)
+                if event.nickname:
+                    player = table[event.nickname]
+                    player.pocket.append(street)
+                    self._current_player = player
+                else:
+                    board.append(street)
+                    self._current_player = None
+                self._current_street = street_class
+            elif isinstance(event, Decision):
+                player = table[event.nickname]
+                street_class = self._get_street_class(event.street, street_classes)
+                action_class = self._get_action_class(event.action)
+                action = action_class(chips=event.chips)
+                self._process_action(player=player, street_class=street_class, action=action, pot=pot)
+                self._current_street = street_class
+                self._current_player = player
             else:
-                raise TypeError(item)
+                raise TypeError(event)
+
+        print('Pocket dealt', self._pocket_dealt)
+        print('Board dealt', self._board_dealt)
+        print('Current street', self._current_street)
+        print('Current player', self._current_player)
 
     def process(
         self,
@@ -77,8 +97,8 @@ class Dealer(ABC):
             print(player, ' == ', repr(hand))
         print(repr(pot))
 
-    def _process_action(self, action: Action, player: Player, pot: Pot) -> None:
-        print(repr(player), repr(action))
+    def _process_action(self, action: Action, street_class: Type[Street], player: Player, pot: Pot) -> None:
+        print(repr(player), repr(action), street_class)
 
         if isinstance(action, Ante):
             pot.add_chips(action.chips)
