@@ -1,7 +1,7 @@
 import time
 
 
-class Timer():
+class Timer:
     def __init__(self, func=time.perf_counter):
         self._func = func
         self._start = None
@@ -40,4 +40,4 @@ class Timer():
         self.stop()
 
 
-__all__ = ('Timer')
+__all__ = ('Timer',)
