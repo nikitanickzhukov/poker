@@ -57,19 +57,19 @@ class Card:
         return (self._rank, self._suit) > (other._rank, other._suit)
 
     @property
-    def rank(self):
+    def rank(self) -> Rank:
         return self._rank
 
     @property
-    def suit(self):
+    def suit(self) -> Suit:
         return self._suit
 
     @property
-    def code(self):
+    def code(self) -> str:
         return self._rank.code + self._suit.code
 
     @property
-    def name(self):
+    def name(self) -> str:
         return '{} of {}'.format(self._rank.name, self._suit.name)
 
 
@@ -83,7 +83,6 @@ class CardSet(frozenset):
 
 
 cards: tuple = tuple(Card(rank=r, suit=s) for s in suits for r in ranks)
-cardset: CardSet = CardSet(cards)
 
 
-__all__ = ('Card', 'cards', 'cardset')
+__all__ = ('Card', 'cards')

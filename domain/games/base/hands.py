@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Union, Optional
+from typing import Tuple, Sequence, Union, Optional
 from functools import total_ordering
 from itertools import combinations, product
 from collections import Counter, defaultdict
@@ -29,31 +29,35 @@ class HandComb:
 
     @property
     def cards(self):
-        if not hasattr(self, '_cards'):
-            self._cards = tuple(sorted(self._pocket.cards + self._board.cards, reverse=True))
-        return self._cards
+        key = '__cards'
+        if not hasattr(self, key):
+            setattr(self, key, tuple(sorted(self._pocket.cards + self._board.cards, reverse=True)))
+        return getattr(self, key)
 
     @property
     def ranks(self):
-        if not hasattr(self, '_ranks'):
-            self._ranks = sorted(set(x.rank for x in self.cards), reverse=True)
-        return self._ranks
+        key = '__ranks'
+        if not hasattr(self, key):
+            setattr(self, key, sorted(set(x.rank for x in self.cards), reverse=True))
+        return getattr(self, key)
 
     @property
     def rank_counter(self) -> Counter:
-        if not hasattr(self, '_rank_counter'):
-            self._rank_counter = Counter(x.rank for x in self.cards)
-        return self._rank_counter
+        key = '__rank_counter'
+        if not hasattr(self, key):
+            setattr(self, key, Counter(x.rank for x in self.cards))
+        return getattr(self, key)
 
     @property
     def suit_counter(self) -> Counter:
-        if not hasattr(self, '_suit_counter'):
-            self._suit_counter = Counter(x.suit for x in self.cards)
-        return self._suit_counter
+        key = '__suit_counter'
+        if not hasattr(self, key):
+            setattr(self, key, Counter(x.suit for x in self.cards))
+        return getattr(self, key)
 
     @property
     def rank_map(self) -> dict:
-        key = '_rank_map'
+        key = '__rank_map'
         if not hasattr(self, key):
             mapping = defaultdict(list)
             for card in self.cards:
@@ -64,7 +68,7 @@ class HandComb:
 
     @property
     def suit_map(self) -> dict:
-        key = '_suit_map'
+        key = '__suit_map'
         if not hasattr(self, key):
             mapping = defaultdict(list)
             for card in self.cards:
@@ -75,7 +79,7 @@ class HandComb:
 
     @property
     def rank_map_not(self) -> dict:
-        key = '_rank_map_not'
+        key = '__rank_map_not'
         if not hasattr(self, key):
             mapping = defaultdict(list)
             for rank in self.ranks:
@@ -84,7 +88,7 @@ class HandComb:
         return getattr(self, key)
 
     def get_rank_reps(self, count: int) -> list:
-        key = '_rank_reps_' + str(count)
+        key = '__rank_reps_' + str(count)
         if not hasattr(self, key):
             reps = []
             for rank, c in self.rank_counter.most_common():
@@ -97,7 +101,7 @@ class HandComb:
         return getattr(self, key)
 
     def get_rank_seqs(self, length: int) -> list:
-        key = '_rank_seqs_' + str(length)
+        key = '__rank_seqs_' + str(length)
         if not hasattr(self, key):
             seq = [self.ranks[0]]
             seqs = []
@@ -117,7 +121,7 @@ class HandComb:
         return getattr(self, key)
 
     def get_suit_reps(self, count: int) -> list:
-        key = '_suit_reps_' + str(count)
+        key = '__suit_reps_' + str(count)
         if not hasattr(self, key):
             reps = []
             for suit, c in self.suit_counter.most_common():
@@ -134,8 +138,8 @@ class HandComb:
 class Hand(ABC):
     __slots__ = ('_cards',)
 
-    def __init__(self, *cards) -> None:
-        self._cards = cards
+    def __init__(self, cards: Sequence[Card]) -> None:
+        self._cards = tuple(cards)
 
     def __str__(self) -> str:
         return str([str(x) for x in self._cards])
@@ -159,15 +163,19 @@ class Hand(ABC):
         return self._cards[key]
 
     @classmethod
-    def check_comb(cls, hand: HandComb, comb: tuple) -> bool:
+    def check_comb(cls, comb: HandComb, cards: Tuple[Card]) -> bool:
         return True
 
     @classmethod
-    def identify(cls, hand: HandComb) -> Optional['Hand']:
-        for comb in cls.get_combs(hand):
-            if cls.check_comb(hand, comb):
-                return cls(*comb)
+    def identify(cls, comb: HandComb) -> Optional['Hand']:
+        for cards in cls.get_combs(comb):
+            if cls.check_comb(comb=comb, cards=cards):
+                return cls(cards=cards)
         return None
+
+    @property
+    def cards(self) -> Tuple[Card]:
+        return self._cards
 
     @property
     def weight(self) -> tuple:
@@ -182,8 +190,8 @@ class HighCard(ABC):
         return '<High card: {}>'.format(', '.join([x.rank.name for x in self._cards]))
 
     @classmethod
-    def get_combs(cls, hand: HandComb) -> iter:
-        yield from combinations(hand.cards, cls.hand_length)
+    def get_combs(cls, comb: HandComb) -> iter:
+        yield from combinations(comb.cards, cls.hand_length)
 
 
 class OnePair(ABC):
@@ -197,11 +205,11 @@ class OnePair(ABC):
         )
 
     @classmethod
-    def get_combs(cls, hand: HandComb) -> iter:
-        rank_reps = hand.get_rank_reps(2)
+    def get_combs(cls, comb: HandComb) -> iter:
+        rank_reps = comb.get_rank_reps(2)
         for rank in rank_reps:
-            pairs = hand.rank_map[rank]
-            kickers = hand.rank_map_not[rank]
+            pairs = comb.rank_map[rank]
+            kickers = comb.rank_map_not[rank]
             for pair in combinations(pairs, 2):
                 for kicker in combinations(kickers, cls.hand_length - 2):
                     yield pair + kicker
@@ -219,13 +227,13 @@ class TwoPair(ABC):
         )
 
     @classmethod
-    def get_combs(cls, hand: HandComb) -> iter:
-        rank_reps = hand.get_rank_reps(2)
+    def get_combs(cls, comb: HandComb) -> iter:
+        rank_reps = comb.get_rank_reps(2)
         if len(rank_reps) >= 2:
             for rank1, rank2 in combinations(rank_reps, 2):
-                pair1 = hand.rank_map[rank1]
-                pair2 = hand.rank_map[rank2]
-                kickers = tuple(x for x in hand.rank_map_not[rank1] if x.rank != rank2)
+                pair1 = comb.rank_map[rank1]
+                pair2 = comb.rank_map[rank2]
+                kickers = tuple(x for x in comb.rank_map_not[rank1] if x.rank != rank2)
                 for kicker in combinations(kickers, cls.hand_length - 4):
                     yield pair1 + pair2 + kicker
 
@@ -241,11 +249,11 @@ class Trips(ABC):
         )
 
     @classmethod
-    def get_combs(cls, hand: HandComb) -> iter:
-        rank_reps = hand.get_rank_reps(3)
+    def get_combs(cls, comb: HandComb) -> iter:
+        rank_reps = comb.get_rank_reps(3)
         for rank in rank_reps:
-            triples = hand.rank_map[rank]
-            kickers = hand.rank_map_not[rank]
+            triples = comb.rank_map[rank]
+            kickers = comb.rank_map_not[rank]
             for triple in combinations(triples, 3):
                 for kicker in combinations(kickers, cls.hand_length - 3):
                     yield triple + kicker
@@ -259,12 +267,12 @@ class Straight(ABC):
         return '<Straight: {}-high>'.format(self._cards[0].rank.name)
 
     @classmethod
-    def get_combs(cls, hand: HandComb) -> iter:
-        rank_seqs = hand.get_rank_seqs(cls.hand_length)
+    def get_combs(cls, comb: HandComb) -> iter:
+        rank_seqs = comb.get_rank_seqs(cls.hand_length)
         for seq in rank_seqs:
             for i in range(len(seq) - cls.hand_length + 1):
                 subseq = seq[i:i + cls.hand_length]
-                cards = tuple(hand.rank_map[x] for x in subseq)
+                cards = tuple(comb.rank_map[x] for x in subseq)
                 yield from product(*cards)
 
 
@@ -276,10 +284,10 @@ class Flush(ABC):
         return '<Flush: {}>'.format(', '.join([x.rank.name for x in self._cards]))
 
     @classmethod
-    def get_combs(cls, hand: HandComb) -> iter:
-        suit_reps = hand.get_suit_reps(cls.hand_length)
+    def get_combs(cls, comb: HandComb) -> iter:
+        suit_reps = comb.get_suit_reps(cls.hand_length)
         for suit in suit_reps:
-            flush = hand.suit_map[suit]
+            flush = comb.suit_map[suit]
             yield from combinations(flush, cls.hand_length)
 
 
@@ -294,17 +302,17 @@ class FullHouse(ABC):
         )
 
     @classmethod
-    def get_combs(cls, hand: HandComb) -> iter:
-        rank_reps_3 = hand.get_rank_reps(3)
-        rank_reps_2 = hand.get_rank_reps(2)
+    def get_combs(cls, comb: HandComb) -> iter:
+        rank_reps_3 = comb.get_rank_reps(3)
+        rank_reps_2 = comb.get_rank_reps(2)
         if rank_reps_3 and len(rank_reps_2) >= 2:
             for rank3 in rank_reps_3:
                 for rank2 in rank_reps_2:
                     if rank2 == rank3:
                         continue
-                    triples = hand.rank_map[rank3]
-                    pairs = hand.rank_map[rank2]
-                    kickers = tuple(x for x in hand.rank_map_not[rank3] if x.rank != rank2)
+                    triples = comb.rank_map[rank3]
+                    pairs = comb.rank_map[rank2]
+                    kickers = tuple(x for x in comb.rank_map_not[rank3] if x.rank != rank2)
                     for triple in combinations(triples, 3):
                         for pair in combinations(pairs, 2):
                             for kicker in combinations(kickers, cls.hand_length - 5):
@@ -322,11 +330,11 @@ class Quads(ABC):
         )
 
     @classmethod
-    def get_combs(cls, hand: HandComb) -> iter:
-        rank_reps = hand.get_rank_reps(4)
+    def get_combs(cls, comb: HandComb) -> iter:
+        rank_reps = comb.get_rank_reps(4)
         for rank in rank_reps:
-            quads = hand.rank_map[rank]
-            kickers = hand.rank_map_not[rank]
+            quads = comb.rank_map[rank]
+            kickers = comb.rank_map_not[rank]
             for quad in combinations(quads, 4):
                 for kicker in combinations(kickers, cls.hand_length - 4):
                     yield quad + kicker
@@ -342,21 +350,21 @@ class StraightFlush(ABC):
         return '<Straight flush: {}-high>'.format(self._cards[0].rank.name)
 
     @classmethod
-    def get_combs(cls, hand: HandComb) -> iter:
-        straights = Straight.get_combs(hand)
+    def get_combs(cls, comb: HandComb) -> iter:
+        straights = Straight.get_combs(comb=comb)
         for straight in straights:
             if all(x.suit == straight[0].suit for x in straight[1:]):
                 yield straight
 
 
 class Identifier(ABC):
-    hand_classes = (StraightFlush, Quads, FullHouse, Flush, Straight, Trips, TwoPair, OnePair, HighCard)
+    hand_classes = ()
 
     @classmethod
     def identify(cls, pocket: Pocket, board: Board) -> Optional[Hand]:
         comb = HandComb(pocket, board)
         for HandClass in cls.hand_classes:
-            hand = HandClass.identify(comb)
+            hand = HandClass.identify(comb=comb)
             if hand:
                 return hand
         return None

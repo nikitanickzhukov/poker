@@ -1,4 +1,4 @@
-from typing import Optional, Sequence
+from typing import Optional, Tuple, Sequence
 from abc import ABC
 
 from domain.cards import Card
@@ -14,7 +14,7 @@ class Kit(ABC):
     __slots__ = ('_streets',)
 
     def __init__(self, streets: Optional[Sequence[Street]] = None) -> None:
-        self._streets = streets or []
+        self._streets = list(streets) if streets else []
 
     def __repr__(self) -> str:
         if not self._streets:
@@ -37,11 +37,11 @@ class Kit(ABC):
         self._streets.append(street)
 
     @property
-    def streets(self) -> Sequence[Street]:
+    def streets(self) -> Tuple[Street]:
         return tuple(self._streets)
 
     @property
-    def cards(self) -> Sequence[Card]:
+    def cards(self) -> Tuple[Card]:
         return tuple(x for s in self._streets for x in s)
 
 

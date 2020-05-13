@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from domain.cards import Rank, Suit, Card, cardset
+from domain.cards import Rank, Suit, Card
 
 
 class CardTestCase(TestCase):
@@ -53,13 +53,3 @@ class CardTestCase(TestCase):
             rank=Rank(code='B', name='Rank B', weight=1),
             suit=Suit(code='y', name='Suit Y', weight=5),
         ))
-
-
-class CardSetTestCase(TestCase):
-    def test_getitem(self):
-        self.assertEqual(cardset['Ah'].code, 'Ah')
-        with self.assertRaises(KeyError):
-            cardset['Xy']
-
-    def test_contains(self):
-        self.assertIn(cardset['Ah'], cardset)

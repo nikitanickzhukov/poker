@@ -1,3 +1,6 @@
+from typing import Tuple
+
+from domain.cards import Card
 from ..base.hands import (
     HandComb, Hand as BaseHand,
     HighCard as BaseHighCard, OnePair as BaseOnePair, TwoPair as BaseTwoPair,
@@ -9,10 +12,10 @@ from ..base.hands import (
 
 class Hand(BaseHand):
     @classmethod
-    def check_comb(cls, hand: HandComb, comb: tuple) -> bool:
+    def check_comb(cls, comb: HandComb, cards: Tuple[Card]) -> bool:
         pocket_count = 0
-        for card in hand.pocket:
-            if card in comb:
+        for card in comb.pocket:
+            if card in cards:
                 pocket_count += 1
                 if pocket_count > 2:
                     break

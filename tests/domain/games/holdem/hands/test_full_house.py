@@ -3,7 +3,7 @@ from unittest import TestCase
 from domain.cards import StandardDeck
 from domain.games.holdem import (
     Preflop, Flop, Turn, River,
-    Pocket, Board, Identifier, FullHouse
+    Pocket, Board, Identifier, FullHouse,
 )
 
 

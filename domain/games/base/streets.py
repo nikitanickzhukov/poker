@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Sequence, Union
+from typing import Sequence, Tuple, Union
 
 from domain.cards import Card
 
@@ -37,7 +37,7 @@ class Street(ABC):
         return iter(self._cards)
 
     @property
-    def cards(self) -> Sequence[Card]:
+    def cards(self) -> Tuple[Card]:
         return tuple(self._cards)
 
 
