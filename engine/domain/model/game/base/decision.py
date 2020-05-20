@@ -1,4 +1,7 @@
 from abc import ABC
+from typing import Optional
+
+from engine.domain.model.chips import Chips
 
 
 class Decision(ABC):
@@ -6,14 +9,16 @@ class Decision(ABC):
     with_chips = False
     is_aggressive = False
 
-    def __init__(self, chips: int = 0) -> None:
-        assert chips >= 0 and self.with_chips == (chips > 0), \
-            '{} cannot contain {} chip(s)'.format(self.__class__.__name__, chips)
+    def __init__(self, chips: Optional[Chips] = None) -> None:
+        if chips is None:
+            chips = Chips(amount=0)
+        assert self.with_chips == bool(chips), \
+            '{} cannot contain {}'.format(self.__class__.__name__, chips)
         self._chips = chips
 
     def __repr__(self) -> str:
         if self.with_chips:
-            return '<{}, {} chip(s)>'.format(self.__class__.__name__, self._chips)
+            return '<{}: {!r}>'.format(self.__class__.__name__, self._chips)
         return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self) -> str:

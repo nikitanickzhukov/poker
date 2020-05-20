@@ -49,14 +49,14 @@ class Prop(ABC):
         return hash(self._code)
 
     def __eq__(self, other: 'Prop') -> bool:
-        if self.__class__ != other.__class__:
-            raise TypeError(other)
-        return self._weight == other._weight
+        if issubclass(other.__class__, self.__class__):
+            return self._weight == other._weight
+        return NotImplemented
 
     def __gt__(self, other: 'Prop') -> bool:
-        if self.__class__ != other.__class__:
-            raise TypeError(other)
-        return self._weight > other._weight
+        if issubclass(other.__class__, self.__class__):
+            return self._weight > other._weight
+        return NotImplemented
 
     @property
     def code(self):
@@ -134,10 +134,14 @@ class Card:
         return hash(self.code)
 
     def __eq__(self, other: 'Card') -> bool:
-        return self._rank == other._rank and self._suit == other._suit
+        if issubclass(other.__class__, self.__class__):
+            return self._rank == other._rank and self._suit == other._suit
+        return NotImplemented
 
     def __gt__(self, other: 'Card') -> bool:
-        return (self._rank, self._suit) > (other._rank, other._suit)
+        if issubclass(other.__class__, self.__class__):
+            return (self._rank, self._suit) > (other._rank, other._suit)
+        return NotImplemented
 
     @property
     def rank(self) -> Rank:

@@ -1,6 +1,8 @@
 from typing import Tuple
+from collections import namedtuple
 
 from engine.domain.model.card import Card
+from engine.domain.model.chips import Chips
 
 from .decision import Decision, Check
 from .pocket import Pocket
@@ -9,23 +11,21 @@ from .pocket import Pocket
 class Player:
     __slots__ = ('_pocket', '_nickname', '_chips', '_state')
 
-    STATE_ACTIVE = 'ACTIVE'
-    STATE_FOLDED = 'FOLDED'
-    STATE_ALL_IN = 'ALL_IN'
+    states = namedtuple('state', ('ACTIVE', 'FOLDED', 'ALL_IN'))
 
     def __init__(
         self,
         pocket: Pocket,
         nickname: str,
-        chips: int,
+        chips: Chips,
     ) -> None:
         self._pocket = pocket
         self._nickname = nickname
         self._chips = chips
-        self._state = self.STATE_ACTIVE
+        self._state = self.states.ACTIVE
 
     def __repr__(self) -> str:
-        return '<{}: {}, {} chip(s), {}, {}>'.format(
+        return '<{}: {}, {!r}, {}, {}>'.format(
             self.__class__.__name__,
             self._nickname,
             self._chips,
@@ -34,20 +34,18 @@ class Player:
         )
 
     def __str__(self) -> str:
-        if self.is_active():
-            return '{}, {} chip(s)'.format(self._nickname, self._chips)
-        return '{}, {} chip(s) [{}]'.format(self._nickname, self._chips, self._state)
+        return self._nickname
 
     def __hash__(self) -> int:
         return hash(self._nickname)
 
-    def post_ante(self, chips: int) -> int:
+    def post_ante(self, chips: Chips) -> Chips:
         return self._post_chips(chips=chips, strict=False)
 
-    def post_blind(self, chips: int) -> int:
+    def post_blind(self, chips: Chips) -> Chips:
         return self._post_chips(chips=chips, strict=False)
 
-    def post_bet(self, chips: int) -> int:
+    def post_bet(self, chips: Chips) -> Chips:
         return self._post_chips(chips=chips, strict=True)
 
     def do_draw(self) -> Tuple[Card]:
@@ -58,33 +56,32 @@ class Player:
         assert self.is_active(), '{} is not active'.format(self)
         return Check()
 
-    def _post_chips(self, chips: int, strict: bool) -> int:
+    def _post_chips(self, chips: Chips, strict: bool) -> Chips:
         assert self.is_active(), '{} is not active'.format(self)
-        assert chips > 0, 'Cannot give negative chips amount'
         if strict:
             assert chips <= self._chips, 'Cannot give more chips than has'
         chips = min(self._chips, chips)
         self._chips -= chips
-        if self._chips == 0:
+        if not self._chips:
             self.all_in()
         return chips
 
     def fold(self) -> None:
         assert self.is_active(), '{} is not active'.format(self)
-        self._state = self.STATE_FOLDED
+        self._state = self.states.FOLDED
 
     def all_in(self) -> None:
         assert self.is_active(), '{} is not active'.format(self)
-        self._state = self.STATE_ALL_IN
+        self._state = self.states.ALL_IN
 
     def is_active(self) -> bool:
-        return self._state == self.STATE_ACTIVE
+        return self._state == self.states.ACTIVE
 
     def is_folded(self) -> bool:
-        return self._state == self.STATE_FOLDED
+        return self._state == self.states.FOLDED
 
     def is_all_in(self) -> bool:
-        return self._state == self.STATE_ALL_IN
+        return self._state == self.states.ALL_IN
 
     @property
     def pocket(self) -> Pocket:
@@ -95,7 +92,7 @@ class Player:
         return self._nickname
 
     @property
-    def chips(self) -> int:
+    def chips(self) -> Chips:
         return self._chips
 
 

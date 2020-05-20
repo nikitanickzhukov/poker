@@ -1,8 +1,8 @@
 from abc import ABC
-from typing import Type, Optional, Sequence
-from collections import namedtuple
+from typing import Type, Optional
 
 from engine.domain.model.card import StandardDeck
+from engine.domain.model.chips import Chips
 
 from .street import Street
 from .event import (
@@ -31,12 +31,12 @@ class Round(ABC):
         self,
         history: History,
         table: Table,
-        sb: int = 0,
-        bb: int = 0,
-        ante: int = 0,
+        sb: Chips = None,
+        bb: Chips = None,
+        ante: Chips = None,
     ) -> None:
         assert self.street_classes, 'Round must contain 1 or more streets'
-        assert (sb and bb) or ante, 'Round must have at least one non-zero of blinds and ante'
+        assert (sb and bb) or ante, 'Round must have at least one non-zero value of both blinds and ante'
 
         self._history = history
         self._table = table
@@ -136,7 +136,7 @@ class Round(ABC):
         elif isinstance(prev_event, PlayerDrawCommitted):
             return self._discarding(street_class=self._street_class, prev_player=prev_event.player)
         elif isinstance(prev_event, PlayerDecisionCommitted):
-            return self._trading(street_class=self._street_class, prev_player=prev_event.player)
+            return self._betting(street_class=self._street_class, prev_player=prev_event.player)
         elif isinstance(prev_event, RoundStateChanged):
             return self._dealing(street_class=self._street_class)
         else:
@@ -172,9 +172,9 @@ class Round(ABC):
             )
             if player:
                 return self._ask_draw(player=player, street_class=street_class)
-        return self._trading(street_class=street_class)
+        return self._betting(street_class=street_class)
 
-    def _trading(self, street_class: Type[Street], prev_player: Optional[Player] = None) -> Event:
+    def _betting(self, street_class: Type[Street], prev_player: Optional[Player] = None) -> Event:
         if street_class.with_decision:
             player = self._get_next_player_for_decision(
                 prev_player=prev_player,
@@ -182,9 +182,9 @@ class Round(ABC):
             )
             if player:
                 return self._ask_decision(player=player, street_class=street_class)
-        return self._next_street(prev_street_class=street_class)
+        return self._moving(prev_street_class=street_class)
 
-    def _next_street(self, prev_street_class: Type[Street]) -> Event:
+    def _moving(self, prev_street_class: Type[Street]) -> Event:
         idx = self.street_classes.index(prev_street_class) + 1
         street_class = self.street_classes[idx] if idx < len(self.street_classes) else None
         return self._change_round(street_class=street_class)
